@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Parked Car</string>
+    <string name="app_name">Tabs Application</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="park_car">Park Car</string>
+    <string name="when_label">When:</string>
+    <string name="when_info">2018-01-22, 11:45</string>
+    <string name="location_label">Location:</string>
+    <string name="location_info">near High Road 23</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
