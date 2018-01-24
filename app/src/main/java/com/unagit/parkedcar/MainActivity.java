@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private TabLayout tabLayout;
 
+    private static final int TABS_COUNT = 3;
+
     /**
      * Positions of tabs in TabLayout
      */
@@ -56,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
         */
 
         setupViewPagerAndTabLayout();
-
-
-
     }
 
     private void setupViewPagerAndTabLayout() {
@@ -142,8 +141,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            /**
+             * Number of tabs
+             */
+            return TABS_COUNT;
         }
 
         @Override

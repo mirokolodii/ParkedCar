@@ -7,7 +7,6 @@
     <string name="when_info">2018-01-22, 11:45</string>
     <string name="location_label">Location:</string>
     <string name="location_info">near High Road 23</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bluetooth_view_info">Mark your car on a list of bluetooth devices below.</string>
+    <string name="bluetooth_view_info_extra">Don\'t see your car? Make sure it is paired with your device first. (Go to Bluetooth settings).</string>
 </resources>
