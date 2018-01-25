@@ -1,11 +1,20 @@
 package com.unagit.parkedcar;
 
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -14,6 +23,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class BluetoothFragment extends Fragment {
+
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -49,9 +61,11 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onCreate");
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
@@ -60,14 +74,38 @@ public class BluetoothFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
-        addBluetoothDevicesListView(rootView);
+        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onCreateView");
+
+
+
         return rootView;
     }
 
-    /*
-     */
-    private void addBluetoothDevicesListView(View rootView) {
+    @Override
+    public void onStart() {
+        super.onStart();
+        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onStart");
 
     }
+
+
+
+    /*
+     */
+
+    private void showBluetoothDevicesListView(View rootView) {
+    /*
+        ArrayList<DeviceItem> deviceItemList = new ArrayList<>();
+        Set<BluetoothDevice> pairedDevices = BTAdapter.getBondedDevices();
+
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress());
+                deviceItemList.add(newDevice);
+            }
+        }
+*/
+    }
+
 
 }

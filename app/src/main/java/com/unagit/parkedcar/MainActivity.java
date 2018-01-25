@@ -1,6 +1,10 @@
 package com.unagit.parkedcar;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.Fragment;
@@ -47,17 +51,33 @@ public class MainActivity extends AppCompatActivity {
     private static final int PHOTOS_TAB = 1;
     private static final int BLUETOOTH_TAB = 2;
 
+    private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    private boolean isBluetoothAvailable;
+    private boolean isBluetoothEnabled;
+
+    private static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST = 10;
+
+
+    public static String LOG_TAG;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LOG_TAG = this.getClass().getName();
 
         /* Not sure if I need this, works just fine without this code
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         */
 
+        /**
+         * Set tabs and show them on screen, using ViewPager
+         */
         setupViewPagerAndTabLayout();
+
     }
 
     private void setupViewPagerAndTabLayout() {
@@ -68,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // Custom animated transformation between tabs
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         //Setup a TabLayout to work with ViewPager (get tabs from it) and set icons on tabs without text
@@ -82,7 +104,22 @@ public class MainActivity extends AppCompatActivity {
         TabLayout.OnTabSelectedListener tb = new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Log.d("MainActivity", "on tab selected" + tab.getPosition());
+                /**
+                 * Verify that:
+                 * 1. Bluetooth is supported by a device
+                 * 2. Bluetooth is enabled
+                 */
+                if (tab.getPosition() == BLUETOOTH_TAB) {
+                    Log.i(LOG_TAG, "Tab 2 is clicked");
+                    if (!isBluetoothAvailable()) {
+                        displayBluetoothNotAvailableNotificationDialog();
+                    } else if (!isBluetoothEnabled()){
+                        enableBluetoothRequest();
+
+                    } else { // bluetooth is available and enabled
+
+                    }
+                }
             }
 
             @Override
@@ -95,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "on tab reselected" + tab.getPosition());
             }
         };
+
         tabLayout.addOnTabSelectedListener(tb);
     }
 
@@ -108,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
+
 
         @Override
         public Fragment getItem(int position) {
@@ -126,10 +166,19 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case BLUETOOTH_TAB:
                     /**
-                     * Third tab - includes a list of all paired bluetooth devices with possibility
-                     * to mark, which devices to follow
+                     * Third tab.
+                     * If BT is not available or not enabled, return empty fragment.
+                     * Otherwise - return custom BluetoothFragment.
+                     *
                      */
-                    return new BluetoothFragment();
+                    if (isBluetoothAvailable()) {
+                        if (isBluetoothEnabled()) {
+                            Log.i(LOG_TAG, "BT is enabled");
+                            return new BluetoothFragment();
+                        }
+                    }
+
+
             }
             /**
              * default option (shouldn't occur) - return empty Fragment
@@ -153,6 +202,73 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    /**
+     * Helpers
+     */
+    private boolean isBluetoothAvailable() {
+        return (btAdapter != null);
+
+    }
+
+    private void displayBluetoothNotAvailableNotificationDialog() {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage("Your device doesn't support Bluetooth")
+                .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Exit app
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i(MainActivity.LOG_TAG, "Cancel is pressed: which is " + which);
+                        return;
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private boolean isBluetoothEnabled() {
+        return btAdapter.isEnabled();
+    }
+
+    public void enableBluetoothRequest() {
+        Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBT, ENABLE_BLUETOOTH_ACTIVITY_REQUEST);
+
+    }
+
+    /**
+     * Handle callbacks from activities:
+     *
+     * requestCode = ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
+     * activity initiated to show a dialog, which allows user to enable bluetooth on a device
+     *
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            // Callback from 'Enable Bluetooth' dialog
+            case ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
+                switch(resultCode) {
+                    case RESULT_OK:
+                        Log.i(LOG_TAG, "user enabled bluetooth");
+                        mSectionsPagerAdapter.notifyDataSetChanged();
+                        break;
+                    case RESULT_CANCELED:
+                        Log.i(LOG_TAG, "user canceled to enable bluetooth");
+                        break;
+                }
+        }
     }
 }
 
