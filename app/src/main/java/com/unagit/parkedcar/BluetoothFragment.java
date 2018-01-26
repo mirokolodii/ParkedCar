@@ -3,16 +3,23 @@ package com.unagit.parkedcar;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 
 /**
@@ -22,6 +29,8 @@ import java.util.Set;
 public class BluetoothFragment extends Fragment {
 
     BluetoothAdapter btAdapter;
+    private ArrayList<MyBluetoothDevice> devices;
+    private Set<String> trackedDevices;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -54,8 +63,12 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         btAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        devices = getPairedDevices();
+        trackedDevices = new HashSet<>();
+        for (MyBluetoothDevice device : devices) {
+            Log.d(LOG_TAG, device.getName() + ", " + device.getAddress());
+        }
 //        Log.i(MainActivity.LOG_TAG, "We are in onCreate of " + this.getClass().getName());
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
@@ -69,34 +82,15 @@ public class BluetoothFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
-        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onCreateView");
-
-        // Get a list of bluetooth paired devices
-        Set<MyBluetoothDevice> pairedDevices = getPairedDevices();
-        for (MyBluetoothDevice device : pairedDevices) {
-            Log.d(MainActivity.LOG_TAG, device.getName() + ", " + device.getAddress());
-        }
-
-
-
-
+        displayBluetoothDevices(rootView);
         return rootView;
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onStart");
-
-    }
-
-
 
     /**
      * Returns a set of MyBluetoothDevice items, which are paired to this device
      */
-    private Set<MyBluetoothDevice> getPairedDevices() {
-        Set<MyBluetoothDevice> pairedDevices = new HashSet<>();
+    private ArrayList<MyBluetoothDevice> getPairedDevices() {
+        ArrayList<MyBluetoothDevice> pairedDevices = new ArrayList<>();
         Set<BluetoothDevice> devices = btAdapter.getBondedDevices();
         if (devices.size() > 0) {
             for (BluetoothDevice device : devices) {
@@ -107,46 +101,53 @@ public class BluetoothFragment extends Fragment {
         return pairedDevices;
     }
 
-
+    /**
+     * Fills ListView with a list of paired Bluetooth devices
+     * and sets onClickListener for each view in a ListView
+     */
     // Display list of paired bluetooth devices
-    private void displayBluetoothDevices(final ArrayList<DeviceItem> deviceItemList) {
-
-
+    private void displayBluetoothDevices(View rootView) {
         // Initialize adapter for ListView
-        DeviceAdapter adapter = new DeviceAdapter(this, FAIKE_LAYOUT_ID_FOR_DEVICE_ADAPTER, deviceItemList, chosenDevices);
+        MyBluetoothDeviceAdapter adapter = new MyBluetoothDeviceAdapter(getContext(), this.devices, trackedDevices);
 
         // Set adapter for ListView
-        ListView listView = findViewById(R.id.devices_listview);
+        ListView listView = rootView.findViewById(R.id.bluetooth_list_view);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
                 // Show id and position in toast message
                 String text = "Position: " + String.valueOf(position) + ". ID: " + String.valueOf(id);
-                createToast(text);
+                showToast(text);
 
                 //Get device and its address
-                DeviceItem clickedDevice = deviceItemList.get(position);
+                MyBluetoothDevice clickedDevice = devices.get(position);
                 String deviceAddress = clickedDevice.getAddress();
 
-                // Flip tick color
+                // Flip tick image
                 ImageView tickImage = view.findViewById(R.id.tick_picture);
                 if ((int) tickImage.getTag() == R.drawable.big_tick_unticked) {
                     tickImage.setImageResource(R.drawable.big_tick);
                     tickImage.setTag(R.drawable.big_tick);
-                    chosenDevices.add(deviceAddress);
-                    Log.i(LOG_TAG,"chosenDevices: " + chosenDevices.toString());
+                    trackedDevices.add(deviceAddress);
+                    Log.i(LOG_TAG,"trackedDevices: " + trackedDevices.toString());
                 } else {
                     tickImage.setImageResource(R.drawable.big_tick_unticked);
                     tickImage.setTag(R.drawable.big_tick_unticked);
-                    chosenDevices.remove(deviceAddress);
-                    Log.i(LOG_TAG,"chosenDevices: " + chosenDevices.toString());
+                    trackedDevices.remove(deviceAddress);
+                    Log.i(LOG_TAG,"chosenDevices: " + trackedDevices.toString());
                 }
 
-                saveChosenDevices();
+//                saveChosenDevices();
             }
         });
+    }
+
+    public void showToast(String text) {
+        Context context = getContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context, text, duration).show();
     }
 
 }
