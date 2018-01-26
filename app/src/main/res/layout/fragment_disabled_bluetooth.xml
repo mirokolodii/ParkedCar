@@ -2,12 +2,15 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/disabled_bluetooth_fragment"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/disabled_bluetooth_fragment">
 
     <TextView
+        android:padding="20dp"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bluetooth is either unavailable or disabled."/>
+        android:text="@string/bluetooth_unavailable"/>
 
 </FrameLayout>
