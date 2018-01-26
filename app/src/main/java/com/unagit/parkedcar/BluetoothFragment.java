@@ -31,6 +31,7 @@ public class BluetoothFragment extends Fragment {
     BluetoothAdapter btAdapter;
     private ArrayList<MyBluetoothDevice> devices;
     private Set<String> trackedDevices;
+    MyDefaultPreferenceManager myDefaultPreferenceManager;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -64,8 +65,9 @@ public class BluetoothFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
         devices = getPairedDevices();
-        trackedDevices = new HashSet<>();
+        trackedDevices = myDefaultPreferenceManager.getDevices();
         for (MyBluetoothDevice device : devices) {
             Log.d(LOG_TAG, device.getName() + ", " + device.getAddress());
         }
@@ -84,6 +86,13 @@ public class BluetoothFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
         displayBluetoothDevices(rootView);
         return rootView;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Save trackedDevices into SharedPreferences
+        myDefaultPreferenceManager.setValue(MyDefaultPreferenceManager.DEVICE_ADDRESSES, trackedDevices);
     }
 
     /**
@@ -114,6 +123,7 @@ public class BluetoothFragment extends Fragment {
         ListView listView = rootView.findViewById(R.id.bluetooth_list_view);
         listView.setAdapter(adapter);
 
+        // Flip tick image and update trackedDevices on item click
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -138,11 +148,10 @@ public class BluetoothFragment extends Fragment {
                     trackedDevices.remove(deviceAddress);
                     Log.i(LOG_TAG,"chosenDevices: " + trackedDevices.toString());
                 }
-
-//                saveChosenDevices();
             }
         });
     }
+
 
     public void showToast(String text) {
         Context context = getContext();
