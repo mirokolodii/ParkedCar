@@ -1,31 +1,20 @@
 package com.unagit.parkedcar;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BluetoothFragment#newInstance} factory method to
+ * Use the {@link DisabledBluetoothFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BluetoothFragment extends Fragment {
-
-
-
+public class DisabledBluetoothFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,7 +25,7 @@ public class BluetoothFragment extends Fragment {
     private String mParam2;
 
 
-    public BluetoothFragment() {
+    public DisabledBluetoothFragment() {
         // Required empty public constructor
     }
 
@@ -46,11 +35,11 @@ public class BluetoothFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment BluetoothFragment.
+     * @return A new instance of fragment DisabledBluetoothFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BluetoothFragment newInstance(String param1, String param2) {
-        BluetoothFragment fragment = new BluetoothFragment();
+    public static DisabledBluetoothFragment newInstance(String param1, String param2) {
+        DisabledBluetoothFragment fragment = new DisabledBluetoothFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,7 +50,6 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Log.i(MainActivity.LOG_TAG, "We are in onCreate of " + this.getClass().getName());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -74,39 +62,7 @@ public class BluetoothFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
-        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onCreateView");
-
-
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_disabled_bluetooth, container, false);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        //Log.i(MainActivity.LOG_TAG, "We are in Fragment onStart");
-
-    }
-
-
-
-    /*
-     */
-
-    private void showBluetoothDevicesListView(View rootView) {
-    /*
-        ArrayList<DeviceItem> deviceItemList = new ArrayList<>();
-        Set<BluetoothDevice> pairedDevices = BTAdapter.getBondedDevices();
-
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress());
-                deviceItemList.add(newDevice);
-            }
-        }
-*/
-    }
-
 
 }
