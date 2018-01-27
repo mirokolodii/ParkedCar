@@ -129,7 +129,7 @@ public class BluetoothFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 // Show id and position in toast message
                 String text = "Position: " + String.valueOf(position) + ". ID: " + String.valueOf(id);
-                showToast(text);
+                Helpers.showToast(text, getContext());
 
                 //Get device and its address
                 MyBluetoothDevice clickedDevice = devices.get(position);
@@ -151,12 +151,4 @@ public class BluetoothFragment extends Fragment {
             }
         });
     }
-
-
-    public void showToast(String text) {
-        Context context = getContext();
-        int duration = Toast.LENGTH_SHORT;
-        Toast.makeText(context, text, duration).show();
-    }
-
 }

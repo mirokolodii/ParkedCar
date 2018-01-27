@@ -3,7 +3,13 @@ package com.unagit.parkedcar;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -25,7 +31,7 @@ import android.widget.TextView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MyLocationManager.MyLocationManagerCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -62,9 +68,12 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * BluetoothAdapter and request ID to enable bluetooth on device
-      */
+     */
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST = 10;
+
+    private MyLocationManager myLocationManager;
+    Location currentLocation;
 
     public static String LOG_TAG;
 
@@ -76,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getName();
 
+        myLocationManager = new MyLocationManager(MainActivity.this, this);
+
         /* Not sure if I need this, works just fine without this code
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,7 +96,46 @@ public class MainActivity extends AppCompatActivity {
          * Set tabs and show them on screen, using ViewPager
          */
         setupViewPagerAndTabLayout();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        /**
+         * First thing we want to know, whether:
+         * 1. Location is enabled on a device;
+         * 2. App is granted location permission
+         *
+         * locationCallback method is triggered, once we receive an async result
+         * from MyLocationManager
+         */
+        myLocationManager.verifyLocationPermissions();
+    }
+
+    @Override
+    public void locationCallback(int result, Location location) {
+        switch (result) {
+            case(MyLocationManager.LOCATION_DISABLED):
+                Helpers.showToast("Location is disabled.", this);
+                this.finish();
+                break;
+            case(MyLocationManager.LOCATION_PERMISSION_NOT_GRANTED):
+                Helpers.showToast("Location permission is not granted.", this);
+                this.finish();
+                break;
+            case(MyLocationManager.LOCATION_RECEIVED):
+                currentLocation = location;
+                if (location == null) {
+                    Helpers.showToast("Oops, last location is not known. Trying again...", this);
+                    // Try again to get location
+                    myLocationManager.verifyLocationPermissions();
+                } else {
+                    Helpers.showToast(
+                            "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
+                            this);
+                }
+                break;
+        }
     }
 
     private void setupViewPagerAndTabLayout() {
@@ -139,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.addOnTabSelectedListener(tb);
     }
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -260,6 +309,8 @@ public class MainActivity extends AppCompatActivity {
      * requestCode == ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
      * callback from activity to enable bluetooth on a device
      *
+     * requestCode == MyLocationManager.REQUEST_CHECK_SETTINGS
+     *
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -272,12 +323,57 @@ public class MainActivity extends AppCompatActivity {
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         setTabIcons();
                         break;
-                    case RESULT_CANCELED: // User didn't enable bluetooth
+                    case RESULT_CANCELED: // User cancelled
+                        break;
+                }
+            case MyLocationManager.REQUEST_CHECK_SETTINGS:
+                switch(resultCode) {
+                    case RESULT_OK: // User enabled location
+                        myLocationManager.verifyLocationPermissions(); // Trigger verifications again
+                        break;
+                    case RESULT_CANCELED: // User cancelled
+                        locationCallback(MyLocationManager.LOCATION_DISABLED, new Location("empty"));
                         break;
                 }
             default:
                 break; // Do nothing
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(LOG_TAG, "We are in onRequestPermissionsResult");
+        switch (requestCode) {
+            case (MyLocationManager.MY_PERMISSION_REQUEST_FINE_LOCATION): {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay!
+                    Helpers.showToast("Location permission is granted", this);
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Helpers.showToast("Location permission denied", this);
+                    // TODO: Show dialog with a link to app settings (use openApplicationSettings method)
+                    // TODO: Then close app, using locationCallback method
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void openApplicationSettings() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+        intent.setData(uri);
+        this.startActivity(intent);
     }
 
     /**
