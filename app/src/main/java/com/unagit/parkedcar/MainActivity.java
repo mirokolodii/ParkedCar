@@ -309,7 +309,8 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
      * requestCode == ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
      * callback from activity to enable bluetooth on a device
      *
-     * requestCode == MyLocationManager.REQUEST_CHECK_SETTINGS
+     * requestCode == MyLocationManager.REQUEST_CHECK_SETTINGS:
+     * callback from request to enable location on this device
      *
      */
     @Override
@@ -329,7 +330,9 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
             case MyLocationManager.REQUEST_CHECK_SETTINGS:
                 switch(resultCode) {
                     case RESULT_OK: // User enabled location
-                        myLocationManager.verifyLocationPermissions(); // Trigger verifications again
+                        // Location is enabled. Trigger verification again
+                        // to get current location
+                        myLocationManager.verifyLocationPermissions();
                         break;
                     case RESULT_CANCELED: // User cancelled
                         locationCallback(MyLocationManager.LOCATION_DISABLED, new Location("empty"));

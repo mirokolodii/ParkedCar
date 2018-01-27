@@ -19,6 +19,7 @@
                 android:maxWidth="200dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:id="@+id/park_car"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center"
                 android:text="@string/park_car"/>
