@@ -31,7 +31,10 @@ import android.widget.TextView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MyLocationManager.MyLocationManagerCallback, ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends AppCompatActivity implements
+        MyLocationManager.MyLocationManagerCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        MapFragment.OnParkButtonPressedListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -115,15 +118,15 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
     @Override
     public void locationCallback(int result, Location location) {
         switch (result) {
-            case(MyLocationManager.LOCATION_DISABLED):
+            case (MyLocationManager.LOCATION_DISABLED):
                 Helpers.showToast("Location is disabled.", this);
                 this.finish();
                 break;
-            case(MyLocationManager.LOCATION_PERMISSION_NOT_GRANTED):
+            case (MyLocationManager.LOCATION_PERMISSION_NOT_GRANTED):
                 Helpers.showToast("Location permission is not granted.", this);
                 this.finish();
                 break;
-            case(MyLocationManager.LOCATION_RECEIVED):
+            case (MyLocationManager.LOCATION_RECEIVED):
                 currentLocation = location;
                 if (location == null) {
                     Helpers.showToast("Oops, last location is not known. Trying again...", this);
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
                 if (tab.getPosition() == BLUETOOTH_TAB) {
                     if (!isBluetoothAvailable()) {
                         displayBluetoothNotAvailableNotificationDialog();
-                    } else if (!isBluetoothEnabled()){
+                    } else if (!isBluetoothEnabled()) {
                         enableBluetoothRequest();
                     }
                 }
@@ -267,10 +270,14 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
     /**
      * Helper methods for Bluetooth
      */
-    private boolean isBluetoothAvailable() { return (btAdapter != null); }
+    private boolean isBluetoothAvailable() {
+        return (btAdapter != null);
+    }
+
     private boolean isBluetoothEnabled() {
         return btAdapter.isEnabled();
     }
+
     public void enableBluetoothRequest() {
         Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBT, ENABLE_BLUETOOTH_ACTIVITY_REQUEST);
@@ -305,21 +312,20 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
 
     /**
      * Handler for callbacks from other activities.
-     *
+     * <p>
      * requestCode == ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
      * callback from activity to enable bluetooth on a device
-     *
+     * <p>
      * requestCode == MyLocationManager.REQUEST_CHECK_SETTINGS:
      * callback from request to enable location on this device
-     *
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             // Callback from 'Enable Bluetooth' dialog
             case ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
-                switch(resultCode) {
+                switch (resultCode) {
                     case RESULT_OK: // User enabled bluetooth
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         setTabIcons();
@@ -328,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
                         break;
                 }
             case MyLocationManager.REQUEST_CHECK_SETTINGS:
-                switch(resultCode) {
+                switch (resultCode) {
                     case RESULT_OK: // User enabled location
                         // Location is enabled. Trigger verification again
                         // to get current location
@@ -398,6 +404,24 @@ public class MainActivity extends AppCompatActivity implements MyLocationManager
                 Log.e(LOG_TAG, e.getMessage());
             }
 
+        }
+    }
+
+    /**
+     * Callback from MapFragment, triggered with Park Car button clicked.
+     * @param action
+     *      == PARK_CAR: request current location and set parking location;
+     *      == CLEAR_PARKING_LOCATION: clear parking, notification etc.
+     *
+     */
+
+    @Override
+    public void parkButtonPressed(int action) {
+        switch (action) {
+            case MapFragment.PARK_CAR:
+                break;
+            case MapFragment.CLEAR_PARKING_LOCATION:
+                break;
         }
     }
 }

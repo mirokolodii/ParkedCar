@@ -1,21 +1,15 @@
 package com.unagit.parkedcar;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MapFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MapFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MapFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +20,17 @@ public class MapFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    public interface OnParkButtonPressedListener {
+        // TODO: Update argument type and name
+        void parkButtonPressed(int action);
+    }
+
+    private OnParkButtonPressedListener mListener;
+
+    private final String PARK_BUTTON = "Park Car";
+    private final String CLEAR_BUTTON = "Clear";
+    static final int PARK_CAR = 0;
+    static final int CLEAR_PARKING_LOCATION= 1;
 
     public MapFragment() {
         // Required empty public constructor
@@ -64,48 +68,47 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        setParkButtonOnClickListener(rootView);
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+
+    /**
+     * Flip Park Car button between two states:
+     * 1. Park Car - change button text, request current location via callback method
+     * 2. Clear - change button text, clear park location
+     */
+    private void setParkButtonOnClickListener(View view) {
+        final Button parkButton = view.findViewById(R.id.park_car);
+        parkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (parkButton.getText().equals(PARK_BUTTON)) {
+                    parkButton.setText(CLEAR_BUTTON);
+                    mListener.parkButtonPressed(PARK_CAR);
+                } else {
+                    parkButton.setText(PARK_BUTTON);
+                    mListener.parkButtonPressed(CLEAR_PARKING_LOCATION);
+                }
+            }
+        });
+
     }
 
-    /*
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnParkButtonPressedListener) {
+            mListener = (OnParkButtonPressedListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnParkButtonPressedListener");
         }
     }
-
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-    */
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
