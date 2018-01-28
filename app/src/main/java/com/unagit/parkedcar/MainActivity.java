@@ -1,5 +1,7 @@
 package com.unagit.parkedcar;
 
+import android.app.NotificationManager;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,24 +13,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
@@ -55,28 +47,18 @@ public class MainActivity extends AppCompatActivity implements
      * TabLayout
      */
     private TabLayout tabLayout;
-    private static final int TABS_COUNT = 3;
-    /**
-     * Positions of tabs in TabLayout
-     */
-    private static final int MAP_TAB = 0;
-    private static final int PHOTOS_TAB = 1;
-    private static final int BLUETOOTH_TAB = 2;
-    /**
-     * Icons for tabs in TabLayout
-     */
-    private static int MAP_TAB_ICON = android.R.drawable.ic_menu_mylocation;
-    private static int PHOTOS_TAB_ICON = android.R.drawable.ic_menu_camera;
-    private static int BLUETOOTH_TAB_ICON = android.R.drawable.stat_sys_data_bluetooth;
 
     /**
      * BluetoothAdapter and request ID to enable bluetooth on device
      */
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-    private static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST = 10;
 
+    /**
+     * Manage location
+     */
     private MyLocationManager myLocationManager;
     Location currentLocation;
+    boolean isLocationRequested = false;
 
     public static String LOG_TAG;
 
@@ -127,18 +109,31 @@ public class MainActivity extends AppCompatActivity implements
                 this.finish();
                 break;
             case (MyLocationManager.LOCATION_RECEIVED):
-                currentLocation = location;
-                if (location == null) {
-                    Helpers.showToast("Oops, last location is not known. Trying again...", this);
-                    // Try again to get location
-                    myLocationManager.verifyLocationPermissions();
-                } else {
-                    Helpers.showToast(
-                            "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
-                            this);
+                if (isLocationRequested) {
+                    currentLocation = location;
+                    if (location == null) {
+                        Helpers.showToast("Oops, last location is not known. Trying again...", this);
+                        // Try again to get location
+                        myLocationManager.verifyLocationPermissions();
+                    } else {
+                        Helpers.showToast(
+                                "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
+                                this);
+                        // Save location into DefaultSharedPreferences
+                        saveLocation();
+                        // Show notification
+                        new MyNotificationManager().sendNotification(this, currentLocation);
+                    }
+                    break;
                 }
-                break;
+
         }
+    }
+
+    private void saveLocation() {
+        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
+        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LATITUDE, (float) currentLocation.getLatitude());
+        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LONGITUDE, (float) currentLocation.getLongitude());
     }
 
     private void setupViewPagerAndTabLayout() {
@@ -170,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements
                  * 1. Bluetooth is supported by a device
                  * 2. Bluetooth is enabled
                  */
-                if (tab.getPosition() == BLUETOOTH_TAB) {
+                if (tab.getPosition() == Constants.Tabs.BLUETOOTH_TAB) {
                     if (!isBluetoothAvailable()) {
                         displayBluetoothNotAvailableNotificationDialog();
                     } else if (!isBluetoothEnabled()) {
@@ -222,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
-                case MAP_TAB:
+                case Constants.Tabs.MAP_TAB:
                     /**
                      * First tab - includes button to set parking location,
                      * information about parking time and location and
@@ -230,9 +225,9 @@ public class MainActivity extends AppCompatActivity implements
                      */
                     return new MapFragment();
 
-                case PHOTOS_TAB:
+                case Constants.Tabs.PHOTOS_TAB:
                     break;
-                case BLUETOOTH_TAB:
+                case Constants.Tabs.BLUETOOTH_TAB:
                     /**
                      * Third tab.
                      * If BT is not available or not enabled, return DisabledBluetoothFragment.
@@ -258,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements
             /**
              * Number of tabs
              */
-            return TABS_COUNT;
+            return Constants.Tabs.TABS_COUNT;
         }
 
         @Override
@@ -280,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void enableBluetoothRequest() {
         Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBT, ENABLE_BLUETOOTH_ACTIVITY_REQUEST);
+        startActivityForResult(enableBT, Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST);
     }
 
     /**
@@ -324,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             // Callback from 'Enable Bluetooth' dialog
-            case ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
+            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled bluetooth
                         mSectionsPagerAdapter.notifyDataSetChanged();
@@ -391,9 +386,9 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setTabIcons() {
         ArrayList<Integer> icons = new ArrayList<>();
-        icons.add(MAP_TAB_ICON);
-        icons.add(PHOTOS_TAB_ICON);
-        icons.add(BLUETOOTH_TAB_ICON);
+        icons.add(Constants.Tabs.MAP_TAB_ICON);
+        icons.add(Constants.Tabs.PHOTOS_TAB_ICON);
+        icons.add(Constants.Tabs.BLUETOOTH_TAB_ICON);
         for (int position = 0; position < icons.size(); position++) {
             try {
                 tabLayout
@@ -418,9 +413,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void parkButtonPressed(int action) {
         switch (action) {
-            case MapFragment.PARK_CAR:
+            case Constants.ParkActions.PARK_CAR:
+                isLocationRequested = true;
+                myLocationManager.verifyLocationPermissions();
                 break;
-            case MapFragment.CLEAR_PARKING_LOCATION:
+            case Constants.ParkActions.CLEAR_PARKING_LOCATION:
+                isLocationRequested = false;
+                // Dismiss notification
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+                try {
+                    mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
+                } catch (NullPointerException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
                 break;
         }
     }

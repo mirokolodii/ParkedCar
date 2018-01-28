@@ -6,11 +6,10 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,24 +30,23 @@ import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 public class MyLocationManager {
 
-
+    private MyLocationManagerCallback callback;
     private Activity activity;
     static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 1;
     static final int REQUEST_CHECK_SETTINGS = 2;
-    private MyLocationManagerCallback callback;
+
     static final int LOCATION_DISABLED = 1;
     static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
     static final int LOCATION_RECEIVED = 3;
-    private Location currentLocation;
 
 
     // Callback interface for location. Used to receive a location from async method to a caller class,
     // which implements callback interface
     public interface MyLocationManagerCallback {
-        public void locationCallback(int result, Location location);
+        void locationCallback(int result, Location location);
     }
 
-    public MyLocationManager(Activity activity, MyLocationManagerCallback callback) {
+    public MyLocationManager(@Nullable Activity activity, MyLocationManagerCallback callback) {
         this.activity = activity;
         // Register a callback method
         this.callback = callback;
@@ -57,10 +55,10 @@ public class MyLocationManager {
 
     public void verifyLocationPermissions() {
         Log.i(LOG_TAG, "We are in verifyLocationPermissions");
-        verifyLocationEnabled(this.activity);
+        verifyLocationEnabled();
     }
 
-    private void verifyLocationEnabled(final Activity activity) {
+    private void verifyLocationEnabled() {
         Log.i(LOG_TAG, "We are in verifyLocationEnabled");
         // we are interested in high accuracy only
         LocationRequest mLocationRequestHighAccuracy = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -118,7 +116,7 @@ public class MyLocationManager {
         // Is location permission granted to our app?
         int permissionCheck = ContextCompat.checkSelfPermission(this.activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
-            requestCurrentLocation();
+            requestCurrentLocation(this.activity.getApplicationContext());
 
         } else { // Ask for permission
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
@@ -126,8 +124,8 @@ public class MyLocationManager {
 
     }
 
-    private void requestCurrentLocation() {
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.activity.getApplicationContext());
+    public void requestCurrentLocation(Context context) {
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context /*this.activity.getApplicationContext()*/);
         try {
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(new OnSuccessListener<Location>() {

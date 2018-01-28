@@ -29,8 +29,6 @@ public class MapFragment extends Fragment {
 
     private final String PARK_BUTTON = "Park Car";
     private final String CLEAR_BUTTON = "Clear";
-    static final int PARK_CAR = 0;
-    static final int CLEAR_PARKING_LOCATION= 1;
 
     public MapFragment() {
         // Required empty public constructor
@@ -85,10 +83,10 @@ public class MapFragment extends Fragment {
             public void onClick(View v) {
                 if (parkButton.getText().equals(PARK_BUTTON)) {
                     parkButton.setText(CLEAR_BUTTON);
-                    mListener.parkButtonPressed(PARK_CAR);
+                    mListener.parkButtonPressed(Constants.ParkActions.PARK_CAR);
                 } else {
                     parkButton.setText(PARK_BUTTON);
-                    mListener.parkButtonPressed(CLEAR_PARKING_LOCATION);
+                    mListener.parkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION);
                 }
             }
         });
