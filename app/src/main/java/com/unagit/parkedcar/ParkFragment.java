@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
@@ -37,12 +38,16 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
         Float latitude = myDefaultPreferenceManager.getLatitude();
         Float longitude = myDefaultPreferenceManager.getLongitude();
-        LatLng currentLatLng = new LatLng(latitude, longitude);
+        LatLng currentLocation = new LatLng(latitude, longitude);
 
         // Set marker
         googleMap.addMarker( new MarkerOptions()
-        .position(currentLatLng)
+        .position(currentLocation)
         .title("Current position"));
+        googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+
+
 
     }
 
