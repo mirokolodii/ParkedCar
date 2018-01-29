@@ -14,7 +14,7 @@ public final class Constants {
         /**
          * Positions of tabs in TabLayout
          */
-        static final int MAP_TAB = 0;
+        static final int PARK_TAB = 0;
         static final int PHOTOS_TAB = 1;
         static final int BLUETOOTH_TAB = 2;
         /**

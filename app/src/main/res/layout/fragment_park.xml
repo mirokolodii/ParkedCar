@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.unagit.parkedcar.MapFragment">
+    tools:context="com.unagit.parkedcar.ParkFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,10 +66,14 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="#FFDF32"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:id="@+id/map"
+            tools:context=".MainActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
     </LinearLayout>
 </FrameLayout>

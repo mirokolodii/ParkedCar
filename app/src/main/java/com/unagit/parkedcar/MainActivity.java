@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements
         MyLocationManager.MyLocationManagerCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        MapFragment.OnParkButtonPressedListener {
+        ParkFragment.OnParkButtonPressedListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -217,13 +217,13 @@ public class MainActivity extends AppCompatActivity implements
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
-                case Constants.Tabs.MAP_TAB:
+                case Constants.Tabs.PARK_TAB:
                     /**
                      * First tab - includes button to set parking location,
                      * information about parking time and location and
                      * Google Maps view with marked location on it
                      */
-                    return new MapFragment();
+                    return new ParkFragment();
 
                 case Constants.Tabs.PHOTOS_TAB:
                     break;
@@ -403,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Callback from MapFragment, triggered with Park Car button clicked.
+     * Callback from ParkFragment, triggered with Park Car button clicked.
      * @param action
      *      == PARK_CAR: request current location and set parking location;
      *      == CLEAR_PARKING_LOCATION: clear parking, notification etc.
