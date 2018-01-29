@@ -1,13 +1,20 @@
 package com.unagit.parkedcar;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
@@ -31,7 +38,22 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         this.context = context;
 
         Log.d(LOG_TAG, "BluetoothReceiver is triggered");
-        // Check intent action
+
+        /**
+         * Send test notification
+         */
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "Test Channel")
+                .setSmallIcon(android.R.drawable.stat_notify_more)
+                .setContentTitle("Test Notification")
+                .setContentText("BluetoothReceiver: notified at" + new SimpleDateFormat("HH:mm:ss").format(new Date())) // current time
+//                .setOngoing(true)
+                .setColor(Color.GREEN)
+                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
+        NotificationManager mNotificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(433, mBuilder.build());
+
+
+            // Check intent action
         final String action = intent.getAction();
         // Check, whether this receiver has been triggered by the change of bluetooth connection state
         if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
