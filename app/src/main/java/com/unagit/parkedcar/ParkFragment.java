@@ -1,8 +1,11 @@
 package com.unagit.parkedcar;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -31,23 +35,45 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
 
+    private GoogleMap googleMap;
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(LOG_TAG, "Callback from map received");
         // Get current location from SharedPreferences
+        this.googleMap = googleMap;
+        setLocationOnMap();
+
+    }
+
+    private void setLocationOnMap() {
+        // Get location
         MyDefaultPreferenceManager myDefaultPreferenceManager =
                 new MyDefaultPreferenceManager(getContext());
         Float latitude = myDefaultPreferenceManager.getLatitude();
         Float longitude = myDefaultPreferenceManager.getLongitude();
         LatLng currentLocation = new LatLng(latitude, longitude);
 
-        // Set marker
-        googleMap.addMarker( new MarkerOptions()
-        .position(currentLocation)
-        .title("Current position"));
+        // Clear everything
+        googleMap.clear();
+        // Show current location
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(true);
+        }
+
+        // Show saved position on the map
+        MarkerOptions options = new MarkerOptions();
+        options.position(currentLocation)
+                .title("Your Car")
+                .snippet("Parked 23 min ago")
+                .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
+        googleMap.addMarker(options)
+                .showInfoWindow(); /* show title without need to click on it */
+
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
         googleMap.animateCamera(CameraUpdateFactory
-                .newLatLng(currentLocation), 2* 1000 /* 2 sec. */, null);
+                .newLatLng(currentLocation), 1* 1000 /* 2 sec. */, null);
 
 
 
@@ -114,10 +140,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         parkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (parkButton.getText().equals(PARK_BUTTON)) {
+
+                if (parkButton.getText().equals(PARK_BUTTON)) { /* Park Car */
+                    setLocationOnMap();
                     parkButton.setText(CLEAR_BUTTON);
                     mListener.parkButtonPressed(Constants.ParkActions.PARK_CAR);
-                } else {
+                } else { /* Clear location */
                     parkButton.setText(PARK_BUTTON);
                     mListener.parkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION);
                 }
