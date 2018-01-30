@@ -32,14 +32,6 @@
         <service
             android:name=".NotificationActionHandlerService"
             android:exported="false" />
-        <!-- Test launcher activity. Should be deleted after tests completed -->
-        <activity android:name=".LocationActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"

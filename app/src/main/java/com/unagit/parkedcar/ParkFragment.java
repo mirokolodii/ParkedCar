@@ -35,7 +35,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         Log.d(LOG_TAG, "Callback from map received");
         // Get current location from SharedPreferences
-        MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
+        MyDefaultPreferenceManager myDefaultPreferenceManager =
+                new MyDefaultPreferenceManager(getContext());
         Float latitude = myDefaultPreferenceManager.getLatitude();
         Float longitude = myDefaultPreferenceManager.getLongitude();
         LatLng currentLocation = new LatLng(latitude, longitude);
@@ -45,7 +46,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         .position(currentLocation)
         .title("Current position"));
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        googleMap.animateCamera(CameraUpdateFactory
+                .newLatLng(currentLocation), 2* 1000 /* 2 sec. */, null);
 
 
 
@@ -125,7 +127,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     private void setMapCallback() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
         if (mapFragment == null) {
             Log.d(LOG_TAG, "mapFragment is null");
         } else {
