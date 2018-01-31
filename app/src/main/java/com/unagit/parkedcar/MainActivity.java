@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         ParkFragment.OnParkButtonPressedListener {
 
+    public static String LOG_TAG;
+    Location currentLocation;
+    boolean isLocationRequested = false;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -37,30 +40,22 @@ public class MainActivity extends AppCompatActivity implements
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
     /**
      * TabLayout
      */
     private TabLayout tabLayout;
-
     /**
-     * BluetoothAdapter and request ID to enable bluetooth on device
+     * BluetoothAdapter enable bluetooth on device
      */
-    private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-
+    private MyBluetoothManager myBluetoothManager;
     /**
      * Manage location
      */
     private MyLocationManager myLocationManager;
-    Location currentLocation;
-    boolean isLocationRequested = false;
-
-    public static String LOG_TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getName();
 
+        myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, this);
 
         /* Not sure if I need this, works just fine without this code
@@ -78,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         */
 
         /**
-         * Set tabs and show them on screen, using ViewPager
+         * Set tabs and show them on screen, using ViewPager.
          */
         setupViewPagerAndTabLayout();
     }
@@ -87,58 +83,20 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         /**
-         * First thing we want to know, whether:
+         * First thing we want to know is if:
          * 1. Location is enabled on a device;
-         * 2. App is granted location permission
+         * 2. App is granted location permission.
          *
-         * locationCallback method is triggered, once we receive an async result
-         * from MyLocationManager
+         * locationCallback method is triggered, once we receive result
+         * from MyLocationManager.
          */
-        myLocationManager.verifyLocationPermissions();
+        myLocationManager.verifyLocationEnabled();
     }
 
-    @Override
-    public void locationCallback(int result, Location location) {
-        switch (result) {
-            case (MyLocationManager.LOCATION_DISABLED):
-                Helpers.showToast("Location is disabled.", this);
-                this.finish();
-                break;
-            case (MyLocationManager.LOCATION_PERMISSION_NOT_GRANTED):
-                Helpers.showToast("Location permission is not granted.", this);
-                this.finish();
-                break;
-            case (MyLocationManager.LOCATION_RECEIVED):
-                if (isLocationRequested) {
-                    currentLocation = location;
-                    if (location == null) {
-                        Helpers.showToast("Oops, last location is not known. Trying again...", this);
-                        // Try again to get location
-                        myLocationManager.verifyLocationPermissions();
-                    } else {
-                        Helpers.showToast(
-                                "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
-                                this);
-                        // Save location into DefaultSharedPreferences
-                        saveLocation();
-                        // Show notification
-                        new MyNotificationManager().sendNotification(this, currentLocation);
-                    }
-                    break;
-                }
-
-        }
-    }
-
-    private void saveLocation() {
-        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
-        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LATITUDE, (float) currentLocation.getLatitude());
-        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LONGITUDE, (float) currentLocation.getLongitude());
-    }
 
     private void setupViewPagerAndTabLayout() {
         // PagerAdapter for ViewPager
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), myBluetoothManager);
 
         // Set up the ViewPager with PagerAdapter.
         mViewPager = findViewById(R.id.container);
@@ -166,10 +124,10 @@ public class MainActivity extends AppCompatActivity implements
                  * 2. Bluetooth is enabled
                  */
                 if (tab.getPosition() == Constants.Tabs.BLUETOOTH_TAB) {
-                    if (!isBluetoothAvailable()) {
-                        displayBluetoothNotAvailableNotificationDialog();
-                    } else if (!isBluetoothEnabled()) {
-                        enableBluetoothRequest();
+                    if (!myBluetoothManager.isBluetoothAvailable()) {
+                        myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
+                    } else if (!myBluetoothManager.isBluetoothEnabled()) {
+                        myBluetoothManager.enableBluetoothRequest();
                     }
                 }
             }
@@ -188,121 +146,43 @@ public class MainActivity extends AppCompatActivity implements
         tabLayout.addOnTabSelectedListener(tb);
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        /**
-         * Notify ViewPager to reload Fragment, when Fragment is DisabledBluetoothFragment
-         */
-        @Override
-        public int getItemPosition(Object object) {
-            if (object.getClass().equals(DisabledBluetoothFragment.class)) {
-                return POSITION_NONE;
-            }
-            return super.getItemPosition(object);
-
-        }
-
-        /**
-         * Get Fragments for ViewPager (i.e. for each of tabs in TabLayout)
-         */
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            switch (position) {
-                case Constants.Tabs.PARK_TAB:
-                    /**
-                     * First tab - includes button to set parking location,
-                     * information about parking time and location and
-                     * Google Maps view with marked location on it
-                     */
-                    return new ParkFragment();
-
-                case Constants.Tabs.PHOTOS_TAB:
+    @Override
+    public void locationCallback(int result, Location location) {
+        switch (result) {
+            case (Constants.Location.LOCATION_DISABLED):
+                Helpers.showToast("Location is disabled.", this);
+                this.finish();
+                break;
+            case (Constants.Location.LOCATION_PERMISSION_NOT_GRANTED):
+                Helpers.showToast("Location permission is not granted.", this);
+                this.finish();
+                break;
+            case (Constants.Location.LOCATION_RECEIVED):
+                if (isLocationRequested) {
+                    currentLocation = location;
+                    if (location == null) {
+                        Helpers.showToast("Oops, last location is not known. Trying again...", this);
+                        // Try again to get location
+                        myLocationManager.verifyLocationEnabled();
+                    } else {
+                        Helpers.showToast(
+                                "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
+                                this);
+                        // Save location into DefaultSharedPreferences
+                        saveLocation();
+                        // Show notification
+                        new MyNotificationManager().sendNotification(this, currentLocation);
+                    }
                     break;
-                case Constants.Tabs.BLUETOOTH_TAB:
-                    /**
-                     * Third tab.
-                     * If BT is not available or not enabled, return DisabledBluetoothFragment.
-                     * Otherwise - return BluetoothFragment.
-                     *
-                     */
-                    if (isBluetoothAvailable()) {
-                        if (isBluetoothEnabled()) {
-                            return new BluetoothFragment();
-                        }
-                    }
-                    return new DisabledBluetoothFragment();
-            }
+                }
 
-            /**
-             * default option (shouldn't occur) - return empty Fragment
-             */
-            return new Fragment();
-        }
-
-        @Override
-        public int getCount() {
-            /**
-             * Number of tabs
-             */
-            return Constants.Tabs.TABS_COUNT;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Page " + String.valueOf(position);
         }
     }
 
-    /**
-     * Helper methods for Bluetooth
-     */
-    private boolean isBluetoothAvailable() {
-        return (btAdapter != null);
-    }
-
-    private boolean isBluetoothEnabled() {
-        return btAdapter.isEnabled();
-    }
-
-    public void enableBluetoothRequest() {
-        Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBT, Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST);
-    }
-
-    /**
-     * Show a dialog, when Bluetooth is not available on a device.
-     * Two buttons:
-     * 1. Exit - exits app;
-     * 2. Cancel - return to app
-     */
-    private void displayBluetoothNotAvailableNotificationDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage("Your device doesn't support Bluetooth")
-                .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Exit app
-                        System.exit(0);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+    private void saveLocation() {
+        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
+        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LATITUDE, (float) currentLocation.getLatitude());
+        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LONGITUDE, (float) currentLocation.getLongitude());
     }
 
     /**
@@ -311,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements
      * requestCode == ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
      * callback from activity to enable bluetooth on a device
      * <p>
-     * requestCode == MyLocationManager.REQUEST_CHECK_SETTINGS:
+     * requestCode == REQUEST_CHECK_SETTINGS:
      * callback from request to enable location on this device
      */
     @Override
@@ -322,21 +202,26 @@ public class MainActivity extends AppCompatActivity implements
             case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled bluetooth
+                        /**
+                         * Refresh Bluetooth tab so that Bluetooth fragment is shown there
+                         * instead of DisabledBluetoothFragment
+                         */
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         setTabIcons();
                         break;
                     case RESULT_CANCELED: // User cancelled
                         break;
                 }
-            case MyLocationManager.REQUEST_CHECK_SETTINGS:
+            case Constants.Requests.REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled location
                         // Location is enabled. Trigger verification again
                         // to get current location
-                        myLocationManager.verifyLocationPermissions();
+                        myLocationManager.verifyLocationEnabled();
                         break;
                     case RESULT_CANCELED: // User cancelled
-                        locationCallback(MyLocationManager.LOCATION_DISABLED, new Location("empty"));
+                        // Show toast message and close
+                        locationCallback(Constants.Location.LOCATION_DISABLED, new Location("empty"));
                         break;
                 }
             default:
@@ -344,25 +229,50 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Callback with permission results.
+     * requestCode == {@link Constants.Requests#MY_PERMISSION_REQUEST_FINE_LOCATION}:
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(LOG_TAG, "We are in onRequestPermissionsResult");
         switch (requestCode) {
-            case (MyLocationManager.MY_PERMISSION_REQUEST_FINE_LOCATION): {
+            case (Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION): {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay!
                     Helpers.showToast("Location permission is granted", this);
+                    // If location has been requested, then request it. Otherwise do nothing
+                    if (isLocationRequested) {
+                        myLocationManager.verifyLocationEnabled();
+                    }
 
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Helpers.showToast("Location permission denied", this);
-                    // TODO: Show dialog with a link to app settings (use openApplicationSettings method)
-                    // TODO: Then close app, using locationCallback method
+                    new AlertDialog.Builder(this)
+                            .setTitle("Error")
+                            .setMessage("You have denied location permission. You can always " +
+                                    "change it in settings")
+                            .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Exit app
+                                    MainActivity.this.finish();
+                                }
+                            })
+                            .setNegativeButton("Settings", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Open app settings
+                                    openApplicationSettings();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
                 }
                 return;
             }
@@ -409,15 +319,17 @@ public class MainActivity extends AppCompatActivity implements
      *      == CLEAR_PARKING_LOCATION: clear parking, notification etc.
      *
      */
-
     @Override
     public void parkButtonPressed(int action) {
         switch (action) {
             case Constants.ParkActions.PARK_CAR:
+                // We want to get updated location
                 isLocationRequested = true;
-                myLocationManager.verifyLocationPermissions();
+                // Verify permissions and request for new location
+                myLocationManager.verifyLocationEnabled();
                 break;
             case Constants.ParkActions.CLEAR_PARKING_LOCATION:
+                // We don't need new location
                 isLocationRequested = false;
                 // Dismiss notification
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);

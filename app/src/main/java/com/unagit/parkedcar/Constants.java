@@ -29,9 +29,13 @@ public final class Constants {
      * IDs for different requests within the app (permission requests, notification IDs etc.)
      */
     static class Requests {
+        // Request to enable bluetooth on a device
         static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST = 10;
         static final String NOTIFICATIONS_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".testnotifications";
         static final int NOTIFICATION_ID = 100;
+        static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 1;
+        // Request to check for 'Location enabled' in device' settings
+        static final int REQUEST_CHECK_SETTINGS = 2;
     }
 
     static class ParkActions {
@@ -53,5 +57,12 @@ public final class Constants {
     static class GoogleMaps {
         static final String GOOGLE_MAPS_QUERY_URL = "https://www.google.com/maps/search/?api=1&query=";
         static final int Parking_icon = R.drawable.ic_parking_icon;
+    }
+
+    static class Location {
+        // Result, returned from MyLocationManager instance via callback
+        static final int LOCATION_DISABLED = 1;
+        static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
+        static final int LOCATION_RECEIVED = 3;
     }
 }

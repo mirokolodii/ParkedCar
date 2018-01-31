@@ -85,10 +85,9 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
     @Override
     public void locationCallback(int result, Location location) {
-        Log.d(LOG_TAG, "BluetoothReceiver received callback from MyLocationManager");
+//        Log.d(LOG_TAG, "BluetoothReceiver received callback from MyLocationManager");
 
-        // TODO: 2. send notification
-        if (result == MyLocationManager.LOCATION_RECEIVED) {
+        if (result == Constants.Location.LOCATION_RECEIVED) {
             new MyNotificationManager().sendNotification(this.context, location);
             // Save to DefaultPreferences
         }

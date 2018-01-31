@@ -37,16 +37,32 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     private GoogleMap googleMap;
 
+    /**
+     * Interface and its object (parkButtonClickListener), which calls method parkButtonPressed,
+     * when Park Car button pressed
+     */
+    public interface OnParkButtonPressedListener {
+        // TODO: Update argument type and name
+        void parkButtonPressed(int action);
+    }
+    private OnParkButtonPressedListener parkButtonClickListener;
+
+    private final String PARK_BUTTON = "Park Car";
+    private final String CLEAR_BUTTON = "Clear";
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(LOG_TAG, "Callback from map received");
         // Get current location from SharedPreferences
         this.googleMap = googleMap;
-        setLocationOnMap();
+        // TODO: set marker only when car is parked
+
+        // Set marker from parking location on the map
+        setMarkerOnMap();
 
     }
 
-    private void setLocationOnMap() {
+    private void setMarkerOnMap() {
         // Get location
         MyDefaultPreferenceManager myDefaultPreferenceManager =
                 new MyDefaultPreferenceManager(getContext());
@@ -74,20 +90,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
         googleMap.animateCamera(CameraUpdateFactory
                 .newLatLng(currentLocation), 1* 1000 /* 2 sec. */, null);
-
-
-
     }
 
-    public interface OnParkButtonPressedListener {
-        // TODO: Update argument type and name
-        void parkButtonPressed(int action);
+    private void clearMap() {
+        googleMap.clear();
     }
 
-    private OnParkButtonPressedListener mListener;
-
-    private final String PARK_BUTTON = "Park Car";
-    private final String CLEAR_BUTTON = "Clear";
 
     public ParkFragment() {
         // Required empty public constructor
@@ -142,12 +150,15 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             public void onClick(View v) {
 
                 if (parkButton.getText().equals(PARK_BUTTON)) { /* Park Car */
-                    setLocationOnMap();
+                    setMarkerOnMap();
                     parkButton.setText(CLEAR_BUTTON);
-                    mListener.parkButtonPressed(Constants.ParkActions.PARK_CAR);
+                    // Call listener
+                    parkButtonClickListener.parkButtonPressed(Constants.ParkActions.PARK_CAR);
                 } else { /* Clear location */
+                    clearMap();
                     parkButton.setText(PARK_BUTTON);
-                    mListener.parkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION);
+                    // Call listener
+                    parkButtonClickListener.parkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION);
                 }
             }
         });
@@ -168,7 +179,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnParkButtonPressedListener) {
-            mListener = (OnParkButtonPressedListener) context;
+            parkButtonClickListener = (OnParkButtonPressedListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnParkButtonPressedListener");
@@ -178,7 +189,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        parkButtonClickListener = null;
     }
 
 
