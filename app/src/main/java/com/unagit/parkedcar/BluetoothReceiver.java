@@ -1,6 +1,5 @@
 package com.unagit.parkedcar;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -12,7 +11,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

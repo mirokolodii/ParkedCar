@@ -3,7 +3,6 @@ package com.unagit.parkedcar;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,10 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
