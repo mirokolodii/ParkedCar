@@ -43,7 +43,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "Test Channel")
                 .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setContentTitle("Test Notification")
-                .setContentText("BluetoothReceiver: notified at" + new SimpleDateFormat("HH:mm:ss").format(new Date())) // current time
+                .setContentText("BluetoothReceiver: notified at " + new SimpleDateFormat("HH:mm:ss").format(new Date())) // current time
 //                .setOngoing(true)
                 .setColor(Color.GREEN)
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent

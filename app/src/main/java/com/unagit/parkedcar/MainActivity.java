@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getName();
 
@@ -87,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements
          * from MyLocationManager.
          */
         myLocationManager.verifyLocationEnabled();
+        String parkingTime = Helpers.timeDifference("");
+        Log.d(LOG_TAG, parkingTime);
     }
 
 
