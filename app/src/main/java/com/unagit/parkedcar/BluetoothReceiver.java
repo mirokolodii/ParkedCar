@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
@@ -43,18 +44,22 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "Test Channel")
                 .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setContentTitle("Test Notification")
-                .setContentText("BluetoothReceiver: notified at " + new SimpleDateFormat("HH:mm:ss").format(new Date())) // current time
+                .setContentText("BluetoothReceiver: notified on "
+                        + new SimpleDateFormat("EEE, HH:mm", Locale.getDefault()).format(new Date())) // now
 //                .setOngoing(true)
                 .setColor(Color.GREEN)
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
         NotificationManager mNotificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(433, mBuilder.build());
 
+        Log.d(LOG_TAG, "1");
 
             // Check intent action
         final String action = intent.getAction();
         // Check, whether this receiver has been triggered by the change of bluetooth connection state
         if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
+
+            Log.d(LOG_TAG, "2");
 
             // Get connection states
             Integer connectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, -1);
@@ -64,13 +69,16 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             String deviceName = device.getName();
             String deviceAddress = device.getAddress();
+            Log.d(LOG_TAG, "Device name: " + deviceName);
 
             // TODO: create instance of MyDefaultPreferenceManager
             // TODO: get a list of bluetooth devices and check, whether current device is in a Set of devices
 
             if (connectionState == BluetoothAdapter.STATE_DISCONNECTED || connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been disconnected
                 // Request current location
-                new MyLocationManager(null, this).requestCurrentLocation(context);
+                Log.d(LOG_TAG, "3");
+                new MyLocationManager(null, context, this).requestCurrentLocation();
+                Log.d(LOG_TAG, "4");
 
             } else if (connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been connected
                 // 1. clear location
@@ -85,7 +93,9 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
     public void locationCallback(int result, Location location) {
 //        Log.d(LOG_TAG, "BluetoothReceiver received callback from MyLocationManager");
 
+        Log.d(LOG_TAG, "11");
         if (result == Constants.Location.LOCATION_RECEIVED) {
+            Log.d(LOG_TAG, "12");
             new MyNotificationManager().sendNotification(this.context, location);
             // Save to DefaultPreferences
         }

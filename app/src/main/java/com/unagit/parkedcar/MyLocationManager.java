@@ -38,6 +38,7 @@ import static com.unagit.parkedcar.MainActivity.LOG_TAG;
  * This class is used to manage all the location work, like verify that
  * location is enabled, location permission granted,
  * get current location, connect to GoogleApi and get location updates.
+ *
  */
 
 public class MyLocationManager extends LocationCallback implements
@@ -55,11 +56,24 @@ public class MyLocationManager extends LocationCallback implements
     private MyLocationManagerCallback callback;
 
     private Activity activity;
+    private Context context;
     private GoogleApiClient mGoogleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    public MyLocationManager(@Nullable Activity activity, MyLocationManagerCallback callback) {
+    /**
+     *
+     * @param activity Only required to ask user to grand permission, otherwise can be null
+     * @param context Only required, if activity is not provided
+     * @param callback Returns location result and location itself
+     */
+    public MyLocationManager(@Nullable Activity activity, @Nullable Context context, MyLocationManagerCallback callback) {
         this.activity = activity;
+        if(activity == null) {
+            this.context = context;
+        } else {
+            this.context = activity.getApplicationContext();
+        }
+
         // Register a callback method
         this.callback = callback;
     }
@@ -79,7 +93,7 @@ public class MyLocationManager extends LocationCallback implements
                 .addLocationRequest(mLocationRequestHighAccuracy)
                 .setAlwaysShow(true); // Remove 'Never' button from location permission dialog window
         Task<LocationSettingsResponse> result =
-                LocationServices.getSettingsClient(this.activity.getApplicationContext())
+                LocationServices.getSettingsClient(context /*this.activity.getApplicationContext()*/)
                         .checkLocationSettings(builder.build());
 
         result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
@@ -129,16 +143,16 @@ public class MyLocationManager extends LocationCallback implements
 
     /**
      * Verify that location permission has been granted for the app.
-     * If yes - request current location with {@link #requestCurrentLocation(Context)};
+     * If yes - request current location with {@link #requestCurrentLocation()};
      * if not - request permission. Result will be passed
      * to callback {@link MainActivity#onRequestPermissionsResult(int, String[], int[])}
      */
     private void verifyPermissionGranted() {
         // Is location permission granted to our app?
-        int permissionCheck = ContextCompat.checkSelfPermission(this.activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
             // Request last known location
-            requestCurrentLocation(this.activity.getApplicationContext());
+            requestCurrentLocation(/*context /*this.activity.getApplicationContext()*/);
 
         } else { // Ask for permission
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
@@ -150,7 +164,8 @@ public class MyLocationManager extends LocationCallback implements
      * Request for latest location.
      * If received, build and connect GoogleApiClient with {@link #buildGoogleApiClient()}
      */
-    public void requestCurrentLocation(Context context) {
+    public void requestCurrentLocation(/*final Context context*/) {
+        Log.d(LOG_TAG, "5");
         FusedLocationProviderClient mFusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(context /*this.activity.getApplicationContext()*/);
         try {
@@ -162,6 +177,7 @@ public class MyLocationManager extends LocationCallback implements
 //                          callback.locationCallback(MyLocationManager.LOCATION_RECEIVED, location);
                             // Last location is known, which is a good first step in getting location.
                             // Now let's refresh it to the latest one
+                            Log.d(LOG_TAG, "6");
                             buildGoogleApiClient();
                         }
                     });
@@ -174,13 +190,15 @@ public class MyLocationManager extends LocationCallback implements
      * Build and connect GoogleApiClient.
      * Once connected, {@link #onConnected(Bundle)} method will be triggered
      */
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this.activity.getApplicationContext())
+    protected synchronized void buildGoogleApiClient(/*Context context*/) {
+        Log.d(LOG_TAG, "7");
+        mGoogleApiClient = new GoogleApiClient.Builder(context /*this.activity.getApplicationContext()*/)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+        Log.d(LOG_TAG, "8");
     }
 
     /**
@@ -196,12 +214,13 @@ public class MyLocationManager extends LocationCallback implements
             .setFastestInterval(1000)
             .setNumUpdates(1); /* One update is enough, as we need only to update location */
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); /* We want highest possible accuracy */
-        int permissionCheck = ContextCompat.checkSelfPermission(this.activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.activity.getApplicationContext());
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context /*this.activity.getApplicationContext()*/);
             // Callback is onLocationResult method in this class
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, this, null);
         }
+        Log.d(LOG_TAG, "9");
     }
 
     /**
@@ -217,6 +236,7 @@ public class MyLocationManager extends LocationCallback implements
         mGoogleApiClient.disconnect();
         mFusedLocationClient = null;
         // Return location back to the object, which requested location
+        Log.d(LOG_TAG, "10");
         callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
     }
 

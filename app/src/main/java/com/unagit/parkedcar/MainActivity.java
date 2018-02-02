@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         LOG_TAG = this.getClass().getName();
 
         myBluetoothManager = new MyBluetoothManager(this);
-        myLocationManager = new MyLocationManager(MainActivity.this, this);
+        myLocationManager = new MyLocationManager(MainActivity.this, null, this);
 
         /* Not sure if I need this, works just fine without this code
         Toolbar toolbar = findViewById(R.id.toolbar);
