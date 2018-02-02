@@ -17,6 +17,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.unagit.parkedcar.Helpers.Helpers;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
          */
         myLocationManager.verifyLocationEnabled();
         String parkingTime = Helpers.timeDifference("");
-        Log.d(LOG_TAG, parkingTime);
+        Log.d(LOG_TAG, "%"+parkingTime+"%");
     }
 
 

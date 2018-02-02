@@ -12,9 +12,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.unagit.parkedcar.Helpers.Helpers;
+
 import java.util.ArrayList;
 import java.util.Set;
 
+import static com.unagit.parkedcar.Helpers.Helpers.showToast;
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 
