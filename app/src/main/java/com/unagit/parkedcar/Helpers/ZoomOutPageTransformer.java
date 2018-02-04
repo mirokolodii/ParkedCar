@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.Helpers;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;

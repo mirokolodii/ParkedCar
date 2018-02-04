@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.unagit.parkedcar.Helpers.Helpers;
+import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
 
@@ -30,28 +31,25 @@ public class MainActivity extends AppCompatActivity implements
     public static String LOG_TAG;
     Location currentLocation;
     boolean isLocationRequested = false;
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+    /*
+     * Implementation of FragmentStatePagerAdapter, which will provide
+     * fragments for each of the sections.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    /**
+    /*
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    /**
-     * TabLayout
-     */
+
     private TabLayout tabLayout;
-    /**
-     * BluetoothAdapter enable bluetooth on device
+
+    /*
+     * BluetoothAdapter verifies bluetooth availability, enables bluetooth on device
+     * and provides list of paired bluetooth devices
      */
     private MyBluetoothManager myBluetoothManager;
-    /**
+
+    /*
      * Manage location
      */
     private MyLocationManager myLocationManager;
@@ -60,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getName();
@@ -74,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         */
 
-        /**
+        /*
          * Set tabs and show them on screen, using ViewPager.
          */
         setupViewPagerAndTabLayout();
@@ -88,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements
          * 1. Location is enabled on a device;
          * 2. App is granted location permission.
          *
-         * locationCallback method is triggered, once we receive result
+         * {@link locationCallback()} method is triggered, once we receive result
          * from MyLocationManager.
          */
         myLocationManager.verifyLocationEnabled();
@@ -147,6 +143,28 @@ public class MainActivity extends AppCompatActivity implements
         };
 
         tabLayout.addOnTabSelectedListener(tb);
+    }
+
+    /**
+     * setTabIcons:
+     * removes title and sets icon for each tab in TabLayout
+     */
+    private void setTabIcons() {
+        ArrayList<Integer> icons = new ArrayList<>();
+        icons.add(Constants.Tabs.MAP_TAB_ICON);
+        icons.add(Constants.Tabs.PHOTOS_TAB_ICON);
+        icons.add(Constants.Tabs.BLUETOOTH_TAB_ICON);
+        for (int position = 0; position < icons.size(); position++) {
+            try {
+                tabLayout
+                        .getTabAt(position)
+                        .setText(null)
+                        .setIcon(icons.get(position));
+            } catch (NullPointerException e) {
+                Log.e(LOG_TAG, e.getMessage());
+            }
+
+        }
     }
 
     @Override
@@ -293,33 +311,13 @@ public class MainActivity extends AppCompatActivity implements
         this.startActivity(intent);
     }
 
-    /**
-     * setTabIcons:
-     * removes title and sets icon for each tab in TabLayout
-     */
-    private void setTabIcons() {
-        ArrayList<Integer> icons = new ArrayList<>();
-        icons.add(Constants.Tabs.MAP_TAB_ICON);
-        icons.add(Constants.Tabs.PHOTOS_TAB_ICON);
-        icons.add(Constants.Tabs.BLUETOOTH_TAB_ICON);
-        for (int position = 0; position < icons.size(); position++) {
-            try {
-                tabLayout
-                        .getTabAt(position)
-                        .setText(null)
-                        .setIcon(icons.get(position));
-            } catch (NullPointerException e) {
-                Log.e(LOG_TAG, e.getMessage());
-            }
 
-        }
-    }
 
     /**
      * Callback from ParkFragment, triggered with Park Car button clicked.
      * @param action
-     *      == PARK_CAR: request current location and set parking location;
-     *      == CLEAR_PARKING_LOCATION: clear parking, notification etc.
+     *      == PARK_CAR: requests current location and sets parking location;
+     *      == CLEAR_PARKING_LOCATION: clears parking, notification etc.
      *
      */
     @Override
@@ -335,13 +333,7 @@ public class MainActivity extends AppCompatActivity implements
                 // We don't need new location
                 isLocationRequested = false;
                 // Dismiss notification
-                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-                try {
-                    mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
-                } catch (NullPointerException e) {
-                    Log.e(LOG_TAG, e.getMessage());
-                }
-                break;
+                new NotificationActionHandlerService().dismissNotification();
         }
     }
 }
