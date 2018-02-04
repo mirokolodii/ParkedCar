@@ -18,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.unagit.parkedcar.Helpers.Helpers;
 import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
 
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements
                         Helpers.showToast("Oops, last location is not known. Trying again...", this);
                         // Try again to get location
                         myLocationManager.verifyLocationEnabled();
-                    } else {
+                    } else { // We have location
                         Helpers.showToast(
                                 "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
                                 this);
@@ -193,6 +194,11 @@ public class MainActivity extends AppCompatActivity implements
                         saveLocation();
                         // Show notification
                         new MyNotificationManager().sendNotification(this, currentLocation);
+                        // Update map fragment
+                        ParkFragment parkFragment = (ParkFragment) getSupportFragmentManager().findFragmentById(R.id.park_fragment);
+                        if(parkFragment != null) {
+                            parkFragment.setMarkerOnMap();
+                        }
                     }
                     break;
                 }
@@ -202,8 +208,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private void saveLocation() {
         MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
-        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LATITUDE, (float) currentLocation.getLatitude());
-        myPreferenceManager.setValue(MyDefaultPreferenceManager.PARKING_LOCATION_LONGITUDE, (float) currentLocation.getLongitude());
+        myPreferenceManager.setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) currentLocation.getLatitude());
+        myPreferenceManager.setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) currentLocation.getLongitude());
+        myPreferenceManager.setValue(Constants.Store.IS_PARKED, true);
     }
 
     /**
@@ -332,6 +339,10 @@ public class MainActivity extends AppCompatActivity implements
             case Constants.ParkActions.CLEAR_PARKING_LOCATION:
                 // We don't need new location
                 isLocationRequested = false;
+                // Remove location
+                MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this);
+                myDefaultPreferenceManager.removeLocation();
+                myDefaultPreferenceManager.setValue(Constants.Store.IS_PARKED, false);
                 // Dismiss notification
                 new NotificationActionHandlerService().dismissNotification();
         }

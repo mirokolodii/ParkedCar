@@ -65,4 +65,14 @@ public final class Constants {
         static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
         static final int LOCATION_RECEIVED = 3;
     }
+
+    static class Store {
+
+        //Keys for SharedPreferences
+        static final String PARKING_LOCATION_LATITUDE = "parkingLocationLatitude";
+        static final String PARKING_LOCATION_LONGITUDE = "parkingLocationLongitude";
+        static final String DEVICE_ADDRESSES = "deviceAddresses";
+        static final String IS_PARKED = "isParked";
+
+    }
 }

@@ -47,51 +47,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private final String PARK_BUTTON = "Park Car";
     private final String CLEAR_BUTTON = "Clear";
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Log.d(LOG_TAG, "Callback from map received");
-        // Get current location from SharedPreferences
-        this.googleMap = googleMap;
-        // TODO: set marker only when car is parked
-
-        // Set marker from parking location on the map
-        setMarkerOnMap();
-
-    }
-
-    private void setMarkerOnMap() {
-        // Get location
-        MyDefaultPreferenceManager myDefaultPreferenceManager =
-                new MyDefaultPreferenceManager(getContext());
-        Float latitude = myDefaultPreferenceManager.getLatitude();
-        Float longitude = myDefaultPreferenceManager.getLongitude();
-        LatLng currentLocation = new LatLng(latitude, longitude);
-
-        // Clear everything
-        googleMap.clear();
-        // Show current location
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            googleMap.setMyLocationEnabled(true);
-        }
-
-        // Show saved position on the map
-        MarkerOptions options = new MarkerOptions();
-        options.position(currentLocation)
-                .title("Your Car")
-                .snippet("Parked 23 min ago")
-                .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
-        googleMap.addMarker(options)
-                .showInfoWindow(); /* show title without need to click on it */
-
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
-        googleMap.animateCamera(CameraUpdateFactory
-                .newLatLng(currentLocation), 1* 1000 /* 2 sec. */, null);
-    }
-
-    private void clearMap() {
-        googleMap.clear();
-    }
+    private Boolean isParked;
+    private Float latitude;
+    private Float longitude;
+    private MyDefaultPreferenceManager myDefaultPreferenceManager;
 
 
     public ParkFragment() {
@@ -114,6 +73,26 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
+        if (context instanceof OnParkButtonPressedListener) {
+            parkButtonClickListener = (OnParkButtonPressedListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnParkButtonPressedListener");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh data from store
+        refreshData();
+
     }
 
     @Override
@@ -147,7 +126,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             public void onClick(View v) {
 
                 if (parkButton.getText().equals(PARK_BUTTON)) { /* Park Car */
-                    setMarkerOnMap();
+                    //setMarkerOnMap(); <-- we need to set this in onLocationCallback instead, i.e. when we have new location
                     parkButton.setText(CLEAR_BUTTON);
                     // Call listener
                     parkButtonClickListener.parkButtonPressed(Constants.ParkActions.PARK_CAR);
@@ -172,22 +151,58 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             mapFragment.getMapAsync(this);
         }
     }
+
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnParkButtonPressedListener) {
-            parkButtonClickListener = (OnParkButtonPressedListener) context;
+    public void onMapReady(GoogleMap googleMap) {
+        Log.d(LOG_TAG, "Callback from map received");
+        // Get current location from SharedPreferences
+        this.googleMap = googleMap;
+        // Set marker from parking location on the map
+        setMarkerOnMap();
+
+    }
+
+    public void setMarkerOnMap() {
+        refreshData();
+
+        if(!isParked) {
+            clearMap();
+
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnParkButtonPressedListener");
+            // Set location
+            LatLng currentLocation = new LatLng(latitude, longitude);
+
+            // Clear everything
+            googleMap.clear();
+            // Show current location
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                googleMap.setMyLocationEnabled(true);
+            }
+
+            // Show saved position on the map
+            MarkerOptions options = new MarkerOptions();
+            options.position(currentLocation)
+                    .title("Your Car")
+                    .snippet("Parked 23 min ago")
+                    .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
+            googleMap.addMarker(options)
+                    .showInfoWindow(); /* show title without need to click on it */
+
+            googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
+            googleMap.animateCamera(CameraUpdateFactory
+                    .newLatLng(currentLocation), 1* 1000 /* 2 sec. */, null);
+
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        parkButtonClickListener = null;
+    private void clearMap() {
+        googleMap.clear();
     }
 
-
+    private void refreshData() {
+        isParked = myDefaultPreferenceManager.isParked();
+        latitude = myDefaultPreferenceManager.getLatitude();
+        longitude = myDefaultPreferenceManager.getLongitude();
+    }
 }
