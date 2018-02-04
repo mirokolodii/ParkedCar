@@ -2,6 +2,7 @@ package com.unagit.parkedcar;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -14,6 +15,7 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
@@ -38,6 +40,10 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
         Log.d(LOG_TAG, "BluetoothReceiver is triggered");
 
+
+
+
+
         /**
          * Send test notification
          */
@@ -49,8 +55,12 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 //                .setOngoing(true)
                 .setColor(Color.GREEN)
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
-        NotificationManager mNotificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(433, mBuilder.build());
+        NotificationManager testNotificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        testNotificationManager.notify(433, mBuilder.build());
+
+
+
+
 
         Log.d(LOG_TAG, "1");
 
@@ -59,11 +69,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         // Check, whether this receiver has been triggered by the change of bluetooth connection state
         if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
 
-            Log.d(LOG_TAG, "2");
 
-            // Get connection states
-            Integer connectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, -1);
-//            Integer prevConnectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, -1);
+            Log.d(LOG_TAG, "2");
 
             // Get remote device
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
@@ -71,21 +78,33 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
             String deviceAddress = device.getAddress();
             Log.d(LOG_TAG, "Device name: " + deviceName);
 
-            // TODO: create instance of MyDefaultPreferenceManager
-            // TODO: get a list of bluetooth devices and check, whether current device is in a Set of devices
+            // Proceed further only if remote bluetooth device is tracked by user
+            if(isTrackedDevice(deviceAddress)) {
+                // Get connection states
+                Integer connectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, -1);
+//            Integer prevConnectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, -1);
 
-            if (connectionState == BluetoothAdapter.STATE_DISCONNECTED || connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been disconnected
-                // Request current location
-                Log.d(LOG_TAG, "3");
-                new MyLocationManager(null, context, this).requestCurrentLocation();
-                Log.d(LOG_TAG, "4");
+                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED || connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been disconnected
+                    // Request current location
+                    Log.d(LOG_TAG, "3");
+                    new MyLocationManager(null, context, this).requestCurrentLocation();
+                    Log.d(LOG_TAG, "4");
 
-            } else if (connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been connected
-                // 1. clear location
-                new MyDefaultPreferenceManager(context).removeLocation();
-                // 2. clear notification
-                new NotificationActionHandlerService().dismissNotification();
+                } else if (connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been connected
+                    // 1. clear location
+                    new MyDefaultPreferenceManager(context).removeLocation();
+                    // 2. clear notification
+//                    new NotificationActionHandlerService().dismissNotification();
+                    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
+                    try {
+                        mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
+                    } catch (NullPointerException e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                    }
+                }
             }
+
+
         }
     }
 
@@ -100,5 +119,10 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
             // Save to DefaultPreferences
         }
 
+    }
+
+    private boolean isTrackedDevice(String address) {
+        Set<String> trackedDevices = new MyDefaultPreferenceManager(this.context).getDevices();
+        return trackedDevices.contains(address);
     }
 }

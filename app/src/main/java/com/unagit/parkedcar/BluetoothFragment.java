@@ -92,7 +92,7 @@ public class BluetoothFragment extends Fragment {
     public void onPause() {
         super.onPause();
         // Save trackedDevices into SharedPreferences
-        myDefaultPreferenceManager.setValue(MyDefaultPreferenceManager.DEVICE_ADDRESSES, trackedDevices);
+        myDefaultPreferenceManager.setValue(Constants.Store.DEVICE_ADDRESSES, trackedDevices);
     }
 
     /**

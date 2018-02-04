@@ -302,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
                 }
-                return;
             }
 
             // other 'case' lines to check for other
@@ -344,7 +343,14 @@ public class MainActivity extends AppCompatActivity implements
                 myDefaultPreferenceManager.removeLocation();
                 myDefaultPreferenceManager.setValue(Constants.Store.IS_PARKED, false);
                 // Dismiss notification
-                new NotificationActionHandlerService().dismissNotification();
+//                new NotificationActionHandlerService().dismissNotification();
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+                try {
+                    mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
+                } catch (NullPointerException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
+                break;
         }
     }
 }

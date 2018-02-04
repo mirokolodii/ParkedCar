@@ -71,7 +71,9 @@ public class MyDefaultPreferenceManager {
     void removeLocation() {
         if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE) & isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)) {
             SharedPreferences.Editor editor = spref.edit();
-            editor.remove(Constants.Store.PARKING_LOCATION_LATITUDE).remove(Constants.Store.PARKING_LOCATION_LONGITUDE);
+            editor
+                    .remove(Constants.Store.PARKING_LOCATION_LATITUDE)
+                    .remove(Constants.Store.PARKING_LOCATION_LONGITUDE);
             editor.apply();
         }
     }

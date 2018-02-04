@@ -18,7 +18,7 @@ public class MyBluetoothDeviceAdapter extends ArrayAdapter {
     private Set<String> trackedDevices;
     private static final int FAKE_LAYOUT_ID_FOR_ARRAY_ADAPTER = 100;
 
-    public MyBluetoothDeviceAdapter(Context context, ArrayList<MyBluetoothDevice> devices, Set<String> trackedDevices) {
+    MyBluetoothDeviceAdapter(Context context, ArrayList<MyBluetoothDevice> devices, Set<String> trackedDevices) {
         super(context, FAKE_LAYOUT_ID_FOR_ARRAY_ADAPTER, devices);
         this.devices = devices;
         this.trackedDevices = trackedDevices;
