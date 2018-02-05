@@ -49,7 +49,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private final String PARK_BUTTON = "Park Car";
     private final String CLEAR_BUTTON = "Clear";
 
-    private Boolean isParked;
+    private Boolean isParked = false;
     private Float latitude;
     private Float longitude;
     private MyDefaultPreferenceManager myDefaultPreferenceManager;
@@ -117,6 +117,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         if(isParked) {
             Button parkButton = rootView.findViewById(R.id.park_car);
             parkButton.setText(CLEAR_BUTTON);
+//            parkButtonClickListener.onParkButtonPressed();
         }
         return rootView;
     }
@@ -164,6 +165,11 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         Log.d(LOG_TAG, "Callback from map received");
         // Get current location from SharedPreferences
         this.googleMap = googleMap;
+        if(isParked) {
+            parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.PARK_CAR, this);
+        } else {
+            parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION, this);
+        }
         // Set marker from parking location on the map
         setMarkerOnMap(null);
 
@@ -179,6 +185,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             googleMap.setMyLocationEnabled(true);
         }
 
+        // Parking is cleared. Set map camera to current location instead
         if(!isParked && currentLocation != null) {
             // Move camera to current location
             LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -186,7 +193,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             googleMap.animateCamera(CameraUpdateFactory
                     .newLatLng(currentLatLng), 1* 1000 /* 1 sec. */, null);
 
-        } else {
+        } else if(isParked){
             // Set marker on parking location and move camera on it
             LatLng parkingLocation = new LatLng(latitude, longitude);
              MarkerOptions options = new MarkerOptions();

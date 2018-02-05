@@ -200,6 +200,9 @@ public class MainActivity extends AppCompatActivity implements
                         new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
                         // Show notification
                         new MyNotificationManager().sendNotification(this);
+                        if(parkFragment != null) {
+                            parkFragment.setMarkerOnMap(null);
+                        }
                     }
 
                 } else {
@@ -276,20 +279,19 @@ public class MainActivity extends AppCompatActivity implements
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
-                    Helpers.showToast("Location permission is granted", this);
+                    Helpers.showToast("Location permission is granted.", this);
                     // If location has been requested, then request it. Otherwise do nothing
-                    if (isLocationRequested) {
-                        myLocationManager.verifyLocationEnabled();
-                    }
+                    myLocationManager.verifyLocationEnabled();
 
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Helpers.showToast("Location permission denied", this);
+                    Helpers.showToast("Location permission denied.", this);
                     new AlertDialog.Builder(this)
                             .setTitle("Error")
-                            .setMessage("You have denied location permission. You can always " +
-                                    "change it in settings")
+                            .setMessage("Application requires location permission in order " +
+                                    "to work properly. You can grant this permission in " +
+                                    "application settings.")
                             .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -307,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
                 }
+                break;
             }
 
             // other 'case' lines to check for other
@@ -333,6 +336,9 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onParkButtonPressed(int action, ParkFragment parkFragment) {
+        // Save instance of ParkFragment
+        this.parkFragment = parkFragment;
+
         switch (action) {
             case Constants.ParkActions.PARK_CAR:
                 // We want to get updated location
@@ -345,10 +351,7 @@ public class MainActivity extends AppCompatActivity implements
                 isLocationRequested = false;
                 // Remove location
                 new MyDefaultPreferenceManager(this).removeLocation();
-                // Save instance of ParkFragment
-                this.parkFragment = parkFragment;
                 myLocationManager.verifyLocationEnabled();
-
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
                 try {
                     mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
