@@ -13,15 +13,13 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 
-import com.google.android.gms.maps.SupportMapFragment;
 import com.unagit.parkedcar.Helpers.Helpers;
 import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
@@ -32,19 +30,26 @@ public class MainActivity extends AppCompatActivity implements
     public static String LOG_TAG;
     Location currentLocation;
     boolean isLocationRequested = false;
-    /*
+
+    /**
      * Implementation of FragmentStatePagerAdapter, which will provide
      * fragments for each of the sections.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    /*
+
+    /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
 
     private TabLayout tabLayout;
 
-    /*
+    /**
+     * Keeps instance of parkFragment, so we can access it later on and use its methods.
+     *
+     */
+    private ParkFragment parkFragment;
+    /**
      * BluetoothAdapter verifies bluetooth availability, enables bluetooth on device
      * and provides list of paired bluetooth devices
      */
@@ -191,27 +196,27 @@ public class MainActivity extends AppCompatActivity implements
                                 "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
                                 this);
                         // Save location into DefaultSharedPreferences
-                        saveLocation();
+//                        saveLocation();
+                        new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
                         // Show notification
-                        new MyNotificationManager().sendNotification(this, currentLocation);
-                        // Update map fragment
-                        ParkFragment parkFragment = (ParkFragment) getSupportFragmentManager().findFragmentById(R.id.park_fragment);
-                        if(parkFragment != null) {
-                            parkFragment.setMarkerOnMap();
-                        }
+                        new MyNotificationManager().sendNotification(this);
                     }
-                    break;
-                }
 
+                } else {
+                    // Zoom map into current location
+                    if(parkFragment != null) {
+                        parkFragment.setMarkerOnMap(location);
+                    }
+
+
+                }
+                break;
         }
     }
 
-    private void saveLocation() {
-        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
-        myPreferenceManager.setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) currentLocation.getLatitude());
-        myPreferenceManager.setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) currentLocation.getLongitude());
-        myPreferenceManager.setValue(Constants.Store.IS_PARKED, true);
-    }
+//    private void saveLocation() {
+//        new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
+//    }
 
     /**
      * Handler for callbacks from other activities.
@@ -327,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements
      *
      */
     @Override
-    public void parkButtonPressed(int action) {
+    public void onParkButtonPressed(int action, ParkFragment parkFragment) {
         switch (action) {
             case Constants.ParkActions.PARK_CAR:
                 // We want to get updated location
@@ -339,11 +344,11 @@ public class MainActivity extends AppCompatActivity implements
                 // We don't need new location
                 isLocationRequested = false;
                 // Remove location
-                MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this);
-                myDefaultPreferenceManager.removeLocation();
-                myDefaultPreferenceManager.setValue(Constants.Store.IS_PARKED, false);
-                // Dismiss notification
-//                new NotificationActionHandlerService().dismissNotification();
+                new MyDefaultPreferenceManager(this).removeLocation();
+                // Save instance of ParkFragment
+                this.parkFragment = parkFragment;
+                myLocationManager.verifyLocationEnabled();
+
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
                 try {
                     mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);

@@ -3,7 +3,9 @@ package com.unagit.parkedcar;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -40,7 +42,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     public interface OnParkButtonPressedListener {
         // TODO: Update argument type and name
-        void parkButtonPressed(int action);
+        void onParkButtonPressed(int action, ParkFragment fragment);
     }
     private OnParkButtonPressedListener parkButtonClickListener;
 
@@ -110,7 +112,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_park, container, false);
         setParkButtonOnClickListener(rootView);
+        refreshData();
         setMapCallback();
+        if(isParked) {
+            Button parkButton = rootView.findViewById(R.id.park_car);
+            parkButton.setText(CLEAR_BUTTON);
+        }
         return rootView;
     }
 
@@ -129,12 +136,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                     //setMarkerOnMap(); <-- we need to set this in onLocationCallback instead, i.e. when we have new location
                     parkButton.setText(CLEAR_BUTTON);
                     // Call listener
-                    parkButtonClickListener.parkButtonPressed(Constants.ParkActions.PARK_CAR);
+                    parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.PARK_CAR, ParkFragment.this);
                 } else { /* Clear location */
                     clearMap();
                     parkButton.setText(PARK_BUTTON);
                     // Call listener
-                    parkButtonClickListener.parkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION);
+                    parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION, ParkFragment.this);
                 }
             }
         });
@@ -158,41 +165,40 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         // Get current location from SharedPreferences
         this.googleMap = googleMap;
         // Set marker from parking location on the map
-        setMarkerOnMap();
+        setMarkerOnMap(null);
 
     }
 
-    public void setMarkerOnMap() {
+    public void setMarkerOnMap(@Nullable Location currentLocation) {
         refreshData();
+        clearMap();
 
-        if(!isParked) {
-            clearMap();
+        // Show current location on a map
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(true);
+        }
+
+        if(!isParked && currentLocation != null) {
+            // Move camera to current location
+            LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
+            googleMap.animateCamera(CameraUpdateFactory
+                    .newLatLng(currentLatLng), 1* 1000 /* 1 sec. */, null);
 
         } else {
-            // Set location
-            LatLng currentLocation = new LatLng(latitude, longitude);
-
-            // Clear everything
-            googleMap.clear();
-            // Show current location
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                googleMap.setMyLocationEnabled(true);
-            }
-
-            // Show saved position on the map
-            MarkerOptions options = new MarkerOptions();
-            options.position(currentLocation)
+            // Set marker on parking location and move camera on it
+            LatLng parkingLocation = new LatLng(latitude, longitude);
+             MarkerOptions options = new MarkerOptions();
+            options.position(parkingLocation)
                     .title("Your Car")
                     .snippet("Parked 23 min ago")
                     .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
             googleMap.addMarker(options)
-                    .showInfoWindow(); /* show title without need to click on it */
-
+                    .showInfoWindow(); /* show title (no need to click on marker to show title) */
             googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
             googleMap.animateCamera(CameraUpdateFactory
-                    .newLatLng(currentLocation), 1* 1000 /* 2 sec. */, null);
-
+                    .newLatLng(parkingLocation), 1* 1000 /* 1 sec. */, null);
         }
     }
 

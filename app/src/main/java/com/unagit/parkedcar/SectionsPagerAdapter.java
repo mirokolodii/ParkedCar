@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 /**
  * Created by a264889 on 31.01.2018.
@@ -59,10 +60,10 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
                  * Otherwise - return BluetoothFragment.
                  *
                  */
-                if (myBluetoothManager.isBluetoothAvailable()) {
-                    if (myBluetoothManager.isBluetoothEnabled()) {
+                if (myBluetoothManager.isBluetoothAvailable()
+                        && myBluetoothManager.isBluetoothEnabled()) {
                         return new BluetoothFragment();
-                    }
+
                 }
                 return new DisabledBluetoothFragment();
         }
@@ -70,6 +71,8 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         /**
          * default option (shouldn't occur) - return empty Fragment
          */
+        Log.e(this.getClass().getName(), "PagerAdapter has returned empty fragment - " +
+                "this probably means unhandled case in getItem method.");
         return new Fragment();
     }
 

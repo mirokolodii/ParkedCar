@@ -2,6 +2,7 @@ package com.unagit.parkedcar;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import java.util.HashSet;
@@ -48,6 +49,12 @@ public class MyDefaultPreferenceManager {
         editor.apply();
     }
 
+    void saveLocation(Location location) {
+        setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.getLatitude());
+        setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.getLongitude());
+        setValue(Constants.Store.IS_PARKED, true);
+    }
+
     Boolean isParked() {
         return (isSet(Constants.Store.IS_PARKED)
                 && spref.getBoolean(Constants.Store.IS_PARKED, false));
@@ -69,11 +76,14 @@ public class MyDefaultPreferenceManager {
     }
 
     void removeLocation() {
-        if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE) & isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)) {
+        if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE)
+                && isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)
+                && isSet(Constants.Store.IS_PARKED)) {
             SharedPreferences.Editor editor = spref.edit();
             editor
                     .remove(Constants.Store.PARKING_LOCATION_LATITUDE)
-                    .remove(Constants.Store.PARKING_LOCATION_LONGITUDE);
+                    .remove(Constants.Store.PARKING_LOCATION_LONGITUDE)
+                    .remove(Constants.Store.IS_PARKED);
             editor.apply();
         }
     }

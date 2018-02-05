@@ -9,6 +9,7 @@ import android.location.Location;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import static com.unagit.parkedcar.Constants.Notifications.NOTIFICATION_TEXT;
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 /**
@@ -17,18 +18,12 @@ import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 public class MyNotificationManager {
     public MyNotificationManager() {}
-    void sendNotification(Context context, Location location) {
-
-        Double latitude = location.getLatitude();
-        Double longitude = location.getLongitude();
-        //String text = NOTIFICATION_TEXT;
-        String text = "Latitude: " + latitude + "; " + "Longitude: " + longitude;
-
+    void sendNotification(Context context) {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Requests.NOTIFICATIONS_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
-                .setContentText(text)
+                .setContentText(NOTIFICATION_TEXT)
                 .setOngoing(true)
                 .setColor(Color.GREEN)
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent

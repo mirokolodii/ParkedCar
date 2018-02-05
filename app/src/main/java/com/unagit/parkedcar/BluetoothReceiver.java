@@ -64,9 +64,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
         Log.d(LOG_TAG, "1");
 
-            // Check intent action
-        final String action = intent.getAction();
         // Check, whether this receiver has been triggered by the change of bluetooth connection state
+        final String action = intent.getAction();
         if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
 
 
@@ -115,8 +114,9 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         Log.d(LOG_TAG, "11");
         if (result == Constants.Location.LOCATION_RECEIVED) {
             Log.d(LOG_TAG, "12");
-            new MyNotificationManager().sendNotification(this.context, location);
+            new MyNotificationManager().sendNotification(this.context);
             // Save to DefaultPreferences
+            new MyDefaultPreferenceManager(this.context).saveLocation(location);
         }
 
     }
@@ -125,4 +125,5 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         Set<String> trackedDevices = new MyDefaultPreferenceManager(this.context).getDevices();
         return trackedDevices.contains(address);
     }
+
 }
