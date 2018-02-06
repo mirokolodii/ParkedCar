@@ -16,8 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewGroup;
-
 import com.unagit.parkedcar.Helpers.Helpers;
 import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
 import java.util.ArrayList;
@@ -93,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements
          * {@link locationCallback()} method is triggered, once we receive result
          * from MyLocationManager.
          */
-        myLocationManager.verifyLocationEnabled();
+//        Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onStart");
+//        myLocationManager.verifyLocationEnabled();
         String parkingTime = Helpers.timeDifference("");
         Log.d(LOG_TAG, "%"+parkingTime+"%");
     }
@@ -190,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements
                     if (location == null) {
                         Helpers.showToast("Oops, last location is not known. Trying again...", this);
                         // Try again to get location
+                        Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.locationCallback");
                         myLocationManager.verifyLocationEnabled();
                     } else { // We have location
                         Helpers.showToast(
@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements
                     case RESULT_OK: // User enabled location
                         // Location is enabled. Trigger verification again
                         // to get current location
+                        Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onActivityResult - when location is enabled");
                         myLocationManager.verifyLocationEnabled();
                         break;
                     case RESULT_CANCELED: // User cancelled
@@ -281,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements
                     // permission was granted, yay!
                     Helpers.showToast("Location permission is granted.", this);
                     // If location has been requested, then request it. Otherwise do nothing
+                    Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onRequestPermissionsResult - after location permission is granted");
                     myLocationManager.verifyLocationEnabled();
 
                 } else {
@@ -344,6 +346,7 @@ public class MainActivity extends AppCompatActivity implements
                 // We want to get updated location
                 isLocationRequested = true;
                 // Verify permissions and request for new location
+                Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onParkButtonPressed - action: park car");
                 myLocationManager.verifyLocationEnabled();
                 break;
             case Constants.ParkActions.CLEAR_PARKING_LOCATION:
@@ -351,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements
                 isLocationRequested = false;
                 // Remove location
                 new MyDefaultPreferenceManager(this).removeLocation();
+                Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onParkButtonPressed - action: clear parking location");
                 myLocationManager.verifyLocationEnabled();
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
                 try {

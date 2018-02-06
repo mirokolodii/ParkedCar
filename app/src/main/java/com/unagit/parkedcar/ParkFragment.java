@@ -153,7 +153,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment == null) {
-            Log.d(LOG_TAG, "mapFragment is null");
+            Log.e(LOG_TAG, "mapFragment is null");
         } else {
             Log.d(LOG_TAG, "Map callback is set");
             mapFragment.getMapAsync(this);
@@ -162,7 +162,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(LOG_TAG, "Callback from map received");
         // Get current location from SharedPreferences
         this.googleMap = googleMap;
         if(isParked) {

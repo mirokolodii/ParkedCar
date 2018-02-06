@@ -36,12 +36,11 @@ public class MyNotificationManager {
                 .addAction(android.R.drawable.sym_action_chat, Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR, getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
 
         // Send notification
-        Log.d(LOG_TAG, "MyNotificationManager: Sending notification....");
         NotificationManager mNotificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         try {
             mNotificationManager.notify(Constants.Requests.NOTIFICATION_ID, mBuilder.build());
         } catch (NullPointerException e) {
-            Log.i(LOG_TAG, "NotificationManager notify method throws an exception" + e.getMessage());
+            Log.e(LOG_TAG, "NotificationManager notify method throws an exception" + e.getMessage());
         }
     }
 

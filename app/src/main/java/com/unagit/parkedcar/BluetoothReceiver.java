@@ -26,7 +26,6 @@ import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 public class BluetoothReceiver extends BroadcastReceiver implements MyLocationManager.MyLocationManagerCallback {
 
     private Context context;
-
     @Override
     public void onReceive(Context context, Intent intent) {
         // NOTE: Broadcast receivers are limited by maximum amount of time (10 seconds generally), they have to finish
@@ -37,9 +36,6 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         //context.startService(serviceIntent);
 
         this.context = context;
-
-        Log.d(LOG_TAG, "BluetoothReceiver is triggered");
-
 
 
 
@@ -61,21 +57,13 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
 
 
-
-        Log.d(LOG_TAG, "1");
-
         // Check, whether this receiver has been triggered by the change of bluetooth connection state
         final String action = intent.getAction();
         if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
-
-
-            Log.d(LOG_TAG, "2");
-
             // Get remote device
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             String deviceName = device.getName();
             String deviceAddress = device.getAddress();
-            Log.d(LOG_TAG, "Device name: " + deviceName);
 
             // Proceed further only if remote bluetooth device is tracked by user
             if(isTrackedDevice(deviceAddress)) {
@@ -85,9 +73,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
                 if (connectionState == BluetoothAdapter.STATE_DISCONNECTED || connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been disconnected
                     // Request current location
-                    Log.d(LOG_TAG, "3");
                     new MyLocationManager(null, context, this).requestCurrentLocation();
-                    Log.d(LOG_TAG, "4");
 
                 } else if (connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been connected
                     // 1. clear location
@@ -102,23 +88,16 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
                     }
                 }
             }
-
-
         }
     }
 
     @Override
     public void locationCallback(int result, Location location) {
-//        Log.d(LOG_TAG, "BluetoothReceiver received callback from MyLocationManager");
-
-        Log.d(LOG_TAG, "11");
         if (result == Constants.Location.LOCATION_RECEIVED) {
-            Log.d(LOG_TAG, "12");
             new MyNotificationManager().sendNotification(this.context);
             // Save to DefaultPreferences
             new MyDefaultPreferenceManager(this.context).saveLocation(location);
         }
-
     }
 
     private boolean isTrackedDevice(String address) {

@@ -23,7 +23,6 @@ public class NotificationActionHandlerService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         final String action = intent.getAction();
-        Log.d(LOG_TAG, "We have just entered NotificationActionHandlerService");
 
         // Show parking location in Google Maps
         if (action.equals(Constants.Notifications.ACTION_SHOW_ON_MAP)) {
@@ -33,7 +32,6 @@ public class NotificationActionHandlerService extends IntentService {
             MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
             String uri = Constants.GoogleMaps.GOOGLE_MAPS_QUERY_URL;
             uri += myPreferenceManager.getLatitude() + "," + myPreferenceManager.getLongitude();
-            Log.i(LOG_TAG, "Google Maps URL: " + uri);
             // Initiate new intent
             Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
             // Open intent in Google Maps
@@ -49,14 +47,12 @@ public class NotificationActionHandlerService extends IntentService {
                 }
                 // No apps are available on a device to handle the intent
                 catch (ActivityNotFoundException innerEx) {
-                    Toast.makeText(this, "Google Maps application is required for this action", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Install Google Maps first.", Toast.LENGTH_LONG).show();
                 }
             }
 
         } else if (action.equals(Constants.Notifications.ACTION_DIRECTIONS)) {
             // TODO: Show directions from current location to parking location in Google Maps
-            Log.i(LOG_TAG, "Directions action");
-            Log.i(LOG_TAG, new MyDefaultPreferenceManager(getApplicationContext()).getDevices().toString());
 
         }else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
             // Remove location's lat and lon from SharedPreferences
@@ -64,10 +60,9 @@ public class NotificationActionHandlerService extends IntentService {
 
 
         } else {
-            Log.i(LOG_TAG, "Unhandled action");
+            // Unhandled action
             throw new IllegalArgumentException("Unsupported action: " + action);
         }
-
         collapseNotificationBar();
     }
 
@@ -88,5 +83,4 @@ public class NotificationActionHandlerService extends IntentService {
         Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         sendBroadcast(it);
     }
-
 }
