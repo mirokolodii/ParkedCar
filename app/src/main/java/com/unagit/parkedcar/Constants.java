@@ -73,6 +73,7 @@ public final class Constants {
         static final String PARKING_LOCATION_LONGITUDE = "parkingLocationLongitude";
         static final String DEVICE_ADDRESSES = "deviceAddresses";
         static final String IS_PARKED = "isParked";
+        static final String PARKED_TIME = "parkedTime";
 
     }
 }

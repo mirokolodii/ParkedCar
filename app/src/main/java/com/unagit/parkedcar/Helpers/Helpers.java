@@ -6,6 +6,7 @@ import android.widget.Toast;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,14 +24,53 @@ public class Helpers {
 
     /**
      * Method calculates difference between current moment in time and provided time.
-     * @param parkTime String representing date and time in following format "yyyy-MM-dd HH:mm:ss".
-     *                 Example: "2016-02-23 23:12:35"
+     * @param parkedTimestamp Long Timestamp.
      * @return String with difference in days, hours and minutes.
      */
-    public static String timeDifference(String parkTime) {
+
+    public static String timeDifference(Long parkedTimestamp) {
+        Long currentTimestamp = Calendar.getInstance().getTimeInMillis();
+        long diff = currentTimestamp - parkedTimestamp;
+
+        /**
+         * Convert time difference into string of format "x days, y hours, z min"
+         */
+        //            long diffSeconds = diff / 1000 % 60;
+        long diffDays = diff / (24 * 60 * 60 * 1000);
+        long diffHours = diff / (60 * 60 * 1000) % 24;
+        long diffMinutes = diff / (60 * 1000) % 60;
+        ArrayList<DurationPart> durationParts = new ArrayList<>();
+        durationParts.add(new DurationPart(diffDays, "day"));
+        durationParts.add(new DurationPart(diffHours, "hour"));
+        durationParts.add(new DurationPart(diffMinutes, "minute"));
+
+        // Remove DurationParts with value == 0
+        ArrayList<DurationPart> zeroValueDurationParts = new ArrayList<>();
+        for (DurationPart part : durationParts) {
+            if(part.getValue() == 0) {
+                zeroValueDurationParts.add(part);
+            }
+        }
+        durationParts.removeAll(zeroValueDurationParts);
+
+        // Launch parts, separated with comma, together into one string
+        String parkingDuration = "";
+        for(int i=0; i<durationParts.size(); i++) {
+            DurationPart part = durationParts.get(i);
+            parkingDuration += String.format(Locale.getDefault(), "%d %s", part.getValue(), part.getText());
+            if(i < durationParts.size()-1) { // We don't want comma after last part
+                parkingDuration += ", ";
+            }
+        }
+        return parkingDuration.isEmpty() ? "1 min" : parkingDuration;
+    }
+
+    /*public static String timeDifference(String parkTime) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         String sParkDateTime2 = "2018-01-30 12:31:00";
         String sCurrentDateTime = format.format(new Date());
+
+
 
         try {
             // Get dates from strings, using format
@@ -72,6 +112,6 @@ public class Helpers {
         }
 
         return ""; // Return empty string
-    }
+    }*/
 }
 

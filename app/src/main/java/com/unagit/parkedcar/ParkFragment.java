@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,6 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.unagit.parkedcar.Helpers.Helpers;
 
 import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
@@ -52,7 +56,13 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Boolean isParked = false;
     private Float latitude;
     private Float longitude;
+    private Long parkedTime;
     private MyDefaultPreferenceManager myDefaultPreferenceManager;
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
+
+    private int i=0;
 
 
     public ParkFragment() {
@@ -92,8 +102,42 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh data from store
         refreshData();
+
+        if(isParked) {
+            startUIUpdate();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopUIUpdate();
+    }
+
+    private void startUIUpdate() {
+        handler.postDelayed(updateUI(), 1 * 1000);
+    }
+
+    private Runnable updateUI() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                i++;
+                TextView parkedTimeTextView = getView().findViewById(R.id.parked_time_textview);
+                String timeDifference = Helpers.timeDifference(parkedTime);
+                parkedTimeTextView.setText(timeDifference + " ago. " + i);
+
+                handler.postDelayed(this, 1 * 1000);
+            }
+        };
+        return runnable;
+    }
+
+    private void stopUIUpdate() {
+        if(runnable != null) {
+            handler.removeCallbacks(runnable);
+        }
 
     }
 
@@ -136,11 +180,13 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 if (parkButton.getText().equals(PARK_BUTTON)) { /* Park Car */
                     //setMarkerOnMap(); <-- we need to set this in onLocationCallback instead, i.e. when we have new location
                     parkButton.setText(CLEAR_BUTTON);
+                    startUIUpdate();
                     // Call listener
                     parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.PARK_CAR, ParkFragment.this);
                 } else { /* Clear location */
                     clearMap();
                     parkButton.setText(PARK_BUTTON);
+                    stopUIUpdate();
                     // Call listener
                     parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.CLEAR_PARKING_LOCATION, ParkFragment.this);
                 }
@@ -216,5 +262,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         isParked = myDefaultPreferenceManager.isParked();
         latitude = myDefaultPreferenceManager.getLatitude();
         longitude = myDefaultPreferenceManager.getLongitude();
+        parkedTime = myDefaultPreferenceManager.getTimestamp();
     }
 }

@@ -46,6 +46,7 @@
                         android:maxLines="2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:id="@+id/parked_time_textview"
                         android:text="@string/when_info"/>
                     </LinearLayout>
                 <LinearLayout

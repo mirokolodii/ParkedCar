@@ -16,8 +16,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.unagit.parkedcar.Helpers.Helpers;
 import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements
         ParkFragment.OnParkButtonPressedListener {
 
     public static String LOG_TAG;
-    Location currentLocation;
+
     boolean isLocationRequested = false;
 
     /**
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Keeps instance of parkFragment, so we can access it later on and use its methods.
-     *
      */
     private ParkFragment parkFragment;
     /**
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements
      * Manage location
      */
     private MyLocationManager myLocationManager;
+    Location currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,24 +81,6 @@ public class MainActivity extends AppCompatActivity implements
          */
         setupViewPagerAndTabLayout();
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        /**
-         * First thing we want to know is if:
-         * 1. Location is enabled on a device;
-         * 2. App is granted location permission.
-         *
-         * {@link locationCallback()} method is triggered, once we receive result
-         * from MyLocationManager.
-         */
-//        Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onStart");
-//        myLocationManager.verifyLocationEnabled();
-        String parkingTime = Helpers.timeDifference("");
-        Log.d(LOG_TAG, "%"+parkingTime+"%");
-    }
-
 
     private void setupViewPagerAndTabLayout() {
         // PagerAdapter for ViewPager
@@ -189,37 +173,29 @@ public class MainActivity extends AppCompatActivity implements
                     if (location == null) {
                         Helpers.showToast("Oops, last location is not known. Trying again...", this);
                         // Try again to get location
-                        Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.locationCallback");
                         myLocationManager.verifyLocationEnabled();
                     } else { // We have location
                         Helpers.showToast(
-                                "Latitude: " + location.getLatitude() + " . Longitude: " + location.getLongitude(),
+                                "Location is saved.",
                                 this);
                         // Save location into DefaultSharedPreferences
-//                        saveLocation();
                         new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
                         // Show notification
                         new MyNotificationManager().sendNotification(this);
-                        if(parkFragment != null) {
+                        if (parkFragment != null) {
                             parkFragment.setMarkerOnMap(null);
                         }
                     }
 
                 } else {
                     // Zoom map into current location
-                    if(parkFragment != null) {
+                    if (parkFragment != null) {
                         parkFragment.setMarkerOnMap(location);
                     }
-
-
                 }
                 break;
         }
     }
-
-//    private void saveLocation() {
-//        new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
-//    }
 
     /**
      * Handler for callbacks from other activities.
@@ -253,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements
                     case RESULT_OK: // User enabled location
                         // Location is enabled. Trigger verification again
                         // to get current location
-                        Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onActivityResult - when location is enabled");
                         myLocationManager.verifyLocationEnabled();
                         break;
                     case RESULT_CANCELED: // User cancelled
@@ -269,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Callback with permission results.
      * requestCode == {@link Constants.Requests#MY_PERMISSION_REQUEST_FINE_LOCATION}:
-     *
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -282,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements
                     // permission was granted, yay!
                     Helpers.showToast("Location permission is granted.", this);
                     // If location has been requested, then request it. Otherwise do nothing
-                    Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onRequestPermissionsResult - after location permission is granted");
                     myLocationManager.verifyLocationEnabled();
 
                 } else {
@@ -328,13 +301,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-
     /**
      * Callback from ParkFragment, triggered with Park Car button clicked.
-     * @param action
-     *      == PARK_CAR: requests current location and sets parking location;
-     *      == CLEAR_PARKING_LOCATION: clears parking, notification etc.
      *
+     * @param action == PARK_CAR: requests current location and sets parking location;
+     *               == CLEAR_PARKING_LOCATION: clears parking, notification etc.
      */
     @Override
     public void onParkButtonPressed(int action, ParkFragment parkFragment) {
@@ -346,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements
                 // We want to get updated location
                 isLocationRequested = true;
                 // Verify permissions and request for new location
-                Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onParkButtonPressed - action: park car");
                 myLocationManager.verifyLocationEnabled();
                 break;
             case Constants.ParkActions.CLEAR_PARKING_LOCATION:
@@ -354,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements
                 isLocationRequested = false;
                 // Remove location
                 new MyDefaultPreferenceManager(this).removeLocation();
-                Log.d(LOG_TAG, "verifyLocationEnabled is triggered from MainActivity.onParkButtonPressed - action: clear parking location");
+                // Get current location and show it on map
                 myLocationManager.verifyLocationEnabled();
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
                 try {

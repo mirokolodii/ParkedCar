@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +40,8 @@ public class MyDefaultPreferenceManager {
             editor.putFloat(key, (Float) value);
         } else if(value instanceof Boolean) {
             editor.putBoolean(key, (Boolean) value);
+        } else if(value instanceof Long) {
+            editor.putLong(key, (Long) value);
         }
         else if (value instanceof Set) {
             editor.putStringSet(key, (Set<String>) value);
@@ -53,13 +57,16 @@ public class MyDefaultPreferenceManager {
         setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.getLatitude());
         setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.getLongitude());
         setValue(Constants.Store.IS_PARKED, true);
+        setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
     }
 
     Boolean isParked() {
         return (isSet(Constants.Store.IS_PARKED)
                 && spref.getBoolean(Constants.Store.IS_PARKED, false));
+    }
 
-
+    Long getTimestamp() {
+        return spref.getLong(Constants.Store.PARKED_TIME, 0);
     }
 
     Float getLatitude() {
@@ -78,13 +85,19 @@ public class MyDefaultPreferenceManager {
     void removeLocation() {
         if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE)
                 && isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)
+                && isSet(Constants.Store.PARKED_TIME)
                 && isSet(Constants.Store.IS_PARKED)) {
             SharedPreferences.Editor editor = spref.edit();
             editor
                     .remove(Constants.Store.PARKING_LOCATION_LATITUDE)
                     .remove(Constants.Store.PARKING_LOCATION_LONGITUDE)
-                    .remove(Constants.Store.IS_PARKED);
+                    .remove(Constants.Store.IS_PARKED)
+                    .remove(Constants.Store.PARKED_TIME);
             editor.apply();
         }
+    }
+
+    private Long getCurrentTimestamp() {
+              return Calendar.getInstance().getTimeInMillis();
     }
 }
