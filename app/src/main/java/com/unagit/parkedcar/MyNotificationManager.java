@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -18,12 +19,16 @@ import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 public class MyNotificationManager {
     public MyNotificationManager() {}
-    void sendNotification(Context context) {
+    void sendNotification(Context context, @Nullable Location location) {
 
+        String text = NOTIFICATION_TEXT;
+        if(location != null) {
+            text += " Accuracy: " + location.getAccuracy() + "m.";
+        }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Requests.NOTIFICATIONS_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
-                .setContentText(NOTIFICATION_TEXT)
+                .setContentText(text)
                 .setOngoing(true)
                 .setColor(Color.GREEN)
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent

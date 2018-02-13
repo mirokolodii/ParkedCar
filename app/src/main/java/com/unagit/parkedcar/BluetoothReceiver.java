@@ -94,9 +94,10 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
     @Override
     public void locationCallback(int result, Location location) {
         if (result == Constants.Location.LOCATION_RECEIVED) {
-            new MyNotificationManager().sendNotification(this.context);
             // Save to DefaultPreferences
             new MyDefaultPreferenceManager(this.context).saveLocation(location);
+            new MyNotificationManager().sendNotification(this.context, location);
+
         }
     }
 

@@ -10,4 +10,7 @@
     <string name="bluetooth_view_info">Mark your car on a list of bluetooth devices below.</string>
     <string name="bluetooth_view_info_extra">Don\'t see your car? Make sure it is paired with your device first. (Go to Bluetooth settings).</string>
     <string name="bluetooth_unavailable">Bluetooth is either unavailable or disabled.</string>
+    <string name="Upload">Upload</string>
+    <string name="Error">Error</string>
+    <string name="Complete">Complete</string>
 </resources>

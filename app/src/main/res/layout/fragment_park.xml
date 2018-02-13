@@ -2,35 +2,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/park_fragment"
     tools:context="com.unagit.parkedcar.ParkFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/park_transition_viewgroup"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical">
             <Button
                 android:layout_width="200dp"
                 android:maxWidth="200dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="#ff3232"
                 android:id="@+id/park_car"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
+
+                android:layout_gravity="center_horizontal"
                 android:text="@string/park_car"/>
             <LinearLayout
+                android:visibility="visible"
+                android:id="@+id/parking_information"
                 android:orientation="vertical"
+                android:background="#af3232"
+
                 android:gravity="center_vertical"
-                android:layout_weight="2"
                 android:layout_width="match_parent"
-                android:layout_margin="10dp"
-                android:layout_height="0dp">
+
+
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -48,7 +55,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/parked_time_textview"
                         android:text="@string/when_info"/>
-                    </LinearLayout>
+                </LinearLayout>
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"

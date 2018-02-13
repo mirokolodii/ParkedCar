@@ -16,7 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
+import com.dd.CircularProgressButton;
 import com.unagit.parkedcar.Helpers.Helpers;
 import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
 
@@ -181,16 +183,18 @@ public class MainActivity extends AppCompatActivity implements
                         // Save location into DefaultSharedPreferences
                         new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
                         // Show notification
-                        new MyNotificationManager().sendNotification(this);
+                        new MyNotificationManager().sendNotification(this, location);
                         if (parkFragment != null) {
-                            parkFragment.setMarkerOnMap(null);
+//                            parkFragment.setMarkerOnMap(null);
+                            parkFragment.updateUI(null);
                         }
                     }
 
                 } else {
                     // Zoom map into current location
                     if (parkFragment != null) {
-                        parkFragment.setMarkerOnMap(location);
+//                        parkFragment.setMarkerOnMap(location);
+                        parkFragment.updateUI(location);
                     }
                 }
                 break;

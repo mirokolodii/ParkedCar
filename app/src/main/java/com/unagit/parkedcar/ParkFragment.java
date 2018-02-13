@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -14,8 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -62,6 +63,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Handler handler = new Handler();
     private Runnable runnable;
 
+//    private MorphingButton parkButton;
+
     private int i=0;
 
 
@@ -102,7 +105,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-        refreshData();
+
+        updateUI(null);
 
         if(isParked) {
             startUIUpdate();
@@ -116,10 +120,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     private void startUIUpdate() {
-        handler.postDelayed(updateUI(), 1 * 1000);
+        handler.postDelayed(updateText(), 1 * 1000);
     }
 
-    private Runnable updateUI() {
+    private Runnable updateText() {
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -141,6 +145,26 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     }
 
+    void updateUI(@Nullable Location location) {
+        refreshData();
+        Button parkButton = getView().findViewById(R.id.park_car);
+        if(isParked) {
+            // Set marker with parking location, which is stored in SharedPreferences
+            setMarkerOnMap(null);
+            parkButton.setText(CLEAR_BUTTON);
+        } else {
+            // Set marker with current location, received from locationCallback
+            if(location != null) {
+                setMarkerOnMap(location);
+            } else {
+                Log.e(LOG_TAG, "Wrong behavior: updateUI method should receive " +
+                        "current location, but null value received instead.");
+            }
+
+            parkButton.setText(PARK_BUTTON);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,14 +179,11 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_park, container, false);
-        setParkButtonOnClickListener(rootView);
+//        setParkButtonOnClickListener(rootView);
         refreshData();
         setMapCallback();
-        if(isParked) {
-            Button parkButton = rootView.findViewById(R.id.park_car);
-            parkButton.setText(CLEAR_BUTTON);
-//            parkButtonClickListener.onParkButtonPressed();
-        }
+
+
         return rootView;
     }
 
@@ -171,18 +192,41 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      * 1. Park Car - change button text, request current location via callback method
      * 2. Clear - change button text, clear park location
      */
-    private void setParkButtonOnClickListener(View view) {
+    private void setParkButtonOnClickListener(final View view) {
+
+        // Set animation
+//        final ViewGroup parkTransitionGroup = view.findViewById(R.id.park_transition_viewgroup);
+//        TransitionManager.beginDelayedTransition(parkTransitionGroup);
         final Button parkButton = view.findViewById(R.id.park_car);
+//        final ViewGroup parkingInfo = view.findViewById(R.id.parking_information);
+
+
         parkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+
+                //TransitionManager.beginDelayedTransition(parkTransitionGroup);
+//                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.MATCH_PARENT,
+//                        0,
+//                        1.0f);
+//                parkTransitionGroup.setLayoutParams(params);
+//
+//                parkingInfo.setVisibility(
+//                        parkingInfo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
+//                );
+
+
+
                 if (parkButton.getText().equals(PARK_BUTTON)) { /* Park Car */
-                    //setMarkerOnMap(); <-- we need to set this in onLocationCallback instead, i.e. when we have new location
                     parkButton.setText(CLEAR_BUTTON);
                     startUIUpdate();
+
                     // Call listener
                     parkButtonClickListener.onParkButtonPressed(Constants.ParkActions.PARK_CAR, ParkFragment.this);
+
+
                 } else { /* Clear location */
                     clearMap();
                     parkButton.setText(PARK_BUTTON);
@@ -193,7 +237,11 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             }
         });
 
+
+
     }
+
+
 
     private void setMapCallback() {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -220,7 +268,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     }
 
-    public void setMarkerOnMap(@Nullable Location currentLocation) {
+    void setMarkerOnMap(@Nullable Location currentLocation) {
         refreshData();
         clearMap();
 
