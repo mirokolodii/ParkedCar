@@ -10,10 +10,15 @@ import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.transition.ChangeBounds;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnticipateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -106,7 +111,9 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
 
-        updateUI(null);
+        if(googleMap != null) {
+            updateUI(null);
+        }
 
         if(isParked) {
             startUIUpdate();
@@ -303,7 +310,9 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     private void clearMap() {
-        googleMap.clear();
+        if(googleMap != null) {
+            googleMap.clear();
+        }
     }
 
     private void refreshData() {
@@ -312,4 +321,98 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         longitude = myDefaultPreferenceManager.getLongitude();
         parkedTime = myDefaultPreferenceManager.getTimestamp();
     }
+
+
+//    public void animate(View view) {
+//        final Button button = (Button) view;
+//        button.setClickable(false);
+//        TextView textView = findViewById(R.id.textView);
+//        ViewGroup container = (ViewGroup) view.getParent();
+//
+//        final boolean isVisible = textView.getVisibility() == View.VISIBLE;
+//
+//        Transition buttonTransition = new ChangeBounds();
+//        buttonTransition
+//                .setInterpolator(new AnticipateInterpolator())
+//                .setDuration(500)
+//                .addTarget(button);
+//
+//        buttonTransition.addListener(new Transition.TransitionListener() {
+//            @Override
+//            public void onTransitionStart(Transition transition) {
+//                button.setText("");
+//            }
+//
+//            @Override
+//            public void onTransitionEnd(Transition transition) {
+//                if(isVisible){
+//                    button.setText("Park Car");
+//                } else {
+//                    button.setText("Clear");
+//                }
+//
+//                button.setClickable(true);
+//            }
+//
+//            @Override
+//            public void onTransitionCancel(Transition transition) {
+//
+//            }
+//
+//            @Override
+//            public void onTransitionPause(Transition transition) {
+//
+//            }
+//
+//            @Override
+//            public void onTransitionResume(Transition transition) {
+//
+//            }
+//        });
+//        Transition textTransition = new Fade();
+//        textTransition
+//                .setDuration(500)
+//                .addTarget(textView);
+//
+//        TransitionSet transitionSet = new TransitionSet();
+//        transitionSet
+//                .setOrdering(TransitionSet.ORDERING_TOGETHER)
+//                .addTransition(buttonTransition)
+//                .addTransition(textTransition);
+//
+//        android.transition.TransitionManager.beginDelayedTransition(container, transitionSet);
+//        int padding;
+//        if(isVisible) {
+//            textView.setVisibility(View.GONE);
+//            button.setPadding(
+//                    DPToPixels(90),
+//                    DPToPixels(40),
+//                    DPToPixels(90),
+//                    DPToPixels(40)
+//            );
+//        } else {
+//            textView.setVisibility(View.VISIBLE);
+//            button.setPadding(
+//                    DPToPixels(50),
+//                    DPToPixels(20),
+//                    DPToPixels(50),
+//                    DPToPixels(20)
+//            );
+//        }
+//
+//    }
+
+
+    /**
+     * Converts DP units to pixels.
+     * @param sizeInDp as integer.
+     * @return pixels as integer.
+     */
+    private int DPToPixels(int sizeInDp) {
+        float scale = getResources().getDisplayMetrics().density;
+        return (int) (sizeInDp*scale + 0.5f);
+    }
+
 }
+
+

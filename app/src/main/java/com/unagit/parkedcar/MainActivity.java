@@ -81,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements
         /*
          * Set tabs and show them on screen, using ViewPager.
          */
+
+        //TODO: Remove log
+        Log.d(LOG_TAG, "MainActivity.onCreate");
+
         setupViewPagerAndTabLayout();
     }
 
