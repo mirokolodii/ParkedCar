@@ -39,8 +39,10 @@ public final class Constants {
     }
 
     static class ParkActions {
-        static final int PARK_CAR = 0;
+        static final int SET_PARKING_LOCATION = 0;
         static final int CLEAR_PARKING_LOCATION= 1;
+        static final int REQUEST_CURRENT_LOCATION = 2;
+        static final int SET_CURRENT_LOCATION = 3;
     }
 
     static class Notifications {
