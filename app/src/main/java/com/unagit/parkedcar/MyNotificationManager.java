@@ -1,11 +1,14 @@
 package com.unagit.parkedcar;
 
+import android.annotation.TargetApi;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -21,11 +24,31 @@ public class MyNotificationManager {
     public MyNotificationManager() {}
     void sendNotification(Context context, @Nullable Location location) {
 
+        NotificationManager notificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        // Set notifications channel for Android.O and above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    Constants.Notifications.NOTIFICATION_CHANNEL_ID,
+                    Constants.Notifications.NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            notificationChannel.setDescription(Constants.Notifications.NOTIFICATION_CHANNEL_DESCRIPTION);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.GREEN);
+            notificationChannel.enableVibration(false);
+
+            try{
+                notificationManager.createNotificationChannel(notificationChannel);
+            } catch (NullPointerException e) {
+                Log.e(LOG_TAG, "Error while setting Notification Channel for Notification Manager: " + e.toString());
+            }
+
+        }
         String text = NOTIFICATION_TEXT;
         if(location != null) {
-            text += " Accuracy: " + location.getAccuracy() + "m.";
+            text += " Accuracy: " + location.getAccuracy() + " m.";
         }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Requests.NOTIFICATIONS_CHANNEL_ID)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
                 .setContentText(text)
@@ -41,11 +64,11 @@ public class MyNotificationManager {
                 .addAction(android.R.drawable.sym_action_chat, Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR, getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
 
         // Send notification
-        NotificationManager mNotificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
         try {
-            mNotificationManager.notify(Constants.Requests.NOTIFICATION_ID, mBuilder.build());
+            notificationManager.notify(Constants.Notifications.NOTIFICATION_ID, mBuilder.build());
         } catch (NullPointerException e) {
-            Log.e(LOG_TAG, "NotificationManager notify method throws an exception" + e.getMessage());
+            Log.e(LOG_TAG, "NotificationManager.notify throws an exception: " + e.getMessage());
         }
     }
 

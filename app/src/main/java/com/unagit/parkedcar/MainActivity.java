@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements
                     // Save location into DefaultSharedPreferences
                     new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
                     // Show notification
+                    Helpers.showToast("Now notification is about to show...", this);
                     new MyNotificationManager().sendNotification(this, location);
                     if (mParkFragment != null) {
                         mParkFragment.updateUI();
@@ -352,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements
             // Clear notification
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
             try {
-                mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
+                mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
             } catch (NullPointerException e) {
                 Log.e(LOG_TAG, e.getMessage());
             }

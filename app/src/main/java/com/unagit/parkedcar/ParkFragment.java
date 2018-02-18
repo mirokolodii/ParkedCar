@@ -70,7 +70,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
 //    private MorphingButton parkButton;
 
-    // TODO: remove this on final version of app
+    // TODO: remove this here and in startTimeUpdate on final version of app
     private int i=0;
 
 
@@ -172,6 +172,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     void updateUI() {
         refreshData();
         Button parkButton = getView().findViewById(R.id.park_car);
+        parkButton.setEnabled(true);
         if(isParked) {
             // Set marker with parking location, which is stored in SharedPreferences
             parkButton.setText(CLEAR_BUTTON);
@@ -192,6 +193,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     private void setParkButtonClickListener(final View view) {
         final Button parkButton = view.findViewById(R.id.park_car);
+        parkButton.setEnabled(false);
         parkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

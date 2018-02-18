@@ -75,7 +75,7 @@ public class NotificationActionHandlerService extends IntentService {
         // Dismiss notification
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
         try {
-            mNotificationManager.cancel(Constants.Requests.NOTIFICATION_ID);
+            mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, e.getMessage());
         }

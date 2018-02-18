@@ -31,8 +31,6 @@ public final class Constants {
     static class Requests {
         // Request to enable bluetooth on a device
         static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST = 10;
-        static final String NOTIFICATIONS_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".testnotifications";
-        static final int NOTIFICATION_ID = 100;
         static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 1;
         // Request to check for 'Location enabled' in device' settings
         static final int REQUEST_CHECK_SETTINGS = 2;
@@ -46,6 +44,14 @@ public final class Constants {
     }
 
     static class Notifications {
+        // ID of channel
+        static final String NOTIFICATION_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".park_car_notifications";
+        // User-visible name of the channel
+        static final String NOTIFICATION_CHANNEL_NAME = "Park Car Notifications";
+        // User-visible description of the channel
+        static final String NOTIFICATION_CHANNEL_DESCRIPTION
+                = "Used to show notifications with information about location of parked car.";
+        static final int NOTIFICATION_ID = 100;
         static final String NOTIFICATION_TITLE = "Parked Car";
         static final String NOTIFICATION_TEXT = "Your Car has been marked on the map.";
         static final String NOTIFICATION_ACTION_TITLE_SHOW = "Show Location";
