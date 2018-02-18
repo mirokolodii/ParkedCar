@@ -26,7 +26,6 @@ public class NotificationActionHandlerService extends IntentService {
 
         // Show parking location in Google Maps
         if (action.equals(Constants.Notifications.ACTION_SHOW_ON_MAP)) {
-            Log.i(LOG_TAG, "Show_on_map action");
             // Show location on google maps
             showLocationOnMaps();
 
@@ -35,7 +34,9 @@ public class NotificationActionHandlerService extends IntentService {
             // TODO: Show directions from current location to parking location in Google Maps
 
         }else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
-            // Remove location's lat and lon from SharedPreferences
+            // Remove location from SharedPreferences
+            new MyDefaultPreferenceManager(this).removeLocation();
+            // Remove notification
             dismissNotification();
 
 
