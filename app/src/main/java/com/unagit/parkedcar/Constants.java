@@ -74,6 +74,11 @@ public final class Constants {
         static final int LOCATION_RECEIVED = 3;
     }
 
+    static class Bluetooth {
+        static final String BLUETOOTH_RECEIVER_BROADCAST_ACTION = BuildConfig.APPLICATION_ID + ".BluetoothReceiverBroadcast";
+        static final String BLUETOOTH_RECEIVER_BROADCAST_RESULT = BuildConfig.APPLICATION_ID + ".result";
+    }
+
     static class Store {
 
         //Keys for SharedPreferences

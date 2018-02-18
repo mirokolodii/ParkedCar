@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,7 +72,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
                 Integer connectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, -1);
 //            Integer prevConnectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, -1);
 
-                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED || connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been disconnected
+                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED) { // device has been disconnected
                     // Request current location
                     new MyLocationManager(null, context, this).requestCurrentLocation();
 
@@ -86,6 +87,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
                     } catch (NullPointerException e) {
                         Log.e(LOG_TAG, e.getMessage());
                     }
+                    // 3. Send broadcast to update ParkFragment UI
+                    sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
                 }
             }
         }
@@ -97,7 +100,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
             // Save to DefaultPreferences
             new MyDefaultPreferenceManager(this.context).saveLocation(location);
             new MyNotificationManager().sendNotification(this.context, location);
-
+            // Send broadcast to update ParkFragment UI
+            sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
         }
     }
 
@@ -106,4 +110,13 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         return trackedDevices.contains(address);
     }
 
+    private void sendBroadcast(int result) {
+        // Send broadcast to update ParkFragment UI
+        Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+        intent.putExtra(
+                Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT,
+                result
+        );
+        LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
+    }
 }

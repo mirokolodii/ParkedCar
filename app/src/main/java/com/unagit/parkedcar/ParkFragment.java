@@ -1,7 +1,10 @@
 package com.unagit.parkedcar;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.Transition;
@@ -73,6 +77,21 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     // TODO: remove this here and in startTimeUpdate on final version of app
     private int i=0;
 
+    private class BluetoothReceiverBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            int result = intent.getIntExtra(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT, -1);
+            if (result == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
+                Helpers.showToast("Auto-parking is cleared.", context);
+            } else if (result == Constants.ParkActions.SET_PARKING_LOCATION) {
+                Helpers.showToast("Auto-parking is set.", context);
+            }
+            updateUI();
+        }
+    }
+
+    private BluetoothReceiverBroadcastReceiver mBluetoothReceiverBroadcastReceiver;
 
     public ParkFragment() {
         // Required empty public constructor
@@ -129,9 +148,14 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     @Override
     public void onResume() {
         //TODO: Remove this toast in final version of app
-        Helpers.showToast("ParkFragment.onResume() triggered", getContext());
+        Helpers.showToast("ParkFragment.onResume() triggered.", getContext());
 
         super.onResume();
+        // Register BroadcastReceiver
+        IntentFilter intentFilter = new IntentFilter(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+        mBluetoothReceiverBroadcastReceiver = new BluetoothReceiverBroadcastReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBluetoothReceiverBroadcastReceiver, intentFilter);
+
         if(googleMap != null) {
             updateUI();
         }
@@ -141,6 +165,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     public void onPause() {
         super.onPause();
         stopTimeUpdate();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBluetoothReceiverBroadcastReceiver);
     }
 
     private void startTimeUpdate() {
