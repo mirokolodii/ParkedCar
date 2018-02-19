@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class NotificationActionHandlerService extends IntentService {
             new MyDefaultPreferenceManager(this).removeLocation();
             // Remove notification
             dismissNotification();
+            sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
 
 
         } else {
@@ -88,5 +90,15 @@ public class NotificationActionHandlerService extends IntentService {
     private void collapseNotificationBar() {
         Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         sendBroadcast(it);
+    }
+
+    private void sendBroadcast(int result) {
+        // Send broadcast to update ParkFragment UI
+        Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+        intent.putExtra(
+                Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT,
+                result
+        );
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
