@@ -209,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements
                     // Save location into DefaultSharedPreferences
                     new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
                     // Show notification
-                    Helpers.showToast("Now notification is about to show...", this);
                     new MyNotificationManager().sendNotification(this, location);
                     if (mParkFragment != null) {
                         mParkFragment.updateUI();

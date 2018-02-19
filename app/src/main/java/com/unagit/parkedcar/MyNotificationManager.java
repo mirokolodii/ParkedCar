@@ -37,7 +37,7 @@ public class MyNotificationManager {
             notificationChannel.setLightColor(Color.GREEN);
             notificationChannel.enableVibration(false);
 
-            try{
+            try {
                 notificationManager.createNotificationChannel(notificationChannel);
             } catch (NullPointerException e) {
                 Log.e(LOG_TAG, "Error while setting Notification Channel for Notification Manager: " + e.toString());
@@ -46,7 +46,8 @@ public class MyNotificationManager {
         }
         String text = NOTIFICATION_TEXT;
         if(location != null) {
-            text += " Accuracy: " + location.getAccuracy() + " m.";
+            // TODO: Work on text. Hint: " += "
+            text = " Accuracy: " + location.getAccuracy() + " m.";
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_notify_more)

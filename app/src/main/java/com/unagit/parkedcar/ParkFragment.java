@@ -1,23 +1,29 @@
 package com.unagit.parkedcar;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.transition.TransitionManager;
+import android.transition.TransitionManager;
+import android.transition.Transition;
+import android.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
-import android.transition.Transition;
-import android.transition.TransitionSet;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,7 +183,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             @Override
             public void run() {
                 i++;
-                TextView parkedTimeTextView = getView().findViewById(R.id.parked_time_textview);
+                TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
                 String timeDifference = Helpers.timeDifference(parkedTime);
                 parkedTimeTextView.setText(timeDifference + " ago. " + i);
 
@@ -189,7 +195,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     private void stopTimeUpdate() {
         if(runnable != null) {
-            handler.removeCallbacks(runnable);
+
+//            handler.removeCallbacks(runnable);
+            // Passing null value will remove all callbacks
+            handler.removeCallbacksAndMessages(null);
         }
 
     }
@@ -200,13 +209,21 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         parkButton.setEnabled(true);
         if(isParked) {
             // Set marker with parking location, which is stored in SharedPreferences
-            parkButton.setText(CLEAR_BUTTON);
+
             setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
+
+//            parkButton.setText(CLEAR_BUTTON);
         } else {
-            parkButton.setText(PARK_BUTTON);
+
             mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
                     ParkFragment.this);
+
+//            parkButton.setText(PARK_BUTTON);
         }
+
+        setAnimation(getView(), parkButton);
+        View progressBar = getView().findViewById(R.id.indeterminateBar);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
 
@@ -218,16 +235,43 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     private void setParkButtonClickListener(final View view) {
         final Button parkButton = view.findViewById(R.id.park_car);
-        parkButton.setEnabled(false);
+//        setAnimation(view, parkButton);
+
         parkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                setAnimation(view, parkButton);
+
+                parkButton.setEnabled(false);
+                parkButton.setText("Working...");
+                View progressBar = getView().findViewById(R.id.indeterminateBar);
+                progressBar.setVisibility(View.VISIBLE);
                 if (isParked) {
                     isParked = false;
+
+//                    int padding;
+//            textView.setVisibility(View.GONE);
+//                    parkButton.setPadding(
+//                            DPToPixels(90),
+//                            DPToPixels(40),
+//                            DPToPixels(90),
+//                            DPToPixels(40)
+//                    );
+
                     mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
                             ParkFragment.this);
                 } else {
                     isParked = true;
+                    //            textView.setVisibility(View.VISIBLE);
+//                    parkButton.setPadding(
+//                            DPToPixels(50),
+//                            DPToPixels(20),
+//                            DPToPixels(50),
+//                            DPToPixels(20)
+//                    );
+
+
+
                     mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.SET_PARKING_LOCATION,
                             ParkFragment.this);
                 }
@@ -235,6 +279,96 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         });
     }
 
+    /**
+     * Set animation transition for park button and park information.
+     * @param rootView
+     * @param parkButton
+     */
+    private void setAnimation(View rootView, final Button parkButton) {
+        ViewGroup container = (ViewGroup) parkButton.getParent();
+        ChangeBounds buttonTransition = new ChangeBounds();
+        buttonTransition
+                .setInterpolator(new AnticipateInterpolator())
+                .setDuration(500)
+                .addTarget(parkButton);
+
+//
+//        TextView parkTypeTextView = rootView.findViewById(R.id.park_type_info);
+//        TextView parkTimeTextView = rootView.findViewById(R.id.park_time_info);
+//
+//        // Declare transition for button
+//        Transition buttonTransition = new ChangeBounds();
+//        buttonTransition
+//                .setInterpolator(new AnticipateInterpolator())
+//                .setDuration(500)
+//                .addTarget(parkButton);
+        buttonTransition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                // Remove button text, so it's not "jumping" during animation
+                parkButton.setText("");
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                parkButton.setText(isParked ? CLEAR_BUTTON : PARK_BUTTON);
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
+        TransitionManager.beginDelayedTransition(container, buttonTransition);
+
+        if(isParked) {
+            parkButton.setPadding(
+                    DPToPixels(50),
+                    DPToPixels(20),
+                    DPToPixels(50),
+                    DPToPixels(20)
+            );
+        } else {
+            parkButton.setPadding(
+                    DPToPixels(90),
+                    DPToPixels(40),
+                    DPToPixels(90),
+                    DPToPixels(40)
+            );
+
+        }
+
+
+//        // Declare transition for text
+//        Transition textTransition = new Fade();
+//        textTransition
+//                .setDuration(500)
+//                .addTarget(parkTypeTextView)
+//                .addTarget(parkTimeTextView);
+//
+//        TransitionSet transitionSet = new TransitionSet();
+//        transitionSet
+//                .setOrdering(TransitionSet.ORDERING_TOGETHER)
+//                .addTransition(buttonTransition)
+//                .addTransition(textTransition);
+//
+//        // Initialize DelayedTransition
+//
+//        TransitionManager.beginDelayedTransition(container, transitionSet);
+//
+
+
+    }
 
 
     private void setMapCallback() {
@@ -265,7 +399,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         }
 
         LatLng latLng = new LatLng(latitude, longitude);
-
+        Log.d(LOG_TAG, "setMarkerOnMap: " + action);
         // Parking is cleared. Set map camera to current location instead
         if(action == Constants.ParkActions.SET_CURRENT_LOCATION) {
             // Move camera to current location
