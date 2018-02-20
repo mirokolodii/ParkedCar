@@ -248,30 +248,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 progressBar.setVisibility(View.VISIBLE);
                 if (isParked) {
                     isParked = false;
-
-//                    int padding;
-//            textView.setVisibility(View.GONE);
-//                    parkButton.setPadding(
-//                            DPToPixels(90),
-//                            DPToPixels(40),
-//                            DPToPixels(90),
-//                            DPToPixels(40)
-//                    );
-
                     mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
                             ParkFragment.this);
                 } else {
                     isParked = true;
-                    //            textView.setVisibility(View.VISIBLE);
-//                    parkButton.setPadding(
-//                            DPToPixels(50),
-//                            DPToPixels(20),
-//                            DPToPixels(50),
-//                            DPToPixels(20)
-//                    );
-
-
-
                     mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.SET_PARKING_LOCATION,
                             ParkFragment.this);
                 }
@@ -286,22 +266,15 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     private void setAnimation(View rootView, final Button parkButton) {
         ViewGroup container = (ViewGroup) parkButton.getParent();
+        ViewGroup parkInfoContainer = rootView.findViewById(R.id.park_info_container);
+
+        // Declare transition for button
         ChangeBounds buttonTransition = new ChangeBounds();
+
         buttonTransition
                 .setInterpolator(new AnticipateInterpolator())
                 .setDuration(500)
                 .addTarget(parkButton);
-
-//
-//        TextView parkTypeTextView = rootView.findViewById(R.id.park_type_info);
-//        TextView parkTimeTextView = rootView.findViewById(R.id.park_time_info);
-//
-//        // Declare transition for button
-//        Transition buttonTransition = new ChangeBounds();
-//        buttonTransition
-//                .setInterpolator(new AnticipateInterpolator())
-//                .setDuration(500)
-//                .addTarget(parkButton);
         buttonTransition.addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
@@ -329,7 +302,22 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
             }
         });
-        TransitionManager.beginDelayedTransition(container, buttonTransition);
+
+        // Declare transition for @id/park_text_container
+        Transition textTransition = new Fade();
+        textTransition
+                .setDuration(500)
+                .addTarget(parkInfoContainer);
+
+        // Put all transitions into one set
+        TransitionSet transitionSet = new TransitionSet();
+        transitionSet
+                .setOrdering(TransitionSet.ORDERING_TOGETHER)
+                .addTransition(buttonTransition)
+                .addTransition(textTransition);
+
+        // Initialize DelayedTransition
+        TransitionManager.beginDelayedTransition(container, transitionSet);
 
         if(isParked) {
             parkButton.setPadding(
@@ -338,6 +326,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                     DPToPixels(50),
                     DPToPixels(20)
             );
+            parkInfoContainer.setVisibility(View.VISIBLE);
         } else {
             parkButton.setPadding(
                     DPToPixels(90),
@@ -345,29 +334,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                     DPToPixels(90),
                     DPToPixels(40)
             );
-
+            parkInfoContainer.setVisibility(View.GONE);
         }
-
-
-//        // Declare transition for text
-//        Transition textTransition = new Fade();
-//        textTransition
-//                .setDuration(500)
-//                .addTarget(parkTypeTextView)
-//                .addTarget(parkTimeTextView);
-//
-//        TransitionSet transitionSet = new TransitionSet();
-//        transitionSet
-//                .setOrdering(TransitionSet.ORDERING_TOGETHER)
-//                .addTransition(buttonTransition)
-//                .addTransition(textTransition);
-//
-//        // Initialize DelayedTransition
-//
-//        TransitionManager.beginDelayedTransition(container, transitionSet);
-//
-
-
     }
 
 

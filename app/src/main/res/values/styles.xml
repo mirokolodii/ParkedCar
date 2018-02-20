@@ -19,12 +19,6 @@
 
     <!-- Custom class for Park Button. -->
     <style name="ParkButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:background">@drawable/button_rounded_shape</item>
+        <!--<item name="android:background">@drawable/button_rounded_shape</item>-->
     </style>
-
-    <style name="MyProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:padding">0dp</item>
-        <item name="android:layout_margin">0dp</item>
-    </style>
-
 </resources>
