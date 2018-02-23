@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -319,23 +320,36 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         // Initialize DelayedTransition
         TransitionManager.beginDelayedTransition(container, transitionSet);
 
+
         if(isParked) {
-            parkButton.setPadding(
-                    DPToPixels(50),
-                    DPToPixels(20),
-                    DPToPixels(50),
-                    DPToPixels(20)
-            );
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                // Parked, portrait
+                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.SMALL_PORTRAIT);
+            } else {
+                // Parked, landscape
+                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.SMALL_LANDSCAPE);
+            }
+
             parkInfoContainer.setVisibility(View.VISIBLE);
         } else {
-            parkButton.setPadding(
-                    DPToPixels(90),
-                    DPToPixels(40),
-                    DPToPixels(90),
-                    DPToPixels(40)
-            );
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                // !Parked, portrait
+                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.BIG_PORTRAIT);
+            } else {
+                // !Parked, landscape
+                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.BIG_LANDSCAPE);
+            }
             parkInfoContainer.setVisibility(View.GONE);
         }
+    }
+
+    private void setParkButtonPadding(Button parkButton, int[] padding) {
+        parkButton.setPadding(
+                DPToPixels(padding[0]),
+                DPToPixels(padding[1]),
+                DPToPixels(padding[2]),
+                DPToPixels(padding[3])
+        );
     }
 
 

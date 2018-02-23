@@ -1,5 +1,7 @@
 package com.unagit.parkedcar;
 
+import java.util.ArrayList;
+
 /**
  * Created by a264889 on 28.01.2018.
  */
@@ -87,6 +89,14 @@ public final class Constants {
         static final String DEVICE_ADDRESSES = "deviceAddresses";
         static final String IS_PARKED = "isParked";
         static final String PARKED_TIME = "parkedTime";
+
+    }
+
+    static class ParkButtonPadding {
+        static final int[] BIG_PORTRAIT = new int[]{90, 40, 90, 40};
+        static final int[] BIG_LANDSCAPE = new int[]{20, 40, 40, 20};
+        static final int[] SMALL_PORTRAIT = new int[]{50, 20, 50, 20};
+        static final int[] SMALL_LANDSCAPE = new int[]{50, 20, 50, 20};
 
     }
 }
