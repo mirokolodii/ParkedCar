@@ -50,7 +50,7 @@ public class MyNotificationManager {
             text = " Accuracy: " + location.getAccuracy() + " m.";
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_notify_more)
+                .setSmallIcon(R.drawable.ic_parking_icon)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
                 .setContentText(text)
                 .setOngoing(true)

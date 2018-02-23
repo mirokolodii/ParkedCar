@@ -45,11 +45,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-            android:id="@+id/park_info_container"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:visibility="visible"
-            android:layout_margin="8dp" >
+                android:id="@+id/park_info_container"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_margin="8dp" >
                 <TextView
                     android:id="@+id/park_type_info"
                     android:layout_width="wrap_content"
