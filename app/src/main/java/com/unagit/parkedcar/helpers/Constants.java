@@ -14,13 +14,15 @@ public final class Constants {
         /**
          * Number of tabs to show
          */
-        public static final int TABS_COUNT = 3;
+//        public static final int TABS_COUNT = 3;
+        public static final int TABS_COUNT = 2;
         /**
          * Positions of tabs in TabLayout
          */
         public static final int PARK_TAB = 0;
-        public static final int PHOTOS_TAB = 1;
-        public static final int BLUETOOTH_TAB = 2;
+//        public static final int PHOTOS_TAB = 1;
+        public static final int BLUETOOTH_TAB = 1;
+//        public static final int BLUETOOTH_TAB = 2;
         /**
          * Icons for tabs in TabLayout
          */
@@ -100,8 +102,8 @@ public final class Constants {
 
     public static class ParkButtonPadding {
         public static final int[] BIG_PORTRAIT = new int[]{90, 40, 90, 40};
-        public static final int[] BIG_LANDSCAPE = new int[]{20, 40, 20, 40};
         public static final int[] SMALL_PORTRAIT = new int[]{50, 20, 50, 20};
+        public static final int[] BIG_LANDSCAPE = new int[]{20, 40, 20, 40};
         public static final int[] SMALL_LANDSCAPE = new int[]{50, 20, 50, 20};
 
     }

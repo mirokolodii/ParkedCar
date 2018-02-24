@@ -54,8 +54,8 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
                  */
                 return new ParkFragment();
 
-            case Constants.Tabs.PHOTOS_TAB:
-                break;
+//            case Constants.Tabs.PHOTOS_TAB:
+//                break;
             case Constants.Tabs.BLUETOOTH_TAB:
                 /**
                  * Third tab.
