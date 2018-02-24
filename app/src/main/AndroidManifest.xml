@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,7 @@
         </activity>
 
         <receiver
-            android:name=".BluetoothReceiver"
+            android:name=".services.BluetoothReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
@@ -30,7 +30,7 @@
         </receiver>
 
         <service
-            android:name=".NotificationActionHandlerService"
+            android:name=".services.NotificationActionHandlerService"
             android:exported="false" />
         <!-- Google Maps API Key -->
         <meta-data

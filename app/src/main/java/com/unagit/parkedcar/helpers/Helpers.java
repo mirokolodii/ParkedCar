@@ -1,16 +1,11 @@
-package com.unagit.parkedcar.Helpers;
+package com.unagit.parkedcar.helpers;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 /**
  * Created by a264889 on 27.01.2018.

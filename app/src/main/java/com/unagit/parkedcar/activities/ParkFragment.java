@@ -1,21 +1,14 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.activities;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.transition.TransitionManager;
 import android.transition.Transition;
 import android.transition.TransitionSet;
@@ -31,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnticipateInterpolator;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,9 +32,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.unagit.parkedcar.Helpers.Helpers;
+import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.helpers.Helpers;
 
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
+import java.util.Locale;
+
+import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 
 public class ParkFragment extends Fragment  implements OnMapReadyCallback {
@@ -187,7 +184,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 i++;
                 TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
                 String timeDifference = Helpers.timeDifference(parkedTime);
-                parkedTimeTextView.setText(timeDifference + " ago. " + i);
+                timeDifference = String.format(Locale.getDefault(),"%s ago. %d", timeDifference, i);
+                parkedTimeTextView.setText(timeDifference);
 
                 handler.postDelayed(this, 1 * 1000);
             }
@@ -274,10 +272,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 // Remove button text, so it's not "jumping" during animation
                 parkButton.setText("");
                 if(isParked) {
-                    parkingTypeTextView.setText(
-                            isParkedAutomatically
-                                    ? Constants.ParkTypeText.PARKED_AUTOMATICALLY_TEXT
-                                    : Constants.ParkTypeText.PARKED_MANUALLY_TEXT);
+                    if (isParkedAutomatically) parkingTypeTextView.setText(
+                            Constants.ParkTypeText.PARKED_AUTOMATICALLY_TEXT);
+                    else parkingTypeTextView.setText(
+                            Constants.ParkTypeText.PARKED_MANUALLY_TEXT);
                 }
             }
 

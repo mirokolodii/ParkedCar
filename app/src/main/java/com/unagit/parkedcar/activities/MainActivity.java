@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.activities;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -16,11 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import com.dd.CircularProgressButton;
-import com.unagit.parkedcar.Helpers.Helpers;
-import com.unagit.parkedcar.Helpers.ZoomOutPageTransformer;
+import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.brain.MyBluetoothManager;
+import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.brain.MyLocationManager;
+import com.unagit.parkedcar.brain.MyNotificationManager;
+import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.helpers.Helpers;
+import com.unagit.parkedcar.helpers.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
 

@@ -1,10 +1,12 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.brain;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+
+import com.unagit.parkedcar.helpers.Constants;
 
 /**
  * Created by a264889 on 31.01.2018.
@@ -14,18 +16,18 @@ public class MyBluetoothManager {
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     Activity activity;
 
-    MyBluetoothManager(Activity activity) {
+    public MyBluetoothManager(Activity activity) {
         this.activity = activity;
     }
 
     /**
      * Helper methods for Bluetooth
      */
-    boolean isBluetoothAvailable() {
+    public boolean isBluetoothAvailable() {
         return (btAdapter != null);
     }
 
-    boolean isBluetoothEnabled() {
+    public boolean isBluetoothEnabled() {
         return btAdapter.isEnabled();
     }
 
@@ -40,7 +42,7 @@ public class MyBluetoothManager {
      * 1. Exit - exits app;
      * 2. Cancel - return to app
      */
-    void displayBluetoothNotAvailableNotificationDialog() {
+    public void displayBluetoothNotAvailableNotificationDialog() {
         new AlertDialog.Builder(activity)
                 .setTitle("Error")
                 .setMessage("Your device doesn't support Bluetooth")

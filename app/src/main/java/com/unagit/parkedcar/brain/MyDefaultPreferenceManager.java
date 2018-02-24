@@ -1,10 +1,13 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.brain;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.unagit.parkedcar.activities.MainActivity;
+import com.unagit.parkedcar.helpers.Constants;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -18,7 +21,7 @@ public class MyDefaultPreferenceManager {
     private static SharedPreferences spref;
 
 
-    MyDefaultPreferenceManager(Context context) {
+    public MyDefaultPreferenceManager(Context context) {
         spref = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -30,7 +33,7 @@ public class MyDefaultPreferenceManager {
     /**
      * Saves (key, value) pair into DefaultSharedPreferences
      */
-    void setValue(String key, Object value) {
+    public void setValue(String key, Object value) {
         // Get instance of SharedPreferences editor
         SharedPreferences.Editor editor = spref.edit();
         // Get type of value and put into editor
@@ -53,45 +56,45 @@ public class MyDefaultPreferenceManager {
         editor.apply();
     }
 
-    void saveLocation(Location location) {
+    public void saveLocation(Location location) {
         setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.getLatitude());
         setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.getLongitude());
         setValue(Constants.Store.IS_PARKED, true);
         setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
     }
 
-    void setParkedAutomatically(boolean value) {
+    public void setParkedAutomatically(boolean value) {
         setValue(Constants.Store.IS_PARKED_AUTOMATICALLY, value);
     }
 
-    Boolean isParked() {
+    public Boolean isParked() {
         return (isSet(Constants.Store.IS_PARKED)
                 && spref.getBoolean(Constants.Store.IS_PARKED, false));
     }
 
-    Boolean isParkedAutomatically() {
+    public Boolean isParkedAutomatically() {
         return (isSet(Constants.Store.IS_PARKED_AUTOMATICALLY)
                 && spref.getBoolean(Constants.Store.IS_PARKED_AUTOMATICALLY, false));
     }
 
-    Long getTimestamp() {
+    public Long getTimestamp() {
         return spref.getLong(Constants.Store.PARKED_TIME, 0);
     }
 
-    Float getLatitude() {
+    public Float getLatitude() {
         return spref.getFloat(Constants.Store.PARKING_LOCATION_LATITUDE, -1);
     }
 
-    Float getLongitude() {
+    public Float getLongitude() {
         return spref.getFloat(Constants.Store.PARKING_LOCATION_LONGITUDE, -1);
     }
 
-    Set<String> getDevices() {
+    public Set<String> getDevices() {
         Set<String> s = new HashSet<>(); // default value
         return spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, s);
     }
 
-    void removeLocation() {
+    public void removeLocation() {
         if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE)
                 && isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)
                 && isSet(Constants.Store.PARKED_TIME)

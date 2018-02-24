@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.activities;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -13,13 +13,16 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.unagit.parkedcar.Helpers.Helpers;
+import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.brain.MyBluetoothDevice;
+import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.helpers.Helpers;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-import static com.unagit.parkedcar.Helpers.Helpers.showToast;
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
+import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 
 /**

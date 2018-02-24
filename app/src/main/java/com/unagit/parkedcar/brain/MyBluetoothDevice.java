@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.brain;
 
 /**
  * Class keeps name and address of Bluetooth Device

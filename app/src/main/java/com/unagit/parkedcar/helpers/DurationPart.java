@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.Helpers;
+package com.unagit.parkedcar.helpers;
 
 /**
  * Created by a264889 on 02.02.2018.

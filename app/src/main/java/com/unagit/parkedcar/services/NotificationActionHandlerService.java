@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -11,7 +11,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
+import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.helpers.Constants;
+
+import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
  * Created by a264889 on 28.01.2018.

@@ -1,10 +1,13 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.activities;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
+
+import com.unagit.parkedcar.brain.MyBluetoothManager;
+import com.unagit.parkedcar.helpers.Constants;
 
 /**
  * Created by a264889 on 31.01.2018.

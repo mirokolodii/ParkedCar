@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.brain;
 
 import android.Manifest;
 import android.app.Activity;
@@ -28,11 +28,13 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.unagit.parkedcar.activities.MainActivity;
+import com.unagit.parkedcar.helpers.Constants;
 
-import static com.unagit.parkedcar.Constants.Location.LOCATION_DISABLED;
-import static com.unagit.parkedcar.Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION;
-import static com.unagit.parkedcar.Constants.Requests.REQUEST_CHECK_SETTINGS;
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
+import static com.unagit.parkedcar.helpers.Constants.Location.LOCATION_DISABLED;
+import static com.unagit.parkedcar.helpers.Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION;
+import static com.unagit.parkedcar.helpers.Constants.Requests.REQUEST_CHECK_SETTINGS;
+import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
  * This class is used to manage all the location work, like verify that

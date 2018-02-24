@@ -1,6 +1,5 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.brain;
 
-import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,8 +12,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import static com.unagit.parkedcar.Constants.Notifications.NOTIFICATION_TEXT;
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
+import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.services.NotificationActionHandlerService;
+
+import static com.unagit.parkedcar.helpers.Constants.Notifications.NOTIFICATION_TEXT;
+import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
  * Created by a264889 on 28.01.2018.
@@ -22,7 +25,7 @@ import static com.unagit.parkedcar.MainActivity.LOG_TAG;
 
 public class MyNotificationManager {
     public MyNotificationManager() {}
-    void sendNotification(Context context, @Nullable Location location) {
+    public void sendNotification(Context context, @Nullable Location location) {
 
         NotificationManager notificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // Set notifications channel for Android.O and above

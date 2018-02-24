@@ -1,4 +1,4 @@
-package com.unagit.parkedcar;
+package com.unagit.parkedcar.services;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,12 +13,18 @@ import android.location.Location;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.brain.MyLocationManager;
+import com.unagit.parkedcar.brain.MyNotificationManager;
+import com.unagit.parkedcar.helpers.Constants;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
-import static com.unagit.parkedcar.MainActivity.LOG_TAG;
+import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
  * Created by a264889 on 28.01.2018.
