@@ -60,9 +60,18 @@ public class MyDefaultPreferenceManager {
         setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
     }
 
+    void setParkedAutomatically(boolean value) {
+        setValue(Constants.Store.IS_PARKED_AUTOMATICALLY, value);
+    }
+
     Boolean isParked() {
         return (isSet(Constants.Store.IS_PARKED)
                 && spref.getBoolean(Constants.Store.IS_PARKED, false));
+    }
+
+    Boolean isParkedAutomatically() {
+        return (isSet(Constants.Store.IS_PARKED_AUTOMATICALLY)
+                && spref.getBoolean(Constants.Store.IS_PARKED_AUTOMATICALLY, false));
     }
 
     Long getTimestamp() {
@@ -86,12 +95,14 @@ public class MyDefaultPreferenceManager {
         if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE)
                 && isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)
                 && isSet(Constants.Store.PARKED_TIME)
+                && isSet(Constants.Store.IS_PARKED_AUTOMATICALLY)
                 && isSet(Constants.Store.IS_PARKED)) {
             SharedPreferences.Editor editor = spref.edit();
             editor
                     .remove(Constants.Store.PARKING_LOCATION_LATITUDE)
                     .remove(Constants.Store.PARKING_LOCATION_LONGITUDE)
                     .remove(Constants.Store.IS_PARKED)
+                    .remove(Constants.Store.IS_PARKED_AUTOMATICALLY)
                     .remove(Constants.Store.PARKED_TIME);
             editor.apply();
         }

@@ -40,7 +40,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
 
 
-
+        // TODO: Remove this test notification
         /**
          * Send test notification
          */
@@ -58,29 +58,25 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
 
 
-        // Check, whether this receiver has been triggered by the change of bluetooth connection state
+        // We need only case, when this receiver has been triggered by the change of bluetooth connection state
         final String action = intent.getAction();
         if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
             // Get remote device
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            String deviceName = device.getName();
             String deviceAddress = device.getAddress();
 
             // Proceed further only if remote bluetooth device is tracked by user
             if(isTrackedDevice(deviceAddress)) {
                 // Get connection states
                 Integer connectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, -1);
-//            Integer prevConnectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, -1);
-
-                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED) { // device has been disconnected
+                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED) { // device has been disconnected, we need to park
                     // Request current location
                     new MyLocationManager(null, context, this).requestCurrentLocation();
 
-                } else if (connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been connected
+                } else if (connectionState == BluetoothAdapter.STATE_CONNECTED) { // device has been connected, clear prev parking
                     // 1. clear location
                     new MyDefaultPreferenceManager(context).removeLocation();
                     // 2. clear notification
-//                    new NotificationActionHandlerService().dismissNotification();
                     NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
                     try {
                         mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
@@ -94,13 +90,19 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         }
     }
 
+    // Handle callback with location, received from MyLocationManager
     @Override
     public void locationCallback(int result, Location location) {
+        // We need only case, when location is received
         if (result == Constants.Location.LOCATION_RECEIVED) {
-            // Save to DefaultPreferences
-            new MyDefaultPreferenceManager(this.context).saveLocation(location);
+            // Save location to DefaultPreferences
+            MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this.context);
+            myDefaultPreferenceManager.saveLocation(location);
+            // Inform that car has been parked automatically
+            myDefaultPreferenceManager.setParkedAutomatically(true);
+            // Send notification
             new MyNotificationManager().sendNotification(this.context, location);
-            // Send broadcast to update ParkFragment UI
+            // Send broadcast that car has been parked automatically via bluetooth connection
             sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
         }
     }

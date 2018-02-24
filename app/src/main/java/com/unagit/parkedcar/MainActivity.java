@@ -188,8 +188,10 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Handles location, received from MyLocationManager, depending on mParkAction:
-     * SET_PARKING_LOCATION - saves location as parking location, shows notification
-     * and updates map in ParkFragment;
+     *
+     * SET_PARKING_LOCATION - saves location as parking location and that car has been parked
+     * manually by the user, shows notification and updates map in ParkFragment;
+     *
      * REQUEST_CURRENT_LOCATION - updates current location on map in ParkFragment.
      * @param location current location.
      */
@@ -207,7 +209,10 @@ public class MainActivity extends AppCompatActivity implements
                             "Location is saved.",
                             this);
                     // Save location into DefaultSharedPreferences
-                    new MyDefaultPreferenceManager(this).saveLocation(currentLocation);
+                    MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this);
+                    myDefaultPreferenceManager.saveLocation(currentLocation);
+                    // Inform that car has been parked manually by the user
+                    myDefaultPreferenceManager.setParkedAutomatically(false);
                     // Show notification
                     new MyNotificationManager().sendNotification(this, location);
                     if (mParkFragment != null) {

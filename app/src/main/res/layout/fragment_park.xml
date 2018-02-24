@@ -38,7 +38,7 @@
             android:id="@+id/park_info_container"
             android:orientation="vertical"
             android:gravity="center"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_marginBottom="10dp"
             android:layout_height="wrap_content">
             <TextView

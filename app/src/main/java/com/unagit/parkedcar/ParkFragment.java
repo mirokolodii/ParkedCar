@@ -74,6 +74,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Float latitude;
     private Float longitude;
     private Long parkedTime;
+    private Boolean isParkedAutomatically = false;
     private MyDefaultPreferenceManager myDefaultPreferenceManager;
 
     private Handler handler = new Handler();
@@ -210,24 +211,15 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         parkButton.setEnabled(true);
         if(isParked) {
             // Set marker with parking location, which is stored in SharedPreferences
-
             setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
-
-//            parkButton.setText(CLEAR_BUTTON);
         } else {
-
             mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
                     ParkFragment.this);
-
-//            parkButton.setText(PARK_BUTTON);
         }
-
         setAnimation(getView(), parkButton);
         View progressBar = getView().findViewById(R.id.indeterminateBar);
         progressBar.setVisibility(View.INVISIBLE);
     }
-
-
 
     /**
      * Flip Park Car button between two states:
@@ -268,10 +260,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private void setAnimation(View rootView, final Button parkButton) {
         ViewGroup container = (ViewGroup) parkButton.getParent();
         ViewGroup parkInfoContainer = rootView.findViewById(R.id.park_info_container);
+        final TextView parkingTypeTextView = rootView.findViewById(R.id.park_type_info);
 
         // Declare transition for button
         ChangeBounds buttonTransition = new ChangeBounds();
-
         buttonTransition
                 .setInterpolator(new AnticipateInterpolator())
                 .setDuration(500)
@@ -281,6 +273,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             public void onTransitionStart(Transition transition) {
                 // Remove button text, so it's not "jumping" during animation
                 parkButton.setText("");
+                if(isParked) {
+                    parkingTypeTextView.setText(
+                            isParkedAutomatically
+                                    ? Constants.ParkTypeText.PARKED_AUTOMATICALLY_TEXT
+                                    : Constants.ParkTypeText.PARKED_MANUALLY_TEXT);
+                }
             }
 
             @Override
@@ -418,88 +416,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         latitude = myDefaultPreferenceManager.getLatitude();
         longitude = myDefaultPreferenceManager.getLongitude();
         parkedTime = myDefaultPreferenceManager.getTimestamp();
+        isParkedAutomatically = myDefaultPreferenceManager.isParkedAutomatically();
     }
-
-
-//    public void animate(View view) {
-//        final Button button = (Button) view;
-//        button.setClickable(false);
-//        TextView textView = findViewById(R.id.textView);
-//        ViewGroup container = (ViewGroup) view.getParent();
-//
-//        final boolean isVisible = textView.getVisibility() == View.VISIBLE;
-//
-//        Transition buttonTransition = new ChangeBounds();
-//        buttonTransition
-//                .setInterpolator(new AnticipateInterpolator())
-//                .setDuration(500)
-//                .addTarget(button);
-//
-//        buttonTransition.addListener(new Transition.TransitionListener() {
-//            @Override
-//            public void onTransitionStart(Transition transition) {
-//                button.setText("");
-//            }
-//
-//            @Override
-//            public void onTransitionEnd(Transition transition) {
-//                if(isVisible){
-//                    button.setText("Park Car");
-//                } else {
-//                    button.setText("Clear");
-//                }
-//
-//                button.setClickable(true);
-//            }
-//
-//            @Override
-//            public void onTransitionCancel(Transition transition) {
-//
-//            }
-//
-//            @Override
-//            public void onTransitionPause(Transition transition) {
-//
-//            }
-//
-//            @Override
-//            public void onTransitionResume(Transition transition) {
-//
-//            }
-//        });
-//        Transition textTransition = new Fade();
-//        textTransition
-//                .setDuration(500)
-//                .addTarget(textView);
-//
-//        TransitionSet transitionSet = new TransitionSet();
-//        transitionSet
-//                .setOrdering(TransitionSet.ORDERING_TOGETHER)
-//                .addTransition(buttonTransition)
-//                .addTransition(textTransition);
-//
-//        android.transition.TransitionManager.beginDelayedTransition(container, transitionSet);
-//        int padding;
-//        if(isVisible) {
-//            textView.setVisibility(View.GONE);
-//            button.setPadding(
-//                    DPToPixels(90),
-//                    DPToPixels(40),
-//                    DPToPixels(90),
-//                    DPToPixels(40)
-//            );
-//        } else {
-//            textView.setVisibility(View.VISIBLE);
-//            button.setPadding(
-//                    DPToPixels(50),
-//                    DPToPixels(20),
-//                    DPToPixels(50),
-//                    DPToPixels(20)
-//            );
-//        }
-//
-//    }
-
 
     /**
      * Converts DP units to pixels.

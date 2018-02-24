@@ -7,7 +7,6 @@ import java.util.ArrayList;
  */
 
 public final class Constants {
-
     static class Tabs {
         /**
          * Number of tabs to show
@@ -76,25 +75,29 @@ public final class Constants {
         static final int LOCATION_RECEIVED = 3;
     }
 
+    static class ParkTypeText {
+        static final String PARKED_AUTOMATICALLY_TEXT = "Parked automatically";
+        static final String PARKED_MANUALLY_TEXT = "Parked manually";
+    }
+
     static class Bluetooth {
         static final String BLUETOOTH_RECEIVER_BROADCAST_ACTION = BuildConfig.APPLICATION_ID + ".BluetoothReceiverBroadcast";
         static final String BLUETOOTH_RECEIVER_BROADCAST_RESULT = BuildConfig.APPLICATION_ID + ".result";
     }
 
     static class Store {
-
         //Keys for SharedPreferences
         static final String PARKING_LOCATION_LATITUDE = "parkingLocationLatitude";
         static final String PARKING_LOCATION_LONGITUDE = "parkingLocationLongitude";
         static final String DEVICE_ADDRESSES = "deviceAddresses";
         static final String IS_PARKED = "isParked";
         static final String PARKED_TIME = "parkedTime";
-
+        static final String IS_PARKED_AUTOMATICALLY = "isParkedAutomatically";
     }
 
     static class ParkButtonPadding {
         static final int[] BIG_PORTRAIT = new int[]{90, 40, 90, 40};
-        static final int[] BIG_LANDSCAPE = new int[]{20, 40, 40, 20};
+        static final int[] BIG_LANDSCAPE = new int[]{20, 40, 20, 40};
         static final int[] SMALL_PORTRAIT = new int[]{50, 20, 50, 20};
         static final int[] SMALL_LANDSCAPE = new int[]{50, 20, 50, 20};
 
