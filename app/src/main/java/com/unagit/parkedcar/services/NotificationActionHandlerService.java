@@ -36,6 +36,7 @@ public class NotificationActionHandlerService extends IntentService {
 
         } else if (action.equals(Constants.Notifications.ACTION_DIRECTIONS)) {
             // TODO: Show directions from current location to parking location in Google Maps
+            showDirections();
 
         }else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
             // Remove location from SharedPreferences
@@ -57,6 +58,19 @@ public class NotificationActionHandlerService extends IntentService {
         MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
         String uri = Constants.GoogleMaps.GOOGLE_MAPS_QUERY_URL;
         uri += myPreferenceManager.getLatitude() + "," + myPreferenceManager.getLongitude();
+        createMapsIntent(uri);
+    }
+
+    private void showDirections() {
+        // Build Google Maps query for directions
+        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
+        String uri = Constants.GoogleMaps.GOOGLE_MAPS_DIRECTIONS_URL;
+        uri += myPreferenceManager.getLatitude() + "," + myPreferenceManager.getLongitude();
+        Log.d(LOG_TAG, "Directions URI: " + uri);
+        createMapsIntent(uri);
+    }
+
+    private void createMapsIntent(String uri) {
         // Initiate new intent
         Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         // Open intent in Google Maps

@@ -60,8 +60,8 @@ public final class Constants {
         public static final int NOTIFICATION_ID = 100;
         public static final String NOTIFICATION_TITLE = "Parked Car";
         public static final String NOTIFICATION_TEXT = "Your Car has been marked on the map.";
-        public static final String NOTIFICATION_ACTION_TITLE_SHOW = "Show Location";
-        public static final String NOTIFICATION_ACTION_TITLE_DIRECTIONS = "Get Directions";
+        public static final String NOTIFICATION_ACTION_TITLE_SHOW = "Map";
+        public static final String NOTIFICATION_ACTION_TITLE_DIRECTIONS = "Directions";
         public static final String NOTIFICATION_ACTION_TITLE_CLEAR = "Clear";
         public static final String ACTION_SHOW_ON_MAP = "Show";
         public static final String ACTION_DIRECTIONS = "Directions";
@@ -70,6 +70,7 @@ public final class Constants {
 
     public static class GoogleMaps {
         public static final String GOOGLE_MAPS_QUERY_URL = "https://www.google.com/maps/search/?api=1&query=";
+        public static final String GOOGLE_MAPS_DIRECTIONS_URL = "https://www.google.com/maps/dir/?api=1&destination=";
         public static final int Parking_icon = R.drawable.ic_parking_icon;
     }
 

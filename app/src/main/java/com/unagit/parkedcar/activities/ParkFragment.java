@@ -391,7 +391,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
              MarkerOptions options = new MarkerOptions();
             options.position(latLng)
                     .title("Your Car")
-                    .snippet("Parked 23 min ago")
+//                    .snippet("Parked 23 min ago")
                     .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
             googleMap.addMarker(options)
                     .showInfoWindow(); /* show title (no need to click on marker to show title) */

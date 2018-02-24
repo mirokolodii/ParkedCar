@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.activities.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 
@@ -52,10 +53,12 @@ public class MyNotificationManager {
         String text = NOTIFICATION_TEXT;
         String accuracy = "";
         if(location != null) {
-            // TODO: Work on text. Hint: " += "
             accuracy = String.format(Locale.getDefault(), " Accuracy: %.2f m.", location.getAccuracy());
-
         }
+        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+        PendingIntent mainActivityPendingIntent =
+                PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_parking_icon)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
@@ -63,7 +66,8 @@ public class MyNotificationManager {
                 .setContentText(text)
                 .setOngoing(true)
                 .setColor(Color.GREEN)
-                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
+//                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
+                .setContentIntent(mainActivityPendingIntent);
         //.setAutoCancel(true); // Clear notification automatically at notification click. Works only if setContentIntent is specified
 
         // Add Actions
@@ -85,7 +89,8 @@ public class MyNotificationManager {
     private PendingIntent getPendingIntent(Context context, String action) {
         Intent notificationAction = new Intent(context, NotificationActionHandlerService.class);
         notificationAction.setAction(action);
-        PendingIntent pIntent = PendingIntent.getService(context, 0, notificationAction, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent =
+                PendingIntent.getService(context, 0, notificationAction, PendingIntent.FLAG_UPDATE_CURRENT);
         return  pIntent;
     }
 }
