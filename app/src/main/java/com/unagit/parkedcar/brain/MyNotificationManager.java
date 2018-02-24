@@ -16,6 +16,8 @@ import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 
+import java.util.Locale;
+
 import static com.unagit.parkedcar.helpers.Constants.Notifications.NOTIFICATION_TEXT;
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
@@ -48,13 +50,16 @@ public class MyNotificationManager {
 
         }
         String text = NOTIFICATION_TEXT;
+        String accuracy = "";
         if(location != null) {
             // TODO: Work on text. Hint: " += "
-            text = " Accuracy: " + location.getAccuracy() + " m.";
+            accuracy = String.format(Locale.getDefault(), " Accuracy: %.2f m.", location.getAccuracy());
+
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_parking_icon)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
+                .setSubText(accuracy)
                 .setContentText(text)
                 .setOngoing(true)
                 .setColor(Color.GREEN)

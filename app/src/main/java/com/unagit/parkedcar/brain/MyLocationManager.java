@@ -62,6 +62,13 @@ public class MyLocationManager extends LocationCallback implements
     private GoogleApiClient mGoogleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
 
+    // We want to have accuracy <= to desiredLocationAccuracy,
+    // but try to achieve this accuracy numberOfLocationUpdates times,
+    // otherwise just return the latest one.
+    private final int desiredLocationAccuracy = 20;
+    private final int startingNumberOfLocationUpdatesLeft = 10;
+    private int numberOfLocationUpdatesLeft = 10;
+
     /**
      *
      * @param activity Only required to ask user to grand permission, otherwise can be null
@@ -205,9 +212,9 @@ public class MyLocationManager extends LocationCallback implements
     public void onConnected(@Nullable Bundle bundle) {
         // Set location request
         LocationRequest mLocationRequest = new LocationRequest()
-            .setInterval(1000)
-            .setFastestInterval(1000)
-            .setNumUpdates(1); /* One update is enough, as we need only to update location */
+            .setInterval(500)
+            .setFastestInterval(500)
+            .setNumUpdates(10);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); /* We want highest possible accuracy */
         int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
@@ -225,12 +232,20 @@ public class MyLocationManager extends LocationCallback implements
      */
     @Override
     public void onLocationResult(LocationResult locationResult) {
-        // We don't want any new location updates
-        mFusedLocationClient.removeLocationUpdates(this);
-        mGoogleApiClient.disconnect();
-        mFusedLocationClient = null;
-        // Return location back to the object, which requested location
-        callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
+        float accuracy = locationResult.getLastLocation().getAccuracy();
+        Log.d("LocationUpdates", String.valueOf(numberOfLocationUpdatesLeft) + " " + String.valueOf(accuracy));
+        if(accuracy < desiredLocationAccuracy || numberOfLocationUpdatesLeft <= 0) {
+            numberOfLocationUpdatesLeft = startingNumberOfLocationUpdatesLeft;
+            // We don't want any new location updates
+            mFusedLocationClient.removeLocationUpdates(this);
+            mGoogleApiClient.disconnect();
+            mFusedLocationClient = null;
+            // Return location back to the object, which requested location
+            callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
+        } else {
+            numberOfLocationUpdatesLeft--;
+        }
+
     }
 
     /**
