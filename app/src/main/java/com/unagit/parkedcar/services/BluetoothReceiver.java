@@ -3,13 +3,17 @@ package com.unagit.parkedcar.services;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -44,6 +48,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
         this.context = context;
 
+        Log.d(LOG_TAG, "BluetoothReceiver is triggered...");
+
 
 
         // TODO: Remove this test notification
@@ -66,15 +72,29 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
         // We need only case, when this receiver has been triggered by the change of bluetooth connection state
         final String action = intent.getAction();
-        if (action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
+        Log.d(LOG_TAG, "Action: " + action);
+        if (
+//                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
+                action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
+
             // Get remote device
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             String deviceAddress = device.getAddress();
+            Log.d(LOG_TAG, "Action verification Passed. Device: " + device.getName());
 
             // Proceed further only if remote bluetooth device is tracked by user
             if(isTrackedDevice(deviceAddress)) {
+                Log.d(LOG_TAG, "Device is tracked");
+                // List all extras in bundle
+                Bundle bundle = intent.getExtras();
+                for (String key : bundle.keySet()) {
+                    Object value = bundle.get(key);
+                    Log.d(LOG_TAG, String.format("%s: %s (%s)",
+                            key, value, value.getClass().getName()));
+                }
                 // Get connection states
-                Integer connectionState = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, -1);
+                Integer connectionState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
+                Log.d(LOG_TAG, String.format("ConnectionState: %d", connectionState));
                 if (connectionState == BluetoothAdapter.STATE_DISCONNECTED) { // device has been disconnected, we need to park
                     // Request current location
                     new MyLocationManager(null, context, this).requestCurrentLocation();

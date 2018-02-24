@@ -233,7 +233,6 @@ public class MyLocationManager extends LocationCallback implements
     @Override
     public void onLocationResult(LocationResult locationResult) {
         float accuracy = locationResult.getLastLocation().getAccuracy();
-        Log.d("LocationUpdates", String.valueOf(numberOfLocationUpdatesLeft) + " " + String.valueOf(accuracy));
         if(accuracy < desiredLocationAccuracy || numberOfLocationUpdatesLeft <= 0) {
             numberOfLocationUpdatesLeft = startingNumberOfLocationUpdatesLeft;
             // We don't want any new location updates

@@ -68,9 +68,9 @@ public class MyNotificationManager {
 
         // Add Actions
         mBuilder
-                .addAction(android.R.drawable.sym_action_chat, Constants.Notifications.NOTIFICATION_ACTION_TITLE_SHOW, getPendingIntent(context, Constants.Notifications.ACTION_SHOW_ON_MAP))
-                .addAction(android.R.drawable.sym_action_chat, Constants.Notifications.NOTIFICATION_ACTION_TITLE_DIRECTIONS, getPendingIntent(context, Constants.Notifications.ACTION_DIRECTIONS))
-                .addAction(android.R.drawable.sym_action_chat, Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR, getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
+                .addAction(android.R.drawable.ic_menu_mylocation, Constants.Notifications.NOTIFICATION_ACTION_TITLE_SHOW, getPendingIntent(context, Constants.Notifications.ACTION_SHOW_ON_MAP))
+                .addAction(android.R.drawable.ic_menu_directions, Constants.Notifications.NOTIFICATION_ACTION_TITLE_DIRECTIONS, getPendingIntent(context, Constants.Notifications.ACTION_DIRECTIONS))
+                .addAction(android.R.drawable.ic_notification_clear_all, Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR, getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
 
         // Send notification
 

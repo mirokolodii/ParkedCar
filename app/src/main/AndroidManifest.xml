@@ -23,9 +23,12 @@
 
         <receiver
             android:name=".services.BluetoothReceiver"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
+                <!--<action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />-->
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
@@ -35,8 +38,7 @@
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC4fU_XfN42pqEUAsGvzNsPYM_ENu7h614"/>
-
+            android:value="AIzaSyC4fU_XfN42pqEUAsGvzNsPYM_ENu7h614" />
     </application>
 
 </manifest>

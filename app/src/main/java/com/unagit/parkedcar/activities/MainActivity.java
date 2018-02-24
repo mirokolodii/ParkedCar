@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         // Set TAG for logs as this class name
-        LOG_TAG = this.getClass().getName();
+        LOG_TAG = this.getClass().getSimpleName();
 
         myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements
     private void setTabIcons() {
         ArrayList<Integer> icons = new ArrayList<>();
         icons.add(Constants.Tabs.MAP_TAB_ICON);
-        icons.add(Constants.Tabs.PHOTOS_TAB_ICON);
+//        icons.add(Constants.Tabs.PHOTOS_TAB_ICON);
         icons.add(Constants.Tabs.BLUETOOTH_TAB_ICON);
         for (int position = 0; position < icons.size(); position++) {
             try {

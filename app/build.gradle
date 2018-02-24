@@ -34,7 +34,6 @@ dependencies {
      * Buttons from github.com/dmytrodanylyk
      */
     implementation 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
-//    implementation 'com.github.dmytrodanylyk:android-morphing-button:v1.0.0'
 
     // commit hash
     testImplementation 'junit:junit:4.12'
