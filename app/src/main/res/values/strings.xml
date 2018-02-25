@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">Parked Car</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings"><a href="">Bluetooth Settings</a></string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="park_car">Park Car</string>
     <string name="when_label">When:</string>
     <string name="when_info">2018-01-22, 11:45</string>
     <string name="location_label">Location:</string>
     <string name="location_info">near High Road 23</string>
-    <string name="bluetooth_view_info">Mark your car on a list of bluetooth devices below.</string>
-    <string name="bluetooth_view_info_extra">Don\'t see your car? Make sure it is paired with your device first. (Go to Bluetooth settings).</string>
+    <string name="bluetooth_view_info">Choose your car on a list of bluetooth devices below.</string>
+    <string name="bluetooth_view_info_extra">Don\'t see your car? Make sure it is paired with your phone first.</string>
     <string name="bluetooth_unavailable">Bluetooth is either unavailable or disabled.</string>
     <string name="Upload">Upload</string>
     <string name="Error">Error</string>

@@ -3,6 +3,8 @@ package com.unagit.parkedcar.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyBluetoothDevice;
@@ -87,6 +90,21 @@ public class BluetoothFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
+
+        // Open bluetooth settings on Bluetooth Settings link's click
+        TextView bluetoothSettingsLink = rootView.findViewById(R.id.bluetooth_settings_link);
+        bluetoothSettingsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                ComponentName cn = new ComponentName("com.android.settings",
+                        "com.android.settings.bluetooth.BluetoothSettings");
+                intent.setComponent(cn);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
         displayBluetoothDevices(rootView);
         return rootView;
     }

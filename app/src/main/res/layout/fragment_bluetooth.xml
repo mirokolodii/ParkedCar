@@ -18,6 +18,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/bluetooth_view_info_extra"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bluetooth_settings_link"
+            android:layout_gravity="right"
+            android:padding="10dp"
+            android:clickable="true"
+            android:text="@string/action_settings"/>
+
         <ListView
             android:id="@+id/bluetooth_list_view"
             android:layout_width="match_parent"

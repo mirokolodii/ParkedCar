@@ -77,11 +77,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Handler handler = new Handler();
     private Runnable runnable;
 
-//    private MorphingButton parkButton;
-
-    // TODO: remove this here and in startTimeUpdate on final version of app
-    private int i=0;
-
     private class BluetoothReceiverBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -175,20 +170,19 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     private void startTimeUpdate() {
-        handler.postDelayed(updateText(), 1 * 1000);
+        handler.post(updateText());
     }
 
     private Runnable updateText() {
         runnable = new Runnable() {
             @Override
             public void run() {
-                i++;
                 TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
                 String timeDifference = Helpers.timeDifference(parkedTime);
-                timeDifference = String.format(Locale.getDefault(),"%s ago. %d", timeDifference, i);
+                timeDifference = String.format(Locale.getDefault()," %s ago.", timeDifference);
                 parkedTimeTextView.setText(timeDifference);
 
-                handler.postDelayed(this, 1 * 1000);
+                handler.postDelayed(this, 60 * 1000);
             }
         };
         return runnable;
