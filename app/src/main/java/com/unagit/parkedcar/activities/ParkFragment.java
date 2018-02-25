@@ -162,6 +162,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBluetoothReceiverBroadcastReceiver, intentFilter);
 
         if(googleMap != null) {
+            showProgressBar(true);
             updateUI();
         }
     }
@@ -215,8 +216,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                     ParkFragment.this);
         }
         setAnimation(getView(), parkButton);
-        View progressBar = getView().findViewById(R.id.indeterminateBar);
-        progressBar.setVisibility(View.INVISIBLE);
+        showProgressBar(false);
     }
 
     /**
@@ -235,8 +235,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
                 parkButton.setEnabled(false);
                 parkButton.setText("Working...");
-                View progressBar = getView().findViewById(R.id.indeterminateBar);
-                progressBar.setVisibility(View.VISIBLE);
+                showProgressBar(true);
                 if (isParked) {
                     isParked = false;
                     mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
@@ -425,6 +424,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private int DPToPixels(int sizeInDp) {
         float scale = getResources().getDisplayMetrics().density;
         return (int) (sizeInDp*scale + 0.5f);
+    }
+
+    private void showProgressBar(Boolean show) {
+        getView().findViewById(R.id.indeterminateBar).setVisibility(
+                show ? View.VISIBLE : View.INVISIBLE
+        );
     }
 
 }

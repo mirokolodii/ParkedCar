@@ -14,7 +14,7 @@
         android:orientation="vertical">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="4dp">
+            android:layout_height="6dp">
             <ProgressBar
                 android:id="@+id/indeterminateBar"
                 android:visibility="invisible"
@@ -27,8 +27,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             style="@style/ParkButton"
             android:id="@+id/park_car"
             android:text="@string/park_car" />
@@ -38,85 +38,20 @@
             android:id="@+id/park_info_container"
             android:orientation="vertical"
             android:gravity="center"
-            android:visibility="gone"
-            android:layout_marginBottom="8dp"
+            android:visibility="visible"
+            android:layout_marginBottom="15dp"
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/park_type_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Parked automatically"/>
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/park_time_info"
-                android:text="12 hours, 23 min ago" />
+                android:id="@+id/park_time_info" />
         </LinearLayout>
-        <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:gravity="center"-->
-        <!--android:orientation="vertical">-->
-        <!--<Button-->
-        <!--android:layout_width="200dp"-->
-        <!--android:maxWidth="200dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="#ff3232"-->
-        <!--android:id="@+id/park_car"-->
-
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:text="@string/park_car"/>-->
-        <!--<LinearLayout-->
-        <!--android:visibility="visible"-->
-        <!--android:id="@+id/parking_information"-->
-        <!--android:orientation="vertical"-->
-        <!--android:background="#af3232"-->
-
-        <!--android:gravity="center_vertical"-->
-        <!--android:layout_width="match_parent"-->
-
-
-        <!--android:layout_height="wrap_content">-->
-        <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-        <!--<TextView-->
-        <!--android:layout_width="0dp"-->
-        <!--android:maxLines="1"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="1"-->
-        <!--android:text="@string/when_label"/>-->
-        <!--<TextView-->
-        <!--android:layout_weight="2"-->
-        <!--android:maxLines="2"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/parked_time_textview"-->
-        <!--android:text="@string/when_info"/>-->
-        <!--</LinearLayout>-->
-        <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-        <!--<TextView-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="1"-->
-        <!--android:maxLines="1"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:text="@string/location_label"/>-->
-        <!--<TextView-->
-        <!--android:layout_weight="2"-->
-        <!--android:maxLines="2"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/location_info"/>-->
-        <!--</LinearLayout>-->
-        <!--</LinearLayout>-->
-        <!--</LinearLayout>-->
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
