@@ -200,17 +200,20 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     void updateUI() {
         refreshData();
-        Button parkButton = getView().findViewById(R.id.park_car);
-        parkButton.setEnabled(true);
-        if(isParked) {
-            // Set marker with parking location, which is stored in SharedPreferences
-            setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
-        } else {
-            mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
-                    ParkFragment.this);
+        View rootView = getView();
+        if(rootView != null) {
+            Button parkButton = rootView.findViewById(R.id.park_car);
+            parkButton.setEnabled(true);
+            if(isParked) {
+                // Set marker with parking location, which is stored in SharedPreferences
+                setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
+            } else {
+                mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
+                        ParkFragment.this);
+            }
+            setAnimation(getView(), parkButton);
+            showProgressBar(false);
         }
-        setAnimation(getView(), parkButton);
-        showProgressBar(false);
     }
 
     /**

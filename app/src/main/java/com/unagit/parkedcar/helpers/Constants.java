@@ -102,8 +102,8 @@ public final class Constants {
     }
 
     public static class ParkButtonPadding {
-        public static final int[] BIG_PORTRAIT = new int[]{80, 40, 80, 40};
-        public static final int[] SMALL_PORTRAIT = new int[]{50, 20, 50, 20};
+        public static final int[] BIG_PORTRAIT = new int[]{60, 30, 70, 30};
+        public static final int[] SMALL_PORTRAIT = new int[]{40, 20, 50, 20};
         public static final int[] BIG_LANDSCAPE = new int[]{20, 40, 20, 40};
         public static final int[] SMALL_LANDSCAPE = new int[]{50, 20, 50, 20};
 
