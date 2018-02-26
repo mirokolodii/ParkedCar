@@ -27,11 +27,12 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     /**
-     * Notify ViewPager to reload Fragment, when Fragment is DisabledBluetoothFragment
+     * Notify ViewPager to reload Fragment, when Fragment is DisabledBluetoothFragment or BluetoothFragment
      */
     @Override
     public int getItemPosition(Object object) {
-        if (object.getClass().equals(DisabledBluetoothFragment.class)) {
+        if (object.getClass().equals(DisabledBluetoothFragment.class)
+                || object.getClass().equals(BluetoothFragment.class)) {
             return POSITION_NONE;
         }
         return super.getItemPosition(object);

@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements
 //                        myBluetoothManager.enableBluetoothRequest();
 //                    }
 //                }
-                updateBluetoothFragment();
+                verifyBluetoothSetup();
             }
 
             @Override
@@ -177,15 +177,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, "MainActivity: onStart");
         updateBluetoothFragment();
+        verifyBluetoothSetup();
         registerEnableBluetoothBroadcastReceiver(true);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         registerEnableBluetoothBroadcastReceiver(false);
     }
 
@@ -200,18 +202,24 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateBluetoothFragment() {
-        if(tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
+    private void verifyBluetoothSetup() {
+        if (tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
             if (!myBluetoothManager.isBluetoothAvailable()) { /* Bluetooth is not available */
                 myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
             } else if (!myBluetoothManager.isBluetoothEnabled()) { /* Bluetooth is disabled */
                 myBluetoothManager.enableBluetoothRequest();
-            } else { /* Bluetooth is enabled */
-                mSectionsPagerAdapter.notifyDataSetChanged();
-                setTabIcons();
             }
         }
     }
+
+    private void updateBluetoothFragment() {
+//        if (tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
+            mSectionsPagerAdapter.notifyDataSetChanged();
+            setTabIcons();
+//        }
+    }
+
+
 
     /**
      * setTabIcons:
