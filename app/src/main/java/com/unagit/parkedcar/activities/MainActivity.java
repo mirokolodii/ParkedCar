@@ -2,8 +2,12 @@ package com.unagit.parkedcar.activities;
 
 import android.app.NotificationManager;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -16,7 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyBluetoothManager;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
@@ -26,12 +29,30 @@ import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.helpers.ZoomOutPageTransformer;
 
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
         MyLocationManager.MyLocationManagerCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
         ParkFragment.ParkFragmentUIUpdateListener {
+
+    public class EnableBluetoothBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                Integer state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+                if(state.equals(BluetoothAdapter.STATE_ON)
+                || state.equals(BluetoothAdapter.STATE_OFF)) {
+                    Log.d(LOG_TAG, "EnableBluetoothBroadcastReceiver is triggered...");
+                    Log.d(LOG_TAG, "Bluetooth status has changed to either STATE_ON or STATE_OFF");
+                    updateBluetoothFragment();
+                }
+            }
+        }
+    }
 
     public static String LOG_TAG;
 
@@ -72,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements
      */
     private MyLocationManager myLocationManager;
     Location currentLocation;
+
+    private EnableBluetoothBroadcastReceiver mEnableBluetoothBroadcastReceiver = new EnableBluetoothBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,13 +151,14 @@ public class MainActivity extends AppCompatActivity implements
                  * 1. Bluetooth is supported by a device. If not - display dialog.
                  * 2. Bluetooth is enabled. If not - send request to enable Bluetooth.
                  */
-                if (tab.getPosition() == Constants.Tabs.BLUETOOTH_TAB) {
-                    if (!myBluetoothManager.isBluetoothAvailable()) {
-                        myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
-                    } else if (!myBluetoothManager.isBluetoothEnabled()) {
-                        myBluetoothManager.enableBluetoothRequest();
-                    }
-                }
+//                if (tab.getPosition() == Constants.Tabs.BLUETOOTH_TAB) {
+//                    if (!myBluetoothManager.isBluetoothAvailable()) {
+//                        myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
+//                    } else if (!myBluetoothManager.isBluetoothEnabled()) {
+//                        myBluetoothManager.enableBluetoothRequest();
+//                    }
+//                }
+                updateBluetoothFragment();
             }
 
             @Override
@@ -149,6 +173,44 @@ public class MainActivity extends AppCompatActivity implements
         };
 
         tabLayout.addOnTabSelectedListener(tb);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBluetoothFragment();
+        registerEnableBluetoothBroadcastReceiver(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        registerEnableBluetoothBroadcastReceiver(false);
+    }
+
+    private void registerEnableBluetoothBroadcastReceiver(Boolean register) {
+        if(register) {
+            // Register receiver
+            IntentFilter enableBluetoothIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+            registerReceiver(mEnableBluetoothBroadcastReceiver, enableBluetoothIntentFilter);
+        } else {
+            // Unregister receiver
+            unregisterReceiver(mEnableBluetoothBroadcastReceiver);
+        }
+    }
+
+    private void updateBluetoothFragment() {
+        if(tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
+            if (!myBluetoothManager.isBluetoothAvailable()) { /* Bluetooth is not available */
+                myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
+            } else if (!myBluetoothManager.isBluetoothEnabled()) { /* Bluetooth is disabled */
+                myBluetoothManager.enableBluetoothRequest();
+            } else { /* Bluetooth is enabled */
+                mSectionsPagerAdapter.notifyDataSetChanged();
+                setTabIcons();
+            }
+        }
     }
 
     /**
@@ -252,21 +314,21 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             // Callback from 'Enable Bluetooth' dialog
-            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT:
-                switch (resultCode) {
-                    case RESULT_OK: // User enabled bluetooth
-                        /**
-                         * Refresh Bluetooth tab so that Bluetooth fragment is shown
-                         * instead of DisabledBluetoothFragment
-                         */
-                        Log.d(LOG_TAG, "User has enabled bluetooth.");
-                        mSectionsPagerAdapter.notifyDataSetChanged();
-                        setTabIcons();
-                        break;
-                    case RESULT_CANCELED: // User cancelled
-                        Log.d(LOG_TAG, "User has NOT enabled bluetooth.");
-                        break;
-                }
+//            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT:
+//                switch (resultCode) {
+//                    case RESULT_OK: // User enabled bluetooth
+//                        /**
+//                         * Refresh Bluetooth tab so that Bluetooth fragment is shown
+//                         * instead of DisabledBluetoothFragment
+//                         */
+//                        Log.d(LOG_TAG, "User has enabled bluetooth.");
+//                        mSectionsPagerAdapter.notifyDataSetChanged();
+//                        setTabIcons();
+//                        break;
+//                    case RESULT_CANCELED: // User cancelled
+//                        Log.d(LOG_TAG, "User has NOT enabled bluetooth.");
+//                        break;
+//                }
             case Constants.Requests.ENABLE_LOCATION_REQUEST_RESULT:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled location
