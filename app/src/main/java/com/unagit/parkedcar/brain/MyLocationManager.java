@@ -33,7 +33,7 @@ import com.unagit.parkedcar.helpers.Constants;
 
 import static com.unagit.parkedcar.helpers.Constants.Location.LOCATION_DISABLED;
 import static com.unagit.parkedcar.helpers.Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION;
-import static com.unagit.parkedcar.helpers.Constants.Requests.REQUEST_CHECK_SETTINGS;
+import static com.unagit.parkedcar.helpers.Constants.Requests.ENABLE_LOCATION_REQUEST_RESULT;
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
@@ -129,7 +129,7 @@ public class MyLocationManager extends LocationCallback implements
                                 // and check the result in onActivityResult().
                                 // Show dialog to enable location.
                                 // Results will be passed to onActivityResult in activity
-                                resolvable.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS);
+                                resolvable.startResolutionForResult(activity, ENABLE_LOCATION_REQUEST_RESULT);
                             } catch (IntentSender.SendIntentException e) {
                                 // Ignore the error.
                             } catch (ClassCastException e) {

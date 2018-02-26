@@ -77,6 +77,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 //                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
                 action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
 
+
             // Get remote device
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             String deviceAddress = device.getAddress();
@@ -94,8 +95,11 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
                 }
                 // Get connection states
                 Integer connectionState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
+                Integer prevConnectionState = intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1);
                 Log.d(LOG_TAG, String.format("ConnectionState: %d", connectionState));
-                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED) { // device has been disconnected, we need to park
+                Log.d(LOG_TAG, String.format("Previous ConnectionState: %d", prevConnectionState));
+                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED
+                        && prevConnectionState == BluetoothAdapter.STATE_DISCONNECTING) { // device has been disconnected, we need to park
                     // Request current location
                     new MyLocationManager(null, context, this).requestCurrentLocation();
 

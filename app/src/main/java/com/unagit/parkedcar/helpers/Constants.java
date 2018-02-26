@@ -36,10 +36,10 @@ public final class Constants {
      */
     public static class Requests {
         // Request to enable bluetooth on a device
-        public static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST = 10;
+        public static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT = 10;
         public static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 1;
         // Request to check for 'Location enabled' in device' settings
-        public static final int REQUEST_CHECK_SETTINGS = 2;
+        public static final int ENABLE_LOCATION_REQUEST_RESULT = 2;
     }
 
     public static class ParkActions {
@@ -102,7 +102,7 @@ public final class Constants {
     }
 
     public static class ParkButtonPadding {
-        public static final int[] BIG_PORTRAIT = new int[]{90, 40, 90, 40};
+        public static final int[] BIG_PORTRAIT = new int[]{80, 40, 80, 40};
         public static final int[] SMALL_PORTRAIT = new int[]{50, 20, 50, 20};
         public static final int[] BIG_LANDSCAPE = new int[]{20, 40, 20, 40};
         public static final int[] SMALL_LANDSCAPE = new int[]{50, 20, 50, 20};

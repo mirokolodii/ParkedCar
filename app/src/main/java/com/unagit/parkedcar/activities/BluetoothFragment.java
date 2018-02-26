@@ -74,6 +74,8 @@ public class BluetoothFragment extends Fragment {
         myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
         devices = getPairedDevices();
         trackedDevices = myDefaultPreferenceManager.getDevices();
+
+        //TODO: remove log
         for (MyBluetoothDevice device : devices) {
             Log.d(LOG_TAG, device.getName() + ", " + device.getAddress());
         }
@@ -91,7 +93,7 @@ public class BluetoothFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
 
-        // Open bluetooth settings on Bluetooth Settings link's click
+        // Add click listener for Bluetooth settings link to open bluetooth settings
         TextView bluetoothSettingsLink = rootView.findViewById(R.id.bluetooth_settings_link);
         bluetoothSettingsLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +107,7 @@ public class BluetoothFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
         displayBluetoothDevices(rootView);
         return rootView;
     }
@@ -148,6 +151,7 @@ public class BluetoothFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //TODO: remove toast message
                 // Show id and position in toast message
                 String text = "Position: " + String.valueOf(position) + ". ID: " + String.valueOf(id);
                 Helpers.showToast(text, getContext());
@@ -162,13 +166,13 @@ public class BluetoothFragment extends Fragment {
                     tickImage.setImageResource(R.drawable.big_tick);
                     tickImage.setTag(R.drawable.big_tick);
                     trackedDevices.add(deviceAddress);
-                    Log.i(LOG_TAG,"trackedDevices: " + trackedDevices.toString());
                 } else {
                     tickImage.setImageResource(R.drawable.big_tick_unticked);
                     tickImage.setTag(R.drawable.big_tick_unticked);
                     trackedDevices.remove(deviceAddress);
-                    Log.i(LOG_TAG,"chosenDevices: " + trackedDevices.toString());
                 }
+                //TODO: remove log
+                Log.i(LOG_TAG,"chosenDevices: " + trackedDevices.toString());
             }
         });
     }

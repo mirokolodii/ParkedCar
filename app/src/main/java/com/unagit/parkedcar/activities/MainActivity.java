@@ -117,16 +117,16 @@ public class MainActivity extends AppCompatActivity implements
         setTabIcons();
 
 
-        /**
+        /*
          * Listener for TabLayout tabs selection changes
          */
         TabLayout.OnTabSelectedListener tb = new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                /**
+                /*
                  * When BLUETOOTH_TAB is selected - verify that:
-                 * 1. Bluetooth is supported by a device
-                 * 2. Bluetooth is enabled
+                 * 1. Bluetooth is supported by a device. If not - display dialog.
+                 * 2. Bluetooth is enabled. If not - send request to enable Bluetooth.
                  */
                 if (tab.getPosition() == Constants.Tabs.BLUETOOTH_TAB) {
                     if (!myBluetoothManager.isBluetoothAvailable()) {
@@ -241,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Handler for callbacks from other activities.
      * <p>
-     * requestCode == ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
+     * requestCode == ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT:
      * callback from activity to enable bluetooth on a device
      * <p>
-     * requestCode == REQUEST_CHECK_SETTINGS:
+     * requestCode == ENABLE_LOCATION_REQUEST_RESULT:
      * callback from request to enable location on this device
      */
     @Override
@@ -252,20 +252,22 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             // Callback from 'Enable Bluetooth' dialog
-            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST:
+            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled bluetooth
                         /**
-                         * Refresh Bluetooth tab so that Bluetooth fragment is shown there
+                         * Refresh Bluetooth tab so that Bluetooth fragment is shown
                          * instead of DisabledBluetoothFragment
                          */
+                        Log.d(LOG_TAG, "User has enabled bluetooth.");
                         mSectionsPagerAdapter.notifyDataSetChanged();
                         setTabIcons();
                         break;
                     case RESULT_CANCELED: // User cancelled
+                        Log.d(LOG_TAG, "User has NOT enabled bluetooth.");
                         break;
                 }
-            case Constants.Requests.REQUEST_CHECK_SETTINGS:
+            case Constants.Requests.ENABLE_LOCATION_REQUEST_RESULT:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled location
                         // Location is enabled. Trigger verification again

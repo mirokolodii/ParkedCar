@@ -9,9 +9,9 @@ import android.support.v7.app.AlertDialog;
 import com.unagit.parkedcar.helpers.Constants;
 
 /**
- * Created by a264889 on 31.01.2018.
+ * Class includes a set of helper methods to work with Bluetooth adapter.
+ *
  */
-
 public class MyBluetoothManager {
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     Activity activity;
@@ -21,19 +21,27 @@ public class MyBluetoothManager {
     }
 
     /**
-     * Helper methods for Bluetooth
+     * Returns a boolean informing, whether Bluetooth is available on a device.
+     * @return boolean
      */
     public boolean isBluetoothAvailable() {
         return (btAdapter != null);
     }
 
+    /**
+     * Returns a boolean informing, whether Bluetooth is enabled on a device.
+     * @return boolean
+     */
     public boolean isBluetoothEnabled() {
         return btAdapter.isEnabled();
     }
 
+    /**
+     * Requests user to enable Bluetooth on a device.
+     */
     public void enableBluetoothRequest() {
         Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        activity.startActivityForResult(enableBT, Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST);
+        activity.startActivityForResult(enableBT, Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT);
     }
 
     /**
