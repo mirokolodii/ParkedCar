@@ -146,16 +146,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     @Override
-    public void onResume() {
+    public void onStart() {
         //TODO: Remove this toast in final version of app
-        Helpers.showToast("ParkFragment.onResume() triggered.", getContext());
+        Helpers.showToast("ParkFragment.onStart() triggered.", getContext());
 
-        super.onResume();
-        // Register BroadcastReceiver
-        IntentFilter intentFilter = new IntentFilter(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
-        mBluetoothReceiverBroadcastReceiver = new BluetoothReceiverBroadcastReceiver();
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBluetoothReceiverBroadcastReceiver, intentFilter);
-
+        super.onStart();
+        registerBluetoothReceiver(true);
         if(googleMap != null) {
             showProgressBar(true);
             updateUI();
@@ -163,16 +159,27 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         stopTimeUpdate();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBluetoothReceiverBroadcastReceiver);
+        registerBluetoothReceiver(false);
     }
 
     private void startTimeUpdate() {
         handler.post(updateText());
     }
 
+    private void registerBluetoothReceiver(boolean register) {
+        if(register) {
+            // Register BroadcastReceiver
+            IntentFilter intentFilter = new IntentFilter(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+            mBluetoothReceiverBroadcastReceiver = new BluetoothReceiverBroadcastReceiver();
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBluetoothReceiverBroadcastReceiver, intentFilter);
+
+        } else {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBluetoothReceiverBroadcastReceiver);
+        }
+    }
     private Runnable updateText() {
         runnable = new Runnable() {
             @Override
