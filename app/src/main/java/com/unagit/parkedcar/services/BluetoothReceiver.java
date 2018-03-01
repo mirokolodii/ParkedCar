@@ -102,6 +102,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
                         && prevConnectionState == BluetoothAdapter.STATE_DISCONNECTING) { // device has been disconnected, we need to park
                     // Request current location
                     new MyLocationManager(null, context, this).requestCurrentLocation();
+                    Log.d(LOG_TAG, "BluetoothReceiver: disconnected, getting location.");
 
                 } else if (connectionState == BluetoothAdapter.STATE_CONNECTED
                         && prevConnectionState == BluetoothAdapter.STATE_CONNECTING) { // device has been connected, clear prev parking
@@ -116,6 +117,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
                     }
                     // 3. Send broadcast to update ParkFragment UI
                     sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
+
+                    Log.d(LOG_TAG, "BluetoothReceiver: connected, removing location.");
                 }
             }
         }

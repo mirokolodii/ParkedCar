@@ -55,7 +55,7 @@ public class BluetoothFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
 
         // Add click listener for Bluetooth settings link to open bluetooth settings
-        setBluetoothSettingsLinkClickListener();
+        setBluetoothSettingsLinkClickListener(rootView);
         displayBluetoothDevices(rootView);
         return rootView;
     }
@@ -63,8 +63,8 @@ public class BluetoothFragment extends Fragment {
     /**
      * Sets onClickListener, which opens Bluetooth settings on a device.
      */
-    private void setBluetoothSettingsLinkClickListener() {
-        TextView bluetoothSettingsLink = getView().findViewById(R.id.bluetooth_settings_link);
+    private void setBluetoothSettingsLinkClickListener(View rootView) {
+        TextView bluetoothSettingsLink = rootView.findViewById(R.id.bluetooth_settings_link);
         bluetoothSettingsLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
