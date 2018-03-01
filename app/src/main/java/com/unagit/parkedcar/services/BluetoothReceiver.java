@@ -85,27 +85,28 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
             // Proceed further only if remote bluetooth device is tracked by user
             if(isTrackedDevice(deviceAddress)) {
+
                 Log.d(LOG_TAG, "Device is tracked");
-                // List all extras in bundle
-                Bundle bundle = intent.getExtras();
-                for (String key : bundle.keySet()) {
-                    Object value = bundle.get(key);
-                    Log.d(LOG_TAG, String.format("%s: %s (%s)",
-                            key, value, value.getClass().getName()));
-                }
+//                // List all extras in bundle
+//                Bundle bundle = intent.getExtras();
+//                for (String key : bundle.keySet()) {
+//                    Object value = bundle.get(key);
+//                    Log.d(LOG_TAG, String.format("%s: %s (%s)",
+//                            key, value, value.getClass().getName()));
+//                }
+
                 // Get connection states
                 Integer connectionState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
                 Integer prevConnectionState = intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1);
                 Log.d(LOG_TAG, String.format("ConnectionState: %d", connectionState));
                 Log.d(LOG_TAG, String.format("Previous ConnectionState: %d", prevConnectionState));
-                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED
-                        && prevConnectionState == BluetoothAdapter.STATE_DISCONNECTING) { // device has been disconnected, we need to park
+                if (connectionState == BluetoothAdapter.STATE_DISCONNECTED /* 0 */
+                        && !(prevConnectionState == BluetoothAdapter.STATE_CONNECTING /* 1 */)) { // device has been disconnected, we need to park
                     // Request current location
                     new MyLocationManager(null, context, this).requestCurrentLocation();
                     Log.d(LOG_TAG, "BluetoothReceiver: disconnected, getting location.");
 
-                } else if (connectionState == BluetoothAdapter.STATE_CONNECTED
-                        && prevConnectionState == BluetoothAdapter.STATE_CONNECTING) { // device has been connected, clear prev parking
+                } else if (connectionState == BluetoothAdapter.STATE_CONNECTED /* 2 */ ) { // device has been connected, clear prev parking
                     // 1. clear location
                     new MyDefaultPreferenceManager(context).removeLocation();
                     // 2. clear notification
