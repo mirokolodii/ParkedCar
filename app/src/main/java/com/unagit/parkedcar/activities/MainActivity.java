@@ -245,6 +245,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void locationCallback(int result, Location location) {
+        //TODO: remove log
+        Log.d(LOG_TAG, "MainActivity.locationCallback action: " + result);
+//        Log.d(LOG_TAG, "Location: " + location.toString());
+
         switch (result) {
             case (Constants.Location.LOCATION_DISABLED):
                 Helpers.showToast("Location is disabled.", this);
@@ -257,6 +261,22 @@ public class MainActivity extends AppCompatActivity implements
             case (Constants.Location.LOCATION_RECEIVED):
                 handleLocationReceivedAction(location);
                 break;
+            case (Constants.Location.LOCATION_NOT_RECEIVED):
+
+                if (location == null) {
+                    location = new Location("");
+                }
+                // Can't get location. Set last known location instead in park fragment and show
+                // dialog to inform the user about the fact.
+                // Set explicitly ParkFragment's action to REQUEST_CURRENT_LOCATION, as can't
+                // get precise location from the device anyway, so most what we can do
+                // is to set last known location as a current location on a map.
+                mParkAction = Constants.ParkActions.REQUEST_CURRENT_LOCATION;
+                handleLocationReceivedAction(location);
+                showLocationNotAvailableDialog();
+
+                break;
+
         }
     }
 
@@ -271,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void handleLocationReceivedAction(Location location) {
         currentLocation = location;
+//        Log.d(LOG_TAG, "handleLocationReceivedAction.currentLocation: " + location.toString());
         if (location == null) {
             Helpers.showToast("Oops, last location is not known. Trying again...", this);
             // Try again to get location
@@ -295,19 +316,38 @@ public class MainActivity extends AppCompatActivity implements
                     break;
 
                 case (Constants.ParkActions.REQUEST_CURRENT_LOCATION):
-                    if (mParkFragment != null) {
-                        mParkFragment.setMarkerOnMap(
-                                location.getLatitude(),
-                                location.getLongitude(),
-                                Constants.ParkActions.SET_CURRENT_LOCATION
-                        );
-                    }
+                    setParkFragmentCurrentLocation(location);
             }
         } else {
             throw new RuntimeException("MainActivity.handleLocationReceivedAction: mParkAction is null.");
         }
     }
 
+    private void setParkFragmentCurrentLocation(Location location) {
+        if (mParkFragment != null) {
+            mParkFragment.setMarkerOnMap(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    Constants.ParkActions.SET_CURRENT_LOCATION
+            );
+        }
+    }
+
+    private void showLocationNotAvailableDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage("Sorry... unable to receive accurate location from the device in " +
+                        "reasonable amount of time. You may verify device's location settings " +
+                        "and try again afterwards.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
     /**
      * Handler for callbacks from other activities.
      * <p>

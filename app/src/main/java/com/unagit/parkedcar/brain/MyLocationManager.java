@@ -8,6 +8,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +19,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -61,13 +63,18 @@ public class MyLocationManager extends LocationCallback implements
     private Context context;
     private GoogleApiClient mGoogleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
+    private Location lastKnownLocation;
 
     // We want to have accuracy <= to desiredLocationAccuracy,
     // but try to achieve this accuracy numberOfLocationUpdates times,
     // otherwise just return the latest one.
-    private final int desiredLocationAccuracy = 20;
-    private final int startingNumberOfLocationUpdatesLeft = 10;
-    private int numberOfLocationUpdatesLeft = 10;
+    private int desiredLocationAccuracy = 20;
+    private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 5;
+    private final int STARTING_NUMBER_OF_LOCATION_UPDATES = 2;
+    private int numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
+    private final int EXPIRATION_DURATION = 20000;
+
+    private Handler mLocationHandler = new Handler();
 
     /**
      *
@@ -155,15 +162,16 @@ public class MyLocationManager extends LocationCallback implements
      */
     private void verifyPermissionGranted() {
         // Is location permission granted to our app?
-        int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
-            // Request last known location
-            requestCurrentLocation();
+        if(context != null) {
+            int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
+                // Request last known location
+                requestCurrentLocation();
 
-        } else { // Ask for permission
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
+            } else { // Ask for permission
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
+            }
         }
-
     }
 
     /**
@@ -182,6 +190,7 @@ public class MyLocationManager extends LocationCallback implements
 //                          callback.locationCallback(MyLocationManager.LOCATION_RECEIVED, location);
                             // Last location is known, which is a good first step in getting location.
                             // Now let's refresh it to the latest one
+                            lastKnownLocation = location;
                             buildGoogleApiClient();
                         }
                     });
@@ -201,6 +210,7 @@ public class MyLocationManager extends LocationCallback implements
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+
     }
 
     /**
@@ -210,18 +220,51 @@ public class MyLocationManager extends LocationCallback implements
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+//        numberOfLocationUpdatesLeft = startingNumberOfLocationUpdates;
         // Set location request
         LocationRequest mLocationRequest = new LocationRequest()
-            .setInterval(1000)
-            .setFastestInterval(500)
-            .setNumUpdates(2);
+                .setInterval(1000)
+                .setFastestInterval(500)
+                .setNumUpdates(20)
+                ;
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); /* We want highest possible accuracy */
         int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context /*this.activity.getApplicationContext()*/);
             // Callback is onLocationResult method in this class
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, this, null);
+            mLocationHandler.postDelayed(locationRunnable, EXPIRATION_DURATION);
         }
+    }
+
+    /**
+     * If location hasn't been received after expirationDuration milliseconds, send
+     * lastKnownLocation instead with LOCATION_NOT_RECEIVED action.
+     */
+    private final Runnable locationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            stopLocationUpdates();
+            if(callback != null) {
+                callback.locationCallback(Constants.Location.LOCATION_NOT_RECEIVED, lastKnownLocation);
+            }
+        }
+    };
+
+    /**
+     * Callback from GoogleApiClient
+     */
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(LOG_TAG, "onConnectionSuspended is triggered");
+    }
+
+    /**
+     * Callback from GoogleApiClient
+     */
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(LOG_TAG, "onConnectionFailed is triggered");
     }
 
     /**
@@ -233,35 +276,55 @@ public class MyLocationManager extends LocationCallback implements
     @Override
     public void onLocationResult(LocationResult locationResult) {
         float accuracy = locationResult.getLastLocation().getAccuracy();
+        Log.d(LOG_TAG, "Enter onLocationResult");
         Log.d(LOG_TAG, "Received location with accuracy: " + accuracy);
         Log.d(LOG_TAG, "Number of location updates left: " + numberOfLocationUpdatesLeft);
+//        numberOfLocationUpdatesLeft--;
+        Log.d(LOG_TAG, "End onLocationResult");
+
+        if(accuracy <= desiredLocationAccuracy) {
+            stopLocationUpdates();
+            // Return location back to the object, which requested location
+            callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
+        } else if(numberOfLocationUpdatesLeft > 1) {
+            numberOfLocationUpdatesLeft--;
+        } else {
+            desiredLocationAccuracy += DESIRED_LOCATION_ACCURACY_INCREMENT;
+            numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
+        }
+
+//        mLocationHandler.removeCallbacksAndMessages(null);
+
 //        if(accuracy < desiredLocationAccuracy || numberOfLocationUpdatesLeft <= 0) {
 //            numberOfLocationUpdatesLeft = startingNumberOfLocationUpdatesLeft;
-//            // We don't want any new location updates
-//            mFusedLocationClient.removeLocationUpdates(this);
-//            mGoogleApiClient.disconnect();
-//            mFusedLocationClient = null;
+//        stopLocationUpdates();
 //            // Return location back to the object, which requested location
 //            callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
 //        } else {
-            numberOfLocationUpdatesLeft--;
+
 //        }
 
     }
 
-    /**
-     * Callback from GoogleApiClient
-     */
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onLocationAvailability(LocationAvailability locationAvailability) {
+        super.onLocationAvailability(locationAvailability);
+        Log.d(LOG_TAG, "Enter onLocationAvailability");
 
+        if(locationAvailability.isLocationAvailable()){
+            Log.d(LOG_TAG, "onLocationAvailability: available");
+        } else {
+            Log.d(LOG_TAG, "onLocationAvailability: NOT available");
+        }
+        Log.d(LOG_TAG, "End onLocationAvailability");
     }
 
-    /**
-     * Callback from GoogleApiClient
-     */
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+    private void stopLocationUpdates() {
+        mLocationHandler.removeCallbacksAndMessages(null);
+        // We don't want any new location updates
+        mFusedLocationClient.removeLocationUpdates(this);
+        mGoogleApiClient.disconnect();
+        mFusedLocationClient = null;
     }
+
 }

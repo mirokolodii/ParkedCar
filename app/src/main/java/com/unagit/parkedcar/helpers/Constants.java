@@ -79,6 +79,7 @@ public final class Constants {
         public static final int LOCATION_DISABLED = 1;
         public static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
         public static final int LOCATION_RECEIVED = 3;
+        public static final int LOCATION_NOT_RECEIVED = 4;
     }
 
     public static class ParkTypeText {

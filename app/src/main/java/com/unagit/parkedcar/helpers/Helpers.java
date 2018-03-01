@@ -13,7 +13,7 @@ import java.util.Locale;
 
 public class Helpers {
     public static void showToast(String text, Context context) {
-        int duration = Toast.LENGTH_SHORT;
+        int duration = Toast.LENGTH_LONG;
         Toast.makeText(context, text, duration).show();
     }
 

@@ -83,7 +83,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             String action = intent.getAction();
             int result = intent.getIntExtra(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT, -1);
             if (result == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
-                Helpers.showToast("Auto-parking is cleared.", context);
+                Helpers.showToast("Parking is cleared.", context);
             } else if (result == Constants.ParkActions.SET_PARKING_LOCATION) {
                 Helpers.showToast("Auto-parking is set.", context);
             }
@@ -152,8 +152,9 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
         super.onStart();
         registerBluetoothReceiver(true);
+        showProgressBar(true);
         if(googleMap != null) {
-            showProgressBar(true);
+//            showProgressBar(true);
             updateUI();
         }
     }
@@ -210,7 +211,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         View rootView = getView();
         if(rootView != null) {
             Button parkButton = rootView.findViewById(R.id.park_car);
-            parkButton.setEnabled(true);
+//            parkButton.setEnabled(true);
+            enableParkButton(false);
             if(isParked) {
                 // Set marker with parking location, which is stored in SharedPreferences
                 setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
@@ -219,7 +221,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                         ParkFragment.this);
             }
             setAnimation(getView(), parkButton);
-            showProgressBar(false);
+
+//            showProgressBar(false);
         }
     }
 
@@ -339,6 +342,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 setParkButtonPadding(parkButton, Constants.ParkButtonPadding.BIG_LANDSCAPE);
             }
             parkInfoContainer.setVisibility(View.GONE);
+//            showProgressBar(false);
         }
     }
 
@@ -350,7 +354,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 DPToPixels(padding[3])
         );
     }
-
 
     private void setMapCallback() {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -403,7 +406,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                     .newLatLng(latLng), 1* 1000 /* 1 sec. */, null);
 
             startTimeUpdate();
+
         }
+        showProgressBar(false);
+        enableParkButton(true);
     }
 
     private void clearMap() {
@@ -434,6 +440,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         getView().findViewById(R.id.indeterminateBar).setVisibility(
                 show ? View.VISIBLE : View.INVISIBLE
         );
+    }
+
+    private void enableParkButton(Boolean enable) {
+        getView().findViewById(R.id.park_car).setEnabled(enable);
     }
 
 }
