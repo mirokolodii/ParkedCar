@@ -72,7 +72,7 @@ public class MyLocationManager extends LocationCallback implements
     private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 10;
     private final int STARTING_NUMBER_OF_LOCATION_UPDATES = 2;
     private int numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
-    private final int EXPIRATION_DURATION = 30000;
+    private final int EXPIRATION_DURATION = 20000;
 
     private Handler mLocationHandler = new Handler();
 
