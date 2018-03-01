@@ -1,6 +1,5 @@
 package com.unagit.parkedcar.activities;
 
-
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,12 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.unagit.parkedcar.R;
 
-
 /**
- * Fragment for Bluetooth states unavailable or disabled
+ * Fragment, used in cases, where Bluetooth is either unavailable or disabled.
  */
 public class DisabledBluetoothFragment extends Fragment {
     public DisabledBluetoothFragment() {
@@ -32,6 +29,7 @@ public class DisabledBluetoothFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_disabled_bluetooth, container, false);
 
+        // Set a click listener, which opens Bluetooth settings for a device.
         TextView bluetoothSettingsLink = rootView.findViewById(R.id.bluetooth_settings_link);
         bluetoothSettingsLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +45,5 @@ public class DisabledBluetoothFragment extends Fragment {
         });
 
         return rootView;
-
     }
-
 }
