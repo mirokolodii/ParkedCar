@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private EnableBluetoothBroadcastReceiver mEnableBluetoothBroadcastReceiver = new EnableBluetoothBroadcastReceiver();
 
+    private boolean isInFront;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -183,12 +185,14 @@ public class MainActivity extends AppCompatActivity implements
         updateBluetoothFragment();
         verifyBluetoothSetup();
         registerEnableBluetoothBroadcastReceiver(true);
+        isInFront = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         registerEnableBluetoothBroadcastReceiver(false);
+        isInFront = false;
     }
 
     private void registerEnableBluetoothBroadcastReceiver(Boolean register) {
@@ -245,6 +249,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void locationCallback(int result, Location location) {
+
+        if(!isInFront) {
+            return;
+        }
+
         //TODO: remove log
         Log.d(LOG_TAG, "MainActivity.locationCallback action: " + result);
 //        Log.d(LOG_TAG, "Location: " + location.toString());
@@ -334,20 +343,21 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showLocationNotAvailableDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage("Sorry... unable to receive accurate location from the device in " +
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.setTitle("Error");
+        dialog.setMessage("Sorry... unable to receive accurate location from the device in " +
                         "reasonable amount of time. You may verify device's location settings " +
-                        "and try again afterwards.")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        "and try again afterwards.");
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing
                     }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+                });
+                dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        dialog.show();
     }
+
     /**
      * Handler for callbacks from other activities.
      * <p>

@@ -68,19 +68,21 @@ public class MyLocationManager extends LocationCallback implements
     // We want to have accuracy <= to desiredLocationAccuracy,
     // but try to achieve this accuracy numberOfLocationUpdates times,
     // otherwise just return the latest one.
-    private int desiredLocationAccuracy = 20;
-    private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 10;
+    private int desiredLocationAccuracy = 2;
+    private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 1;
     private final int STARTING_NUMBER_OF_LOCATION_UPDATES = 2;
     private int numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
     private final int EXPIRATION_DURATION = 20000;
-
+    private final int LOCATION_REQUEST_INTERVAL = 1000;
+    private final int LOCATION_REQUEST_FASTEST_INTERVAL = 500;
+    private final int LOCATION_REQUEST_NUM_UPDATES = 20;
     private Handler mLocationHandler = new Handler();
 
     /**
      *
      * @param activity Only required to ask user to grand permission, otherwise can be null
      * @param context Only required, if activity is not provided
-     * @param callback Returns location result and location itself
+     * @param callback Returns location status result and location itself
      */
     public MyLocationManager(@Nullable Activity activity, @Nullable Context context, MyLocationManagerCallback callback) {
         this.activity = activity;
@@ -169,7 +171,10 @@ public class MyLocationManager extends LocationCallback implements
                 requestCurrentLocation();
 
             } else { // Ask for permission
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
+                if(activity != null) {
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
+                }
+
             }
         }
     }
@@ -223,10 +228,9 @@ public class MyLocationManager extends LocationCallback implements
 //        numberOfLocationUpdatesLeft = startingNumberOfLocationUpdates;
         // Set location request
         LocationRequest mLocationRequest = new LocationRequest()
-                .setInterval(1000)
-                .setFastestInterval(500)
-                .setNumUpdates(20)
-                ;
+                .setInterval(LOCATION_REQUEST_INTERVAL)
+//                .setFastestInterval(LOCATION_REQUEST_FASTEST_INTERVAL)
+                .setNumUpdates(LOCATION_REQUEST_NUM_UPDATES);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); /* We want highest possible accuracy */
         int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
@@ -238,12 +242,14 @@ public class MyLocationManager extends LocationCallback implements
     }
 
     /**
-     * If location hasn't been received after expirationDuration milliseconds, send
-     * lastKnownLocation instead with LOCATION_NOT_RECEIVED action.
+     * If location hasn't been received after expirationDuration milliseconds,
+     * send lastKnownLocation instead with LOCATION_NOT_RECEIVED action.
      */
     private final Runnable locationRunnable = new Runnable() {
         @Override
         public void run() {
+            //TODO: remove log
+            Log.d(LOG_TAG, "location client expired. Disconnecting client...");
             stopLocationUpdates();
             if(callback != null) {
                 callback.locationCallback(Constants.Location.LOCATION_NOT_RECEIVED, lastKnownLocation);
@@ -252,7 +258,7 @@ public class MyLocationManager extends LocationCallback implements
     };
 
     /**
-     * Callback from GoogleApiClient
+     * Callback from GoogleApiClient.
      */
     @Override
     public void onConnectionSuspended(int i) {
@@ -260,7 +266,7 @@ public class MyLocationManager extends LocationCallback implements
     }
 
     /**
-     * Callback from GoogleApiClient
+     * Callback from GoogleApiClient.
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

@@ -377,7 +377,9 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         clearMap();
 
         // Show current location on a map
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        Context context = getContext();
+        if (context != null
+                && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             googleMap.setMyLocationEnabled(true);
         }
