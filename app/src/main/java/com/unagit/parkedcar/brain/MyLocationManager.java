@@ -68,15 +68,16 @@ public class MyLocationManager extends LocationCallback implements
     // We want to have accuracy <= to desiredLocationAccuracy,
     // but try to achieve this accuracy numberOfLocationUpdates times,
     // otherwise just return the latest one.
-    private int desiredLocationAccuracy = 2;
-    private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 1;
-    private final int STARTING_NUMBER_OF_LOCATION_UPDATES = 2;
-    private int numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
+    private int desiredLocationAccuracy = 20;
+    private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 10;
+//    private final int STARTING_NUMBER_OF_LOCATION_UPDATES = 2;
+//    private int numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
     private final int EXPIRATION_DURATION = 20000;
     private final int LOCATION_REQUEST_INTERVAL = 1000;
-    private final int LOCATION_REQUEST_FASTEST_INTERVAL = 500;
+//    private final int LOCATION_REQUEST_FASTEST_INTERVAL = 500;
     private final int LOCATION_REQUEST_NUM_UPDATES = 20;
     private Handler mLocationHandler = new Handler();
+    private boolean isFastResult = false;
 
     /**
      *
@@ -84,7 +85,8 @@ public class MyLocationManager extends LocationCallback implements
      * @param context Only required, if activity is not provided
      * @param callback Returns location status result and location itself
      */
-    public MyLocationManager(@Nullable Activity activity, @Nullable Context context, MyLocationManagerCallback callback) {
+    public MyLocationManager(@Nullable Activity activity, @Nullable Context context,
+                             MyLocationManagerCallback callback) {
         this.activity = activity;
         if(activity == null) {
             this.context = context;
@@ -96,6 +98,15 @@ public class MyLocationManager extends LocationCallback implements
         this.callback = callback;
     }
 
+    public void getLocation(boolean verifyPermissions, boolean fastResult) {
+        isFastResult = fastResult;
+        if(verifyPermissions) {
+            verifyLocationEnabled();
+        } else {
+            requestCurrentLocation();
+        }
+    }
+
     /**
      * Verifies, whether location is enabled.
      * If enabled - trigger {@link #verifyPermissionGranted()}
@@ -103,7 +114,7 @@ public class MyLocationManager extends LocationCallback implements
      * if can be resolved - show dialog and catch result in activity's {@link MainActivity#onActivityResult(int, int, Intent)}
      * if can't be resolved - trigger a callback with corresponding status
      */
-    public void verifyLocationEnabled() {
+    private void verifyLocationEnabled() {
         // we are interested in high accuracy only
         LocationRequest mLocationRequestHighAccuracy =
                 LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -183,7 +194,7 @@ public class MyLocationManager extends LocationCallback implements
      * Request for latest location.
      * If received, build and connect GoogleApiClient with {@link #buildGoogleApiClient()}
      */
-    public void requestCurrentLocation(/*final Context context*/) {
+    private void requestCurrentLocation(/*final Context context*/) {
         FusedLocationProviderClient mFusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(context /*this.activity.getApplicationContext()*/);
         try {
@@ -284,19 +295,20 @@ public class MyLocationManager extends LocationCallback implements
         float accuracy = locationResult.getLastLocation().getAccuracy();
         Log.d(LOG_TAG, "Enter onLocationResult");
         Log.d(LOG_TAG, "Received location with accuracy: " + accuracy);
-        Log.d(LOG_TAG, "Number of location updates left: " + numberOfLocationUpdatesLeft);
+//        Log.d(LOG_TAG, "Number of location updates left: " + numberOfLocationUpdatesLeft);
 //        numberOfLocationUpdatesLeft--;
         Log.d(LOG_TAG, "End onLocationResult");
 
-        if(accuracy <= desiredLocationAccuracy) {
+
+        if(isFastResult || accuracy <= desiredLocationAccuracy) {
             stopLocationUpdates();
             // Return location back to the object, which requested location
             callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
-        } else if(numberOfLocationUpdatesLeft > 1) {
-            numberOfLocationUpdatesLeft--;
+//        } else if(numberOfLocationUpdatesLeft > 1) {
+//            numberOfLocationUpdatesLeft--;
         } else {
             desiredLocationAccuracy += DESIRED_LOCATION_ACCURACY_INCREMENT;
-            numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
+//            numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
         }
 
 //        mLocationHandler.removeCallbacksAndMessages(null);
@@ -311,6 +323,8 @@ public class MyLocationManager extends LocationCallback implements
 //        }
 
     }
+
+
 
     @Override
     public void onLocationAvailability(LocationAvailability locationAvailability) {

@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -263,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (result) {
             case (Constants.Location.LOCATION_DISABLED):
                 Helpers.showToast("Location is disabled.", this);
-                this.finish();
+                showLocationDisabledDialog();
                 break;
             case (Constants.Location.LOCATION_PERMISSION_NOT_GRANTED):
                 Helpers.showToast("Location permission is not granted.", this);
@@ -306,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements
         if (location == null) {
             Helpers.showToast("Oops, last location is not known. Trying again...", this);
             // Try again to get location
-            myLocationManager.verifyLocationEnabled();
+            myLocationManager.getLocation(true, true);
 
         } else if (mParkAction != null) {
             switch (mParkAction) {
@@ -343,6 +344,34 @@ public class MainActivity extends AppCompatActivity implements
             );
         }
     }
+
+    private void showLocationDisabledDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.setTitle("Error");
+        dialog.setMessage("Location is disabled on your device or device is in airplane mode. " +
+                "Please, enable location in order to use this application.");
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Exit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                System.exit(0);
+            }
+        });
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//                ComponentName cn = new ComponentName("com.android.settings",
+//                        "com.android.settings.bluetooth.BluetoothSettings");
+//                intent.setComponent(cn);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
+        dialog.show();
+    }
+
 
     private void showLocationNotAvailableDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
@@ -394,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements
                     case RESULT_OK: // User enabled location
                         // Location is enabled. Trigger verification again
                         // to get current location
-                        myLocationManager.verifyLocationEnabled();
+                        myLocationManager.getLocation(true, true);
                         break;
                     case RESULT_CANCELED: // User cancelled
                         // Show toast message and close
@@ -421,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements
                     // permission was granted, yay!
                     Helpers.showToast("Location permission is granted.", this);
                     // If location has been requested, then request it. Otherwise do nothing
-                    myLocationManager.verifyLocationEnabled();
+                    myLocationManager.getLocation(true, true);
 
                 } else {
                     // permission denied, boo! Disable the
@@ -473,12 +502,16 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onUIUpdate(int action, ParkFragment parkFragment) {
-        if (action == Constants.ParkActions.SET_PARKING_LOCATION
-                || action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
+        if (action == Constants.ParkActions.SET_PARKING_LOCATION) {
             mParkAction = action;
             mParkFragment = parkFragment;
             // Get location
-            myLocationManager.verifyLocationEnabled();
+            myLocationManager.getLocation(true, false);
+        } else if(action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
+            mParkAction = action;
+            mParkFragment = parkFragment;
+            // Get location
+            myLocationManager.getLocation(true, true);
         } else if (action == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
             // Remove location
             new MyDefaultPreferenceManager(this).removeLocation();

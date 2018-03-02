@@ -50,28 +50,49 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
 
         Log.d(LOG_TAG, "BluetoothReceiver is triggered...");
 
-
         // We need only case, when this receiver has been triggered by the change of bluetooth connection state
         final String action = intent.getAction();
+        final Integer connectionState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
+        final Integer prevConnectionState = intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1);
+        final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+        String deviceAddress = device.getAddress();
+
         Log.d(LOG_TAG, "Action: " + action);
-        if (
+
+        if (isCorrectAction(action) && isTrackedDevice(deviceAddress)) {
+            handleConnectionState(connectionState, prevConnectionState);
+        }
+
+    }
+
+    private boolean isCorrectAction(String action) {
+        return (
 //                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
-                action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
+                        action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED));
+    }
 
-            final Integer connectionState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
-            final Integer prevConnectionState = intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1);
-            final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            String deviceAddress = device.getAddress();
+    private void handleConnectionState(Integer connectionState, Integer prevConnectionState) {
+        if (connectionState == BluetoothAdapter.STATE_DISCONNECTED /* 0 */
+                && !(prevConnectionState == BluetoothAdapter.STATE_CONNECTING /* 1 */)) { // device has been disconnected, we need to park
+            // Request current location
+            MyLocationManager myLocationManager = new MyLocationManager(null, context, this);
+            myLocationManager.getLocation(false, false);
+            Log.d(LOG_TAG, "BluetoothReceiver: disconnected, getting location.");
 
-//            Log.d(LOG_TAG, String.format("ConnectionState: %d", connectionState));
-//            Log.d(LOG_TAG, String.format("Previous ConnectionState: %d", prevConnectionState));
-
-            if(isTrackedDevice(deviceAddress)) {
-                MyLocationManager myLocationManager = new MyLocationManager(null, context, this);
-                myLocationManager.requestCurrentLocation();
+        } else if (connectionState == BluetoothAdapter.STATE_CONNECTED /* 2 */ ) { // device has been connected, clear prev parking
+            // 1. clear location
+            new MyDefaultPreferenceManager(context).removeLocation();
+            // 2. clear notification
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
+            try {
+                mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
+            } catch (NullPointerException e) {
+                Log.e(LOG_TAG, e.getMessage());
             }
+            // 3. Send broadcast to update ParkFragment UI
+            sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
 
-
+            Log.d(LOG_TAG, "BluetoothReceiver: connected, removing location.");
         }
 
     }
@@ -90,6 +111,9 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
             new MyNotificationManager().sendNotification(this.context, location);
             // Send broadcast that car has been parked automatically via bluetooth connection
             sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
+        } else {
+            //Unhandled result
+            Log.d(LOG_TAG, "BluetoothReceiver: callback triggered with unhandled result");
         }
     }
 
