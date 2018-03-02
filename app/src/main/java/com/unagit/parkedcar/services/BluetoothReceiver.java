@@ -34,7 +34,7 @@ import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
  * Created by a264889 on 28.01.2018.
  */
 
-public class BluetoothReceiver extends BroadcastReceiver {
+public class BluetoothReceiver extends BroadcastReceiver implements MyLocationManager.MyLocationManagerCallback {
 
     private Context context;
     @Override
@@ -51,7 +51,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
         Log.d(LOG_TAG, "BluetoothReceiver is triggered...");
 
 
-
         // We need only case, when this receiver has been triggered by the change of bluetooth connection state
         final String action = intent.getAction();
         Log.d(LOG_TAG, "Action: " + action);
@@ -61,12 +60,51 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
             final Integer connectionState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
             final Integer prevConnectionState = intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1);
+            final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            String deviceAddress = device.getAddress();
 
-            Log.d(LOG_TAG, String.format("ConnectionState: %d", connectionState));
-            Log.d(LOG_TAG, String.format("Previous ConnectionState: %d", prevConnectionState));
+//            Log.d(LOG_TAG, String.format("ConnectionState: %d", connectionState));
+//            Log.d(LOG_TAG, String.format("Previous ConnectionState: %d", prevConnectionState));
 
-            BluetoothReceiverIntentService.startBluetoothTrigger(context, intent.getExtras());
+            if(isTrackedDevice(deviceAddress)) {
+                MyLocationManager myLocationManager = new MyLocationManager(null, context, this);
+                myLocationManager.requestCurrentLocation();
+            }
+
+
         }
 
+    }
+
+    // Handle callback with location, received from MyLocationManager
+    @Override
+    public void locationCallback(int result, Location location) {
+        // We need only case, when location is received
+        if (result == Constants.Location.LOCATION_RECEIVED) {
+            // Save location to DefaultPreferences
+            MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this.context);
+            myDefaultPreferenceManager.saveLocation(location);
+            // Inform that car has been parked automatically
+            myDefaultPreferenceManager.setParkedAutomatically(true);
+            // Send notification
+            new MyNotificationManager().sendNotification(this.context, location);
+            // Send broadcast that car has been parked automatically via bluetooth connection
+            sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
+        }
+    }
+
+    private boolean isTrackedDevice(String address) {
+        Set<String> trackedDevices = new MyDefaultPreferenceManager(this.context).getDevices();
+        return trackedDevices.contains(address);
+    }
+
+    private void sendBroadcast(int result) {
+        // Send broadcast to update ParkFragment UI
+        Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+        intent.putExtra(
+                Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT,
+                result
+        );
+        LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
     }
 }

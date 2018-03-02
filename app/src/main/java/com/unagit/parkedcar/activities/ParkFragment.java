@@ -185,7 +185,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         runnable = new Runnable() {
             @Override
             public void run() {
-                TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
+                TextView parkedTimeTextView = (TextView) getView().findViewById(R.id.park_time_info);
                 String timeDifference = Helpers.timeDifference(parkedTime);
                 timeDifference = String.format(Locale.getDefault()," %s ago.", timeDifference);
                 parkedTimeTextView.setText(timeDifference);
@@ -210,7 +210,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         refreshData();
         View rootView = getView();
         if(rootView != null) {
-            Button parkButton = rootView.findViewById(R.id.park_car);
+            Button parkButton = (Button) rootView.findViewById(R.id.park_car);
 //            parkButton.setEnabled(true);
             enableParkButton(false);
             if(isParked) {
@@ -232,7 +232,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      * 2. Clear - change button text, clear park location
      */
     private void setParkButtonClickListener(final View view) {
-        final Button parkButton = view.findViewById(R.id.park_car);
+        final Button parkButton = (Button) view.findViewById(R.id.park_car);
 //        setAnimation(view, parkButton);
 
         parkButton.setOnClickListener(new View.OnClickListener() {
@@ -263,8 +263,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     private void setAnimation(View rootView, final Button parkButton) {
         ViewGroup container = (ViewGroup) parkButton.getParent();
-        ViewGroup parkInfoContainer = rootView.findViewById(R.id.park_info_container);
-        final TextView parkingTypeTextView = rootView.findViewById(R.id.park_type_info);
+        ViewGroup parkInfoContainer = (ViewGroup) rootView.findViewById(R.id.park_info_container);
+        final TextView parkingTypeTextView = (TextView) rootView.findViewById(R.id.park_type_info);
 
         // Declare transition for button
         ChangeBounds buttonTransition = new ChangeBounds();

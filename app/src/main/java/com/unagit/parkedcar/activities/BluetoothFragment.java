@@ -64,7 +64,7 @@ public class BluetoothFragment extends Fragment {
      * Sets onClickListener, which opens Bluetooth settings on a device.
      */
     private void setBluetoothSettingsLinkClickListener(View rootView) {
-        TextView bluetoothSettingsLink = rootView.findViewById(R.id.bluetooth_settings_link);
+        TextView bluetoothSettingsLink = (TextView) rootView.findViewById(R.id.bluetooth_settings_link);
         bluetoothSettingsLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +111,7 @@ public class BluetoothFragment extends Fragment {
         MyBluetoothDeviceAdapter adapter = new MyBluetoothDeviceAdapter(getContext(), this.devices, trackedDevices);
 
         // Set adapter for ListView
-        ListView listView = rootView.findViewById(R.id.bluetooth_list_view);
+        ListView listView = (ListView) rootView.findViewById(R.id.bluetooth_list_view);
         listView.setAdapter(adapter);
 
         // Flip tick image and update trackedDevices on item click
@@ -123,7 +123,7 @@ public class BluetoothFragment extends Fragment {
                 String deviceAddress = clickedDevice.getAddress();
 
                 // Flip tick image
-                ImageView tickImage = view.findViewById(R.id.tick_picture);
+                ImageView tickImage = (ImageView) view.findViewById(R.id.tick_picture);
                 if ((int) tickImage.getTag() == R.drawable.big_tick_unticked) {
                     tickImage.setImageResource(R.drawable.big_tick);
                     tickImage.setTag(R.drawable.big_tick);

@@ -20,6 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TableLayout;
+
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyBluetoothManager;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), myBluetoothManager);
 
         // Set up the ViewPager with PagerAdapter.
-        mViewPager = findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // Custom animated transformation between tabs
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements
 
         //Setup a TabLayout to work with ViewPager (get tabs from it).
         // Remove title text and set icons for tabs
-        tabLayout = findViewById(R.id.tab_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
         setTabIcons();
 

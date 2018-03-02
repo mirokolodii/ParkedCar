@@ -30,7 +30,7 @@ public class DisabledBluetoothFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_disabled_bluetooth, container, false);
 
         // Set a click listener, which opens Bluetooth settings for a device.
-        TextView bluetoothSettingsLink = rootView.findViewById(R.id.bluetooth_settings_link);
+        TextView bluetoothSettingsLink = (TextView) rootView.findViewById(R.id.bluetooth_settings_link);
         bluetoothSettingsLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

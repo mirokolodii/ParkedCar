@@ -40,9 +40,9 @@ public class MyBluetoothDeviceAdapter extends ArrayAdapter {
                 .inflate(R.layout.list_view_device, parent, false);
 
         // Get views for name, address and tick image
-        TextView deviceNameTextView = deviceView.findViewById(R.id.device_name);
-        TextView deviceAddressTextView = deviceView.findViewById(R.id.device_address);
-        ImageView imageView = deviceView.findViewById(R.id.tick_picture);
+        TextView deviceNameTextView = (TextView) deviceView.findViewById(R.id.device_name);
+        TextView deviceAddressTextView = (TextView) deviceView.findViewById(R.id.device_address);
+        ImageView imageView = (ImageView) deviceView.findViewById(R.id.tick_picture);
 
         // Get device for current position
         MyBluetoothDevice device = devices.get(position);
