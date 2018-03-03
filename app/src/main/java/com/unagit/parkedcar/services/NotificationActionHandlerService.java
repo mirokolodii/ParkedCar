@@ -10,16 +10,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.helpers.Constants;
-
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
- * Created by a264889 on 28.01.2018.
+ * Handles actions from notification.
  */
-
 public class NotificationActionHandlerService extends IntentService {
     public NotificationActionHandlerService() {
         super("NotificationActionHandlerService");
@@ -28,31 +25,40 @@ public class NotificationActionHandlerService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         final String action = intent.getAction();
 
-        // Show parking location in Google Maps
+        // Show parking location in Google Maps app.
         if (action.equals(Constants.Notifications.ACTION_SHOW_ON_MAP)) {
             // Show location on google maps
             showLocationOnMaps();
+        }
 
-
-        } else if (action.equals(Constants.Notifications.ACTION_DIRECTIONS)) {
-            // TODO: Show directions from current location to parking location in Google Maps
+        // Show directions dialog in Google Maps app.
+        else if (action.equals(Constants.Notifications.ACTION_DIRECTIONS)) {
             showDirections();
 
-        }else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
+        }
+
+        // Clear parking location, dismiss notification and inform UI via broadcast.
+        else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
             // Remove location from SharedPreferences
             new MyDefaultPreferenceManager(this).removeLocation();
             // Remove notification
             dismissNotification();
+            // Send broadcast to inform UI about a need to clear parking.
             sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
+        }
 
-
-        } else {
-            // Unhandled action
+        // Unhandled action
+        else {
             throw new IllegalArgumentException("Unsupported action: " + action);
         }
+
+        // We want to collapse notification bar, once user clicks one of notification actions.
         collapseNotificationBar();
     }
 
+    /**
+     * Opens Google Maps application with parking location marker.
+     */
     private void showLocationOnMaps() {
         // Create Google Maps query URL
         MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
@@ -61,6 +67,9 @@ public class NotificationActionHandlerService extends IntentService {
         createMapsIntent(uri);
     }
 
+    /**
+     * Opens Google Maps application with direction dialog from current location to parking location.
+     */
     private void showDirections() {
         // Build Google Maps query for directions
         MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
@@ -70,6 +79,10 @@ public class NotificationActionHandlerService extends IntentService {
         createMapsIntent(uri);
     }
 
+    /**
+     * Creates intent to open Google Maps app with specified action.
+     * @param uri
+     */
     private void createMapsIntent(String uri) {
         // Initiate new intent
         Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -109,6 +122,10 @@ public class NotificationActionHandlerService extends IntentService {
         sendBroadcast(it);
     }
 
+    /**
+     * Sends broadcast with parking result.
+     * @param result
+     */
     private void sendBroadcast(int result) {
         // Send broadcast to update ParkFragment UI
         Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
