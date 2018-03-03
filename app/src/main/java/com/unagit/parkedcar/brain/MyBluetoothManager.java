@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-
 import com.unagit.parkedcar.helpers.Constants;
 
 /**
@@ -14,14 +13,14 @@ import com.unagit.parkedcar.helpers.Constants;
  */
 public class MyBluetoothManager {
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-    Activity activity;
+    private Activity activity;
 
     public MyBluetoothManager(Activity activity) {
         this.activity = activity;
     }
 
     /**
-     * Returns a boolean informing, whether Bluetooth is available on a device.
+     * Returns a boolean, informing, whether Bluetooth is available on a device.
      * @return boolean
      */
     public boolean isBluetoothAvailable() {
@@ -29,7 +28,7 @@ public class MyBluetoothManager {
     }
 
     /**
-     * Returns a boolean informing, whether Bluetooth is enabled on a device.
+     * Returns a boolean, informing, whether Bluetooth is enabled on a device.
      * @return boolean
      */
     public boolean isBluetoothEnabled() {

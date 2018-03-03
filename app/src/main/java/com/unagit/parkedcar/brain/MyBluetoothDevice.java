@@ -1,7 +1,7 @@
 package com.unagit.parkedcar.brain;
 
 /**
- * Class keeps name and address of Bluetooth Device
+ * Simple getter/setter class, which keeps name and address of a Bluetooth Device.
  */
 
 public class MyBluetoothDevice {

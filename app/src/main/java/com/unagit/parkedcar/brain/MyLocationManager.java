@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,11 +31,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.unagit.parkedcar.activities.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
-
 import static com.unagit.parkedcar.helpers.Constants.Location.LOCATION_DISABLED;
 import static com.unagit.parkedcar.helpers.Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION;
 import static com.unagit.parkedcar.helpers.Constants.Requests.ENABLE_LOCATION_REQUEST_RESULT;
-import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
  * This class is used to manage all the location work, like verify that
@@ -50,8 +47,8 @@ public class MyLocationManager extends LocationCallback implements
         GoogleApiClient.OnConnectionFailedListener {
 
     /**
-     * Callback {@link MainActivity#locationCallback(int, Location)}, which receives
-     * final result (location disabled, permission not granted, location received)
+     * Callback, which receives a result
+     * (location disabled, permission not granted, location received, location not received)
      * and location.
      */
     public interface MyLocationManagerCallback {
@@ -65,25 +62,35 @@ public class MyLocationManager extends LocationCallback implements
     private FusedLocationProviderClient mFusedLocationClient;
     private Location lastKnownLocation;
 
-    // We want to have accuracy <= to desiredLocationAccuracy,
-    // but try to achieve this accuracy numberOfLocationUpdates times,
-    // otherwise just return the latest one.
+    /*
+    We want to have accuracy <= desiredLocationAccuracy.
+    Otherwise increase desiredLocationAccuracy by DESIRED_LOCATION_ACCURACY_INCREMENT
+    with each new location update.
+     */
     private int desiredLocationAccuracy = 20;
     private final int DESIRED_LOCATION_ACCURACY_INCREMENT = 10;
-//    private final int STARTING_NUMBER_OF_LOCATION_UPDATES = 2;
-//    private int numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
+
+    // Expire LocationRequest after EXPIRATION_DURATION
     private final int EXPIRATION_DURATION = 20000;
+
+    // LocationRequest's parameters
     private final int LOCATION_REQUEST_INTERVAL = 1000;
 //    private final int LOCATION_REQUEST_FASTEST_INTERVAL = 500;
     private final int LOCATION_REQUEST_NUM_UPDATES = 20;
+
+    // Used to handle timer for LocationRequest expiration
     private Handler mLocationHandler = new Handler();
+
+    /*
+     Determines, whether or not we need fast result (first one received),
+     or accurate one, which is determined by desiredLocationAccuracy.
+      */
     private boolean isFastResult = false;
 
     /**
-     *
-     * @param activity Only required to ask user to grand permission, otherwise can be null
-     * @param context Only required, if activity is not provided
-     * @param callback Returns location status result and location itself
+     * @param activity Only required to show grand permission dialog, otherwise can be null.
+     * @param context Only required, if activity is not provided, otherwise we can get context from activity.
+     * @param callback Returns location status result and location itself.
      */
     public MyLocationManager(@Nullable Activity activity, @Nullable Context context,
                              MyLocationManagerCallback callback) {
@@ -98,11 +105,16 @@ public class MyLocationManager extends LocationCallback implements
         this.callback = callback;
     }
 
+    /**
+     * Public method, which triggers location inner methods from outside.
+     */
     public void getLocation(boolean verifyPermissions, boolean fastResult) {
         isFastResult = fastResult;
+        // First verify permissions, afterwards request location updates.
         if(verifyPermissions) {
             verifyLocationEnabled();
         } else {
+            // Don't make verifications, just try to get location updates.
             requestCurrentLocation();
         }
     }
@@ -115,14 +127,14 @@ public class MyLocationManager extends LocationCallback implements
      * if can't be resolved - trigger a callback with corresponding status
      */
     private void verifyLocationEnabled() {
-        // we are interested in high accuracy only
+        // We are interested in high accuracy only
         LocationRequest mLocationRequestHighAccuracy =
                 LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequestHighAccuracy)
                 .setAlwaysShow(true); // Remove 'Never' button from location permission dialog window
         Task<LocationSettingsResponse> result =
-                LocationServices.getSettingsClient(context /*this.activity.getApplicationContext()*/)
+                LocationServices.getSettingsClient(context)
                         .checkLocationSettings(builder.build());
 
         result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
@@ -130,10 +142,11 @@ public class MyLocationManager extends LocationCallback implements
             public void onComplete(Task<LocationSettingsResponse> task) {
                 try {
                     LocationSettingsResponse response = task.getResult(ApiException.class);
-                    // All location settings are satisfied. The client can initialize location
-                    // requests here.
-                    // Location is enabled, next is to verify
-                    // that location permission is granted for the app
+                    /* All location settings are satisfied. The client can initialize location
+                    requests here.
+                    Location is enabled, next is to verify
+                    that location permission is granted for the app.
+                    */
                     verifyPermissionGranted();
 
                 } catch (ApiException exception) {
@@ -141,7 +154,6 @@ public class MyLocationManager extends LocationCallback implements
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                             // Location settings are not satisfied. But could be fixed by showing the
                             // user a dialog.
-                            Log.i(LOG_TAG, "Location is disabled");
                             try {
                                 // Cast to a resolvable exception.
                                 ResolvableApiException resolvable = (ResolvableApiException) exception;
@@ -168,7 +180,7 @@ public class MyLocationManager extends LocationCallback implements
     }
 
     /**
-     * Verify that location permission has been granted for the app.
+     * Verifies that location permission has been granted for the app.
      * If yes - request current location with {@link #requestCurrentLocation()};
      * if not - request permission. Result will be passed
      * to callback {@link MainActivity#onRequestPermissionsResult(int, String[], int[])}
@@ -181,7 +193,7 @@ public class MyLocationManager extends LocationCallback implements
                 // Request last known location
                 requestCurrentLocation();
 
-            } else { // Ask for permission
+            } else { // Ask for a permission
                 if(activity != null) {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
                 }
@@ -191,8 +203,9 @@ public class MyLocationManager extends LocationCallback implements
     }
 
     /**
-     * Request for latest location.
-     * If received, build and connect GoogleApiClient with {@link #buildGoogleApiClient()}
+     * Requests last known location.
+     * If received, build and connect GoogleApiClient with {@link #buildGoogleApiClient()},
+     * so that we can get updated location.
      */
     private void requestCurrentLocation(/*final Context context*/) {
         FusedLocationProviderClient mFusedLocationClient =
@@ -216,11 +229,11 @@ public class MyLocationManager extends LocationCallback implements
     }
 
     /**
-     * Build and connect GoogleApiClient.
-     * Once connected, {@link #onConnected(Bundle)} method will be triggered
+     * Builds and connects GoogleApiClient.
+     * Once connected, {@link #onConnected(Bundle)} method will be triggered.
      */
-    protected synchronized void buildGoogleApiClient(/*Context context*/) {
-        mGoogleApiClient = new GoogleApiClient.Builder(context /*this.activity.getApplicationContext()*/)
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -236,31 +249,29 @@ public class MyLocationManager extends LocationCallback implements
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        numberOfLocationUpdatesLeft = startingNumberOfLocationUpdates;
         // Set location request
         LocationRequest mLocationRequest = new LocationRequest()
                 .setInterval(LOCATION_REQUEST_INTERVAL)
 //                .setFastestInterval(LOCATION_REQUEST_FASTEST_INTERVAL)
                 .setNumUpdates(LOCATION_REQUEST_NUM_UPDATES);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); /* We want highest possible accuracy */
-        int permissionCheck = ContextCompat.checkSelfPermission(context /*this.activity.getApplicationContext()*/, Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) { // Permission granted
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context /*this.activity.getApplicationContext()*/);
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
             // Callback is onLocationResult method in this class
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, this, null);
+            // Set a timer with EXPIRATION_DURATION time. Once passed, location update is timeout.
             mLocationHandler.postDelayed(locationRunnable, EXPIRATION_DURATION);
         }
     }
 
     /**
-     * If location hasn't been received after expirationDuration milliseconds,
+     * If location hasn't been received after expirationDuration,
      * send lastKnownLocation instead with LOCATION_NOT_RECEIVED action.
      */
     private final Runnable locationRunnable = new Runnable() {
         @Override
         public void run() {
-            //TODO: remove log
-            Log.d(LOG_TAG, "location client expired. Disconnecting client...");
             stopLocationUpdates();
             if(callback != null) {
                 callback.locationCallback(Constants.Location.LOCATION_NOT_RECEIVED, lastKnownLocation);
@@ -273,7 +284,7 @@ public class MyLocationManager extends LocationCallback implements
      */
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(LOG_TAG, "onConnectionSuspended is triggered");
+
     }
 
     /**
@@ -281,7 +292,7 @@ public class MyLocationManager extends LocationCallback implements
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(LOG_TAG, "onConnectionFailed is triggered");
+
     }
 
     /**
@@ -293,52 +304,22 @@ public class MyLocationManager extends LocationCallback implements
     @Override
     public void onLocationResult(LocationResult locationResult) {
         float accuracy = locationResult.getLastLocation().getAccuracy();
-        Log.d(LOG_TAG, "Enter onLocationResult");
-        Log.d(LOG_TAG, "Received location with accuracy: " + accuracy);
-//        Log.d(LOG_TAG, "Number of location updates left: " + numberOfLocationUpdatesLeft);
-//        numberOfLocationUpdatesLeft--;
-        Log.d(LOG_TAG, "End onLocationResult");
-
-
         if(isFastResult || accuracy <= desiredLocationAccuracy) {
             stopLocationUpdates();
             // Return location back to the object, which requested location
             callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
-//        } else if(numberOfLocationUpdatesLeft > 1) {
-//            numberOfLocationUpdatesLeft--;
         } else {
+            // Location accuracy is not satisfied, increase it.
             desiredLocationAccuracy += DESIRED_LOCATION_ACCURACY_INCREMENT;
-//            numberOfLocationUpdatesLeft = STARTING_NUMBER_OF_LOCATION_UPDATES;
         }
-
-//        mLocationHandler.removeCallbacksAndMessages(null);
-
-//        if(accuracy < desiredLocationAccuracy || numberOfLocationUpdatesLeft <= 0) {
-//            numberOfLocationUpdatesLeft = startingNumberOfLocationUpdatesLeft;
-//        stopLocationUpdates();
-//            // Return location back to the object, which requested location
-//            callback.locationCallback(Constants.Location.LOCATION_RECEIVED, locationResult.getLastLocation());
-//        } else {
-
-//        }
-
     }
-
-
 
     @Override
     public void onLocationAvailability(LocationAvailability locationAvailability) {
         super.onLocationAvailability(locationAvailability);
-        Log.d(LOG_TAG, "Enter onLocationAvailability");
-
-        if(locationAvailability.isLocationAvailable()){
-            Log.d(LOG_TAG, "onLocationAvailability: available");
-        } else {
-            Log.d(LOG_TAG, "onLocationAvailability: NOT available");
-        }
-        Log.d(LOG_TAG, "End onLocationAvailability");
     }
 
+    // Stop location updates and disconnect GoogleApiClient
     private void stopLocationUpdates() {
         mLocationHandler.removeCallbacksAndMessages(null);
         // We don't want any new location updates

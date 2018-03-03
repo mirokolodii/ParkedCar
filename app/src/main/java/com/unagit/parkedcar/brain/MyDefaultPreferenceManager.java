@@ -5,33 +5,31 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
 import com.unagit.parkedcar.activities.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
-
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by a264889 on 27.01.2018.
+ * This class includes helper methods for DefaultSharedPreferences.
  */
-
 public class MyDefaultPreferenceManager {
     private static SharedPreferences spref;
-
 
     public MyDefaultPreferenceManager(Context context) {
         spref = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    // Check whether key exists in SharedPreferences
+    /**
+     * Verifies whether key exists in SharedPreferences.
+      */
     private boolean isSet(String key) {
         return spref.contains(key);
     }
 
     /**
-     * Saves (key, value) pair into DefaultSharedPreferences
+     * Saves (key, value) pair into DefaultSharedPreferences.
      */
     public void setValue(String key, Object value) {
         // Get instance of SharedPreferences editor
@@ -56,6 +54,9 @@ public class MyDefaultPreferenceManager {
         editor.apply();
     }
 
+    /**
+     * Saves location, current time and set IS_PARKED to true.
+     */
     public void saveLocation(Location location) {
         setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.getLatitude());
         setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.getLongitude());
@@ -63,6 +64,10 @@ public class MyDefaultPreferenceManager {
         setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
     }
 
+    /**
+     * Parking type.
+     * @param value identifies, whether car has been parked automatically (via Bluetooth) or manually.
+     */
     public void setParkedAutomatically(boolean value) {
         setValue(Constants.Store.IS_PARKED_AUTOMATICALLY, value);
     }
@@ -89,11 +94,17 @@ public class MyDefaultPreferenceManager {
         return spref.getFloat(Constants.Store.PARKING_LOCATION_LONGITUDE, -1);
     }
 
+    /**
+     * Returns a list of Bluetooth devices, which are tracked by the user for auto-parking.
+     */
     public Set<String> getDevices() {
         Set<String> s = new HashSet<>(); // default value
         return spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, s);
     }
 
+    /**
+     * Removes location, IS_PARKED, parking time, parking type.
+     */
     public void removeLocation() {
         if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE)
                 && isSet(Constants.Store.PARKING_LOCATION_LONGITUDE)

@@ -18,11 +18,20 @@ import static com.unagit.parkedcar.helpers.Constants.Notifications.NOTIFICATION_
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
- * Created by a264889 on 28.01.2018.
+ * Creates and displays notification with parked car information.
  */
 
 public class MyNotificationManager {
     public MyNotificationManager() {}
+
+    /**
+     * Creates and displays notification with corresponding actions:
+     * MAP - shows parking location in Google Maps;
+     * DIRECTIONS - opens directions dialog in Google Maps;
+     * CLEAR - removes notification and parking location.
+     * @param context required for notification creation.
+     * @param location if provided, gets accuracy and shows it in notification.
+     */
     public void sendNotification(Context context, @Nullable Location location) {
         NotificationManager notificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -34,7 +43,7 @@ public class MyNotificationManager {
 //            NotificationChannel notificationChannel = new NotificationChannel(
 //                    Constants.Notifications.NOTIFICATION_CHANNEL_ID,
 //                    Constants.Notifications.NOTIFICATION_CHANNEL_NAME,
-//                    NotificationManager.IMPORTANCE_DEFAULT
+//                    NotificationManager.IMPORTANCE_DEFAULT // Should be lower priority to not show it in a bar?
 //            );
 //            notificationChannel.setDescription(Constants.Notifications.NOTIFICATION_CHANNEL_DESCRIPTION);
 //            notificationChannel.enableLights(true);
@@ -48,11 +57,11 @@ public class MyNotificationManager {
 //            }
 //        }
 
-        String text = NOTIFICATION_TEXT;
         String accuracy = "";
         if(location != null) {
             accuracy = String.format(Locale.getDefault(), " Accuracy: %.2f m.", location.getAccuracy());
         }
+        // This intent is triggered on notification click
         Intent mainActivityIntent = new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent =
                 PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -63,11 +72,10 @@ public class MyNotificationManager {
                 .setSmallIcon(R.drawable.ic_parking_icon)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
                 .setSubText(accuracy)
-                .setContentText(text)
+                .setContentText(NOTIFICATION_TEXT)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(Color.GREEN)
-//                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
                 .setContentIntent(mainActivityPendingIntent);
         //.setAutoCancel(true); // Clear notification automatically at notification click. Works only if setContentIntent is specified
 
@@ -78,7 +86,6 @@ public class MyNotificationManager {
                 .addAction(android.R.drawable.ic_notification_clear_all, Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR, getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
 
         // Send notification
-
         try {
             notificationManager.notify(Constants.Notifications.NOTIFICATION_ID, mBuilder.build());
         } catch (NullPointerException e) {
@@ -86,12 +93,10 @@ public class MyNotificationManager {
         }
     }
 
-    // Create PendingIntent for action in notification
+    // Create PendingIntent for notification's action
     private PendingIntent getPendingIntent(Context context, String action) {
         Intent notificationAction = new Intent(context, NotificationActionHandlerService.class);
         notificationAction.setAction(action);
-        PendingIntent pIntent =
-                PendingIntent.getService(context, 0, notificationAction, PendingIntent.FLAG_UPDATE_CURRENT);
-        return  pIntent;
+        return PendingIntent.getService(context, 0, notificationAction, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
