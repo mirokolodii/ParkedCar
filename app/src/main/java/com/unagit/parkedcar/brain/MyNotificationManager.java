@@ -65,6 +65,7 @@ public class MyNotificationManager {
                 .setSubText(accuracy)
                 .setContentText(text)
                 .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(Color.GREEN)
 //                .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0)); // Empty intent
                 .setContentIntent(mainActivityPendingIntent);
