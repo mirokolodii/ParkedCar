@@ -5,29 +5,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
-
 import com.unagit.parkedcar.brain.MyBluetoothManager;
 import com.unagit.parkedcar.helpers.Constants;
 
 /**
- * Created by a264889 on 31.01.2018.
- */
-
-/**
+ * Adapter for fragments.
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
+    // Used to verify Bluetooth state (available, enabled etc.)
     private MyBluetoothManager myBluetoothManager;
 
-    public SectionsPagerAdapter(FragmentManager fm, MyBluetoothManager bluetoothManager) {
+    SectionsPagerAdapter(FragmentManager fm, MyBluetoothManager bluetoothManager) {
         super(fm);
         this.myBluetoothManager = bluetoothManager;
     }
 
     /**
-     * Notify ViewPager to reload Fragment, when Fragment is DisabledBluetoothFragment or BluetoothFragment
+     * Notify ViewPager to reload Fragment, when Fragment is DisabledBluetoothFragment or BluetoothFragment.
+     * In this way we can refresh fragment, depending on changes in Bluetooth states.
      */
     @Override
     public int getItemPosition(Object object) {
@@ -36,11 +34,10 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
             return POSITION_NONE;
         }
         return super.getItemPosition(object);
-
     }
 
     /**
-     * Get Fragments for ViewPager (i.e. for each of tabs in TabLayout)
+     * Gets Fragment for ViewPager (i.e. for each of tabs in TabLayout).
      */
     @Override
     public Fragment getItem(int position) {
@@ -67,27 +64,31 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
                 if (myBluetoothManager.isBluetoothAvailable()
                         && myBluetoothManager.isBluetoothEnabled()) {
                         return new BluetoothFragment();
-
                 }
                 return new DisabledBluetoothFragment();
         }
 
         /**
-         * default option (shouldn't occur) - return empty Fragment
+         * Default option (shouldn't occur) - return empty Fragment
          */
         Log.e(this.getClass().getName(), "PagerAdapter has returned empty fragment - " +
                 "this probably means unhandled case in getItem method.");
         return new Fragment();
     }
 
+    /**
+     * Tabs count.
+     */
     @Override
     public int getCount() {
-        /**
-         * Number of tabs
-         */
         return Constants.Tabs.TABS_COUNT;
     }
 
+    /**
+     * Tabs titles.
+     * @param position
+     * @return
+     */
     @Override
     public CharSequence getPageTitle(int position) {
         return "Page " + String.valueOf(position);

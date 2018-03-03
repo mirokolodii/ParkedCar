@@ -43,27 +43,23 @@ import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 
 public class ParkFragment extends Fragment  implements OnMapReadyCallback {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private GoogleMap googleMap;
 
     /**
-     * Interface and its object (parkButtonClickListener), which calls method parkButtonPressed,
-     * when Park Car button pressed
+     * Interface, which is used to notify its implementer about UI changes in this fragment.
      */
     public interface ParkFragmentUIUpdateListener {
-        // TODO: Update argument type and name
         void onUIUpdate(int action, ParkFragment onLocationReceivedCallback);
     }
+
+    /**
+     * Instance of object, which implements interface ParkFragmentUIUpdateListener.
+     * It is interested in UI changes on this fragment.
+     */
     private ParkFragmentUIUpdateListener mParkFragmentUIUpdateListener;
 
+    // Text for Park Car button.
     private final String PARK_BUTTON = "Park Car";
     private final String CLEAR_BUTTON = "Clear";
 
@@ -74,6 +70,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Boolean isParkedAutomatically = false;
     private MyDefaultPreferenceManager myDefaultPreferenceManager;
 
+    // Those two objects are used to trigger a timer, which updates UI.
     private Handler handler = new Handler();
     private Runnable runnable;
 
@@ -97,22 +94,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ParkFragment.
-     */
-    public static ParkFragment newInstance(String param1, String param2) {
-        ParkFragment fragment = new ParkFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -129,10 +110,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override

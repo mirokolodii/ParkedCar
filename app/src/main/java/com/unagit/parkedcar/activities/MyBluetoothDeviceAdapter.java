@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.unagit.parkedcar.brain.MyBluetoothDevice;
 import com.unagit.parkedcar.R;
-
 import java.util.ArrayList;
 import java.util.Set;
 
-
+/**
+ * Adapter for a ListView of paired Bluetooth devices.
+ */
 public class MyBluetoothDeviceAdapter extends ArrayAdapter {
     private final ArrayList<MyBluetoothDevice> devices;
     private Set<String> trackedDevices;
@@ -26,12 +26,10 @@ public class MyBluetoothDeviceAdapter extends ArrayAdapter {
         super(context, FAKE_LAYOUT_ID_FOR_ARRAY_ADAPTER, devices);
         this.devices = devices;
         this.trackedDevices = trackedDevices;
-//        Log.i("DeviceAdapter", "chosenDevices: " + chosenDevices.toString());
     }
 
     /**
-     * Returns MyBluetoothDevice view, which includes device name, device address and tick image
-     *
+     * Returns MyBluetoothDevice view, which includes device name, device address and tick image.
      */
     @NonNull
     @Override
