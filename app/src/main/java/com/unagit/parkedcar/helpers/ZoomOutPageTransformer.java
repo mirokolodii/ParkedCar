@@ -4,7 +4,8 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 /**
- * Created by a264889 on 19.01.2018.
+ * This class has been copied from one of Google resources as it is.
+ * Adds animation during change of tabs in TabLayout.
  */
 
 public class ZoomOutPageTransformer implements ViewPager.PageTransformer {

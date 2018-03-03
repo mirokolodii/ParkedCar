@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         ParkFragment.ParkFragmentUIUpdateListener {
 
+    /**
+     * Listens to Bluetooth state changes and notifies BluetoothFragment about it.
+     */
     public class EnableBluetoothBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -49,17 +51,14 @@ public class MainActivity extends AppCompatActivity implements
                 Integer state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(state.equals(BluetoothAdapter.STATE_ON)
                 || state.equals(BluetoothAdapter.STATE_OFF)) {
-                    Log.d(LOG_TAG, "EnableBluetoothBroadcastReceiver is triggered...");
-                    Log.d(LOG_TAG, "Bluetooth status has changed to either STATE_ON or STATE_OFF");
                     updateBluetoothFragment();
                 }
             }
         }
     }
 
+    // Tag for logs
     public static String LOG_TAG;
-
-    boolean isLocationRequested = false;
 
     /**
      * Implementation of FragmentStatePagerAdapter, which will provide
@@ -75,30 +74,40 @@ public class MainActivity extends AppCompatActivity implements
     private TabLayout tabLayout;
 
     /**
-     * Keeps instance of ParkFragment to be able to use its methods from MainActivity.
+     * Instance of ParkFragment. Required to trigger its methods from MainActivity.
      */
     private ParkFragment mParkFragment;
 
     /**
-     * Keeps park action from set of {@link Constants.ParkActions actions},
+     * Park action from a set of {@link Constants.ParkActions actions},
      * returned from ParkFragment.
      */
     private Integer mParkAction;
 
     /**
-     * BluetoothAdapter verifies bluetooth availability, enables bluetooth on device
-     * and provides list of paired bluetooth devices
+     * Instance of {@link MyBluetoothManager}, which includes some helper methods.
+     *
      */
     private MyBluetoothManager myBluetoothManager;
 
-    /*
-     * Manage location
+    /**
+     * Instance of {@link MyLocationManager}, which provides information about current location.
      */
     private MyLocationManager myLocationManager;
+
+    /**
+     * Keeps location, returned from MyLocationManager.
+     */
     Location currentLocation;
 
+    /**
+     * Instance of {@link EnableBluetoothBroadcastReceiver}, which informs about Bluetooth state changes.
+     */
     private EnableBluetoothBroadcastReceiver mEnableBluetoothBroadcastReceiver = new EnableBluetoothBroadcastReceiver();
 
+    /**
+     * True when application is in foreground, false otherwise. Changed in onStart/onStop methods.
+     */
     private boolean isInFront;
 
     @Override
@@ -109,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getSimpleName();
 
+        // Create instances of helpers classes.
         myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
 
@@ -117,16 +127,13 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         */
 
-        /*
-         * Set tabs and show them on screen, using ViewPager.
-         */
-
-        //TODO: Remove log
-        Log.d(LOG_TAG, "MainActivity.onCreate");
-
+        // Set tabs and show them on screen, using ViewPager.
         setupViewPagerAndTabLayout();
     }
 
+    /**
+     * Setup ViewPager and TabLayout.
+     */
     private void setupViewPagerAndTabLayout() {
         // PagerAdapter for ViewPager
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), myBluetoothManager);
@@ -139,16 +146,15 @@ public class MainActivity extends AppCompatActivity implements
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         //Setup a TabLayout to work with ViewPager (get tabs from it).
-        // Remove title text and set icons for tabs
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
+        // Each tab: remove title text and set icons
         setTabIcons();
-
 
         /*
          * Listener for TabLayout tabs selection changes
          */
-        TabLayout.OnTabSelectedListener tb = new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 /*
@@ -156,13 +162,6 @@ public class MainActivity extends AppCompatActivity implements
                  * 1. Bluetooth is supported by a device. If not - display dialog.
                  * 2. Bluetooth is enabled. If not - send request to enable Bluetooth.
                  */
-//                if (tab.getPosition() == Constants.Tabs.BLUETOOTH_TAB) {
-//                    if (!myBluetoothManager.isBluetoothAvailable()) {
-//                        myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
-//                    } else if (!myBluetoothManager.isBluetoothEnabled()) {
-//                        myBluetoothManager.enableBluetoothRequest();
-//                    }
-//                }
                 verifyBluetoothSetup();
             }
 
@@ -175,16 +174,12 @@ public class MainActivity extends AppCompatActivity implements
             public void onTabUnselected(TabLayout.Tab tab) {
 
             }
-        };
-
-        tabLayout.addOnTabSelectedListener(tb);
-
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(LOG_TAG, "MainActivity: onStart");
         updateBluetoothFragment();
         verifyBluetoothSetup();
         registerEnableBluetoothBroadcastReceiver(true);
@@ -198,6 +193,10 @@ public class MainActivity extends AppCompatActivity implements
         isInFront = false;
     }
 
+    /**
+     *
+     * @param register
+     */
     private void registerEnableBluetoothBroadcastReceiver(Boolean register) {
         if(register) {
             // Register receiver
@@ -219,11 +218,12 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Updates BluetoothFragment on Bluetooth connection state changes.
+     */
     private void updateBluetoothFragment() {
-//        if (tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
             mSectionsPagerAdapter.notifyDataSetChanged();
             setTabIcons();
-//        }
     }
 
 
@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements
     private void showLocationDisabledDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setTitle("Error");
-        dialog.setMessage("Location is disabled on your device or device is in airplane mode. " +
+        dialog.setMessage("Location is disabled on your device or it is in airplane mode. " +
                 "Please, enable location in order to use this application.");
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Exit", new DialogInterface.OnClickListener() {
             @Override

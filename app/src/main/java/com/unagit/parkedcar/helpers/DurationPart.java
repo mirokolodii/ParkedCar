@@ -1,12 +1,10 @@
 package com.unagit.parkedcar.helpers;
 
-/**
- * Created by a264889 on 02.02.2018.
- */
+import java.util.Locale;
 
 /**
- * Simple class to keep date or time value with corresponding text.
- * If value > 1, append "s" at the end of text.
+ * This is a helper getter/setter class, which receives a set of (value, text).
+ * If value > 1, amends char 's' at the end of text.
  */
 class DurationPart {
     private long value;
@@ -19,9 +17,16 @@ class DurationPart {
             this.text = text;
         }
     }
-    String getText() {
-        return this.text;
+
+    /**
+     * Returns date/time in a format:
+     * '1 day', '5 hours', '32 minutes', '1 minute' etc.
+     * @return 'value text'
+     */
+    String getDuration() {
+        return String.format(Locale.getDefault(), "%d %s", value, text);
     }
+
     long getValue() {
         return this.value;
     }
