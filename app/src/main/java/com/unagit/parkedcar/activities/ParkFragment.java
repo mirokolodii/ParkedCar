@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,11 +35,8 @@ import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
-
 import java.util.Locale;
-
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
-
 
 public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
@@ -55,7 +51,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     /**
      * Instance of object, which implements interface ParkFragmentUIUpdateListener.
-     * It is interested in UI changes on this fragment.
+     * Will be notified by this fragment about its UI changes.
      */
     private ParkFragmentUIUpdateListener mParkFragmentUIUpdateListener;
 
@@ -74,26 +70,25 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Handler handler = new Handler();
     private Runnable runnable;
 
+    // Updates UI depending on a result received.
     private class BluetoothReceiverBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             int result = intent.getIntExtra(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT, -1);
             if (result == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
-                Helpers.showToast("Parking is cleared.", context);
+                Helpers.showToast("Parking location is cleared.", context);
             } else if (result == Constants.ParkActions.SET_PARKING_LOCATION) {
-                Helpers.showToast("Auto-parking is set.", context);
+                Helpers.showToast("Car has been parked.", context);
             }
             updateUI();
         }
     }
-
     private BluetoothReceiverBroadcastReceiver mBluetoothReceiverBroadcastReceiver;
 
     public ParkFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -124,14 +119,10 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
     @Override
     public void onStart() {
-        //TODO: Remove this toast in final version of app
-        Helpers.showToast("ParkFragment.onStart() triggered.", getContext());
-
         super.onStart();
         registerBluetoothReceiver(true);
         showProgressBar(true);
         if(googleMap != null) {
-//            showProgressBar(true);
             updateUI();
         }
     }
@@ -147,6 +138,39 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         handler.post(updateText());
     }
 
+    /**
+     * Updates TextView, which shows time since parking.
+      */
+    private Runnable updateText() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if(getView() != null) {
+                    TextView parkedTimeTextView = (TextView) getView().findViewById(R.id.park_time_info);
+                    String timeDifference = Helpers.timeDifference(parkedTime);
+                    timeDifference = String.format(Locale.getDefault()," %s ago.", timeDifference);
+                    parkedTimeTextView.setText(timeDifference);
+                    // Repeat in 1 min.
+                    handler.postDelayed(this, 60 * 1000);
+                }
+            }
+        };
+        return runnable;
+    }
+
+    /**
+     * Stops updating parking time TextView.
+     */
+    private void stopTimeUpdate() {
+        if(runnable != null) {
+            // Passing null value will remove all callbacks
+            handler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    /**
+     * Register/unregister receiver
+      */
     private void registerBluetoothReceiver(boolean register) {
         if(register) {
             // Register BroadcastReceiver
@@ -158,48 +182,28 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBluetoothReceiverBroadcastReceiver);
         }
     }
-    private Runnable updateText() {
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                TextView parkedTimeTextView = (TextView) getView().findViewById(R.id.park_time_info);
-                String timeDifference = Helpers.timeDifference(parkedTime);
-                timeDifference = String.format(Locale.getDefault()," %s ago.", timeDifference);
-                parkedTimeTextView.setText(timeDifference);
 
-                handler.postDelayed(this, 60 * 1000);
-            }
-        };
-        return runnable;
-    }
-
-    private void stopTimeUpdate() {
-        if(runnable != null) {
-
-//            handler.removeCallbacks(runnable);
-            // Passing null value will remove all callbacks
-            handler.removeCallbacksAndMessages(null);
-        }
-
-    }
-
+    /**
+     * Updates fragment UI on button or notification action clicks, autoparking.
+     */
     void updateUI() {
+        // Refresh data from Store (DefaultSharedPreferences).
         refreshData();
         View rootView = getView();
         if(rootView != null) {
             Button parkButton = (Button) rootView.findViewById(R.id.park_car);
-//            parkButton.setEnabled(true);
             enableParkButton(false);
             if(isParked) {
                 // Set marker with parking location, which is stored in SharedPreferences
                 setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
             } else {
+                // Send callback to listener (MainActivity) and request for a location update.
                 mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
                         ParkFragment.this);
             }
-            setAnimation(getView(), parkButton);
 
-//            showProgressBar(false);
+            // Animate UI changes.
+            setAnimation(getView(), parkButton);
         }
     }
 
@@ -212,31 +216,33 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         final Button parkButton = (Button) view.findViewById(R.id.park_car);
 //        setAnimation(view, parkButton);
 
-        parkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if(parkButton != null) {
+            parkButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 //                setAnimation(view, parkButton);
 
-                parkButton.setEnabled(false);
-                parkButton.setText("Working...");
-                showProgressBar(true);
-                if (isParked) {
-                    isParked = false;
-                    mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
-                            ParkFragment.this);
-                } else {
-                    isParked = true;
-                    mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.SET_PARKING_LOCATION,
-                            ParkFragment.this);
+                    parkButton.setEnabled(false);
+                    parkButton.setText("Working...");
+                    showProgressBar(true);
+                    if (isParked) {
+                        isParked = false;
+                        mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
+                                ParkFragment.this);
+                    } else {
+                        isParked = true;
+                        mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.SET_PARKING_LOCATION,
+                                ParkFragment.this);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
-     * Set animation transition for park button and park information.
-     * @param rootView
-     * @param parkButton
+     * Sets animation transition for park button and park information.
+     * @param rootView main View of this fragment. Used to get other inner Views.
+     * @param parkButton ButtonView, which should be animated.
      */
     private void setAnimation(View rootView, final Button parkButton) {
         ViewGroup container = (ViewGroup) parkButton.getParent();
@@ -264,6 +270,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 
             @Override
             public void onTransitionEnd(Transition transition) {
+                // Show button text again on transition end.
                 parkButton.setText(isParked ? CLEAR_BUTTON : PARK_BUTTON);
             }
 
@@ -299,7 +306,9 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         // Initialize DelayedTransition
         TransitionManager.beginDelayedTransition(container, transitionSet);
 
-
+        /* Depending on isParked value device's orientation, change button's padding
+         and show/hide parking information TextView.
+          */
         if(isParked) {
             if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 // Parked, portrait
@@ -308,8 +317,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 // Parked, landscape
                 setParkButtonPadding(parkButton, Constants.ParkButtonPadding.SMALL_LANDSCAPE);
             }
-
             parkInfoContainer.setVisibility(View.VISIBLE);
+
         } else {
             if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 // !Parked, portrait
@@ -319,10 +328,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 setParkButtonPadding(parkButton, Constants.ParkButtonPadding.BIG_LANDSCAPE);
             }
             parkInfoContainer.setVisibility(View.GONE);
-//            showProgressBar(false);
         }
     }
 
+    /**
+     * Helper to set button padding.
+     */
     private void setParkButtonPadding(Button parkButton, int[] padding) {
         parkButton.setPadding(
                 DPToPixels(padding[0]),
@@ -332,17 +343,21 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         );
     }
 
+    /**
+     * Once map fragment is ready, set its callback.
+     */
     private void setMapCallback() {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        if (mapFragment == null) {
-            Log.e(LOG_TAG, "mapFragment is null");
-        } else {
-            Log.d(LOG_TAG, "Map callback is set");
+        if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
     }
 
+    /**
+     * Callback for a map. Once map is ready, this method is triggered and updates UI.
+     * @param googleMap Instance of GoogleMap, returned to this callback.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Get current location from SharedPreferences
@@ -350,6 +365,12 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         updateUI();
     }
 
+    /**
+     * Depending on {@param action}, sets marker on a map to parking location / current location.
+     * @param latitude double.
+     * @param longitude double.
+     * @param action determines, whether we should park or set current location on a map.
+     */
     void setMarkerOnMap(double latitude, double longitude, int action) {
         clearMap();
 
@@ -376,7 +397,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
              MarkerOptions options = new MarkerOptions();
             options.position(latLng)
                     .title("Your Car")
-//                    .snippet("Parked 23 min ago")
                     .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
             googleMap.addMarker(options)
                     .showInfoWindow(); /* show title (no need to click on marker to show title) */
@@ -384,19 +404,27 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             googleMap.animateCamera(CameraUpdateFactory
                     .newLatLng(latLng), 1* 1000 /* 1 sec. */, null);
 
+            // Start updating parking time.
             startTimeUpdate();
 
         }
+        // Once marker is set, we can enable button and hide progress bar.
         showProgressBar(false);
         enableParkButton(true);
     }
 
+    /**
+     * Removes markers from map.
+     */
     private void clearMap() {
         if(googleMap != null) {
             googleMap.clear();
         }
     }
 
+    /**
+     * Refreshes data from DefaultSharedPreferences.
+     */
     private void refreshData() {
         isParked = myDefaultPreferenceManager.isParked();
         latitude = myDefaultPreferenceManager.getLatitude();
@@ -416,15 +444,18 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     private void showProgressBar(Boolean show) {
-        getView().findViewById(R.id.indeterminateBar).setVisibility(
-                show ? View.VISIBLE : View.INVISIBLE
-        );
+        if(getView() != null) {
+            getView().findViewById(R.id.indeterminateBar).setVisibility(
+                    show ? View.VISIBLE : View.INVISIBLE
+            );
+        }
     }
 
     private void enableParkButton(Boolean enable) {
-        getView().findViewById(R.id.park_car).setEnabled(enable);
+        if(getView() != null) {
+            getView().findViewById(R.id.park_car).setEnabled(enable);
+        }
     }
-
 }
 
 

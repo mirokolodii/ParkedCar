@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,8 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TableLayout;
-
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyBluetoothManager;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
@@ -31,8 +28,6 @@ import com.unagit.parkedcar.brain.MyNotificationManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.helpers.ZoomOutPageTransformer;
-
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
@@ -47,10 +42,10 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+            if(action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 Integer state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(state.equals(BluetoothAdapter.STATE_ON)
-                || state.equals(BluetoothAdapter.STATE_OFF)) {
+                        || state.equals(BluetoothAdapter.STATE_OFF)) {
                     updateBluetoothFragment();
                 }
             }
@@ -118,11 +113,13 @@ public class MainActivity extends AppCompatActivity implements
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getSimpleName();
 
-        // Create instances of helpers classes.
+        // Create instances of helper classes.
         myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
 
-        /* Not sure if I need this, works just fine without this code
+        /*
+        // Set toolbar to act as an actionbar. Although, seems like I don't need this for
+        // this app.
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         */
@@ -132,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Setup ViewPager and TabLayout.
+     * Setup ViewPager with adapter.
+     * Setup TabLayout to work with ViewPager.
      */
     private void setupViewPagerAndTabLayout() {
         // PagerAdapter for ViewPager
@@ -194,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     *
-     * @param register
+     * Helper method to register/unregister receiver.
+     * @param register determines, whether to register or unregister.
      */
     private void registerEnableBluetoothBroadcastReceiver(Boolean register) {
         if(register) {
@@ -208,6 +206,11 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * If bluetooth tab is currently selected, then verify:
+     * - is Bluetooth available on a device? If not, show a message to a user.
+     * - is Bluetooth enabled on a device? If not, show a request to enable Bluetooth.
+     */
     private void verifyBluetoothSetup() {
         if (tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
             if (!myBluetoothManager.isBluetoothAvailable()) { /* Bluetooth is not available */
@@ -220,17 +223,17 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Updates BluetoothFragment on Bluetooth connection state changes.
+     * If Bluetooth is enabled, show Bluetooth fragment.
+     * If Bluetooth is disabled or not available, show DisabledBluetoothFragment.
      */
     private void updateBluetoothFragment() {
-            mSectionsPagerAdapter.notifyDataSetChanged();
-            setTabIcons();
+        mSectionsPagerAdapter.notifyDataSetChanged();
+        setTabIcons();
     }
-
-
 
     /**
      * setTabIcons:
-     * removes title and sets icon for each tab in TabLayout
+     * removes title and sets icon for each tab in TabLayout.
      */
     private void setTabIcons() {
         ArrayList<Integer> icons = new ArrayList<>();
@@ -246,24 +249,23 @@ public class MainActivity extends AppCompatActivity implements
             } catch (NullPointerException e) {
                 Log.e(LOG_TAG, e.getMessage());
             }
-
         }
     }
 
+    /**
+     * Callback, which receives location result and location itself.
+     * @param result informs, whether or not location has been received.
+     * @param location requested location.
+     */
     @Override
     public void locationCallback(int result, Location location) {
-
+        // We need some action only if this activity is in foreground.
         if(!isInFront) {
             return;
         }
 
-        //TODO: remove log
-        Log.d(LOG_TAG, "MainActivity.locationCallback action: " + result);
-//        Log.d(LOG_TAG, "Location: " + location.toString());
-
         switch (result) {
             case (Constants.Location.LOCATION_DISABLED):
-                Helpers.showToast("Location is disabled.", this);
                 showLocationDisabledDialog();
                 break;
             case (Constants.Location.LOCATION_PERMISSION_NOT_GRANTED):
@@ -274,21 +276,23 @@ public class MainActivity extends AppCompatActivity implements
                 handleLocationReceivedAction(location);
                 break;
             case (Constants.Location.LOCATION_NOT_RECEIVED):
-
+                /*
+                 Can't get location. Set last known location instead (or empty location,
+                 if returned location is null) in park fragment and show
+                 dialog to inform the user about this fact.
+                 */
                 if (location == null) {
                     location = new Location("");
                 }
-                // Can't get location. Set last known location instead in park fragment and show
-                // dialog to inform the user about the fact.
-                // Set explicitly ParkFragment's action to REQUEST_CURRENT_LOCATION, as can't
-                // get precise location from the device anyway, so most what we can do
-                // is to set last known location as a current location on a map.
+                /*
+                 Set explicitly ParkFragment's action to REQUEST_CURRENT_LOCATION, as can't
+                 get precise location from the device anyway, so most what we can do
+                 is to set last known location as a current location on a map.
+                */
                 mParkAction = Constants.ParkActions.REQUEST_CURRENT_LOCATION;
                 handleLocationReceivedAction(location);
                 showLocationNotAvailableDialog();
-
                 break;
-
         }
     }
 
@@ -303,13 +307,16 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void handleLocationReceivedAction(Location location) {
         currentLocation = location;
-//        Log.d(LOG_TAG, "handleLocationReceivedAction.currentLocation: " + location.toString());
         if (location == null) {
             Helpers.showToast("Oops, last location is not known. Trying again...", this);
             // Try again to get location
             myLocationManager.getLocation(true, true);
 
         } else if (mParkAction != null) {
+            /*
+            Get back to ParkFragment with location result, depending on action,
+            received from ParkFragment previously in onUIUpdate.
+             */
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
                     Helpers.showToast(
@@ -335,6 +342,9 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Gets back to ParkFragment and sets current location on a map.
+     */
     private void setParkFragmentCurrentLocation(Location location) {
         if (mParkFragment != null) {
             mParkFragment.setMarkerOnMap(
@@ -345,6 +355,12 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Shows a dialog to a user, if Bluetooth is disabled.
+     * Dialog has two buttons:
+     * - Exit: exit app;
+     * - Settings: open device's Bluetooth settings.
+     */
     private void showLocationDisabledDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setTitle("Error");
@@ -360,11 +376,6 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//                ComponentName cn = new ComponentName("com.android.settings",
-//                        "com.android.settings.bluetooth.BluetoothSettings");
-//                intent.setComponent(cn);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -373,19 +384,22 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+    /**
+     * Show a dialog to a user, if can't get precise enough location.
+     */
     private void showLocationNotAvailableDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setTitle("Error");
         dialog.setMessage("Sorry... unable to receive accurate location from the device in " +
-                        "reasonable amount of time. You may verify device's location settings " +
-                        "and try again afterwards.");
+                "reasonable amount of time. You may verify device's location settings " +
+                "and try again afterwards.");
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                    }
-                });
-                dialog.setIcon(android.R.drawable.ic_dialog_alert);
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+        dialog.setIcon(android.R.drawable.ic_dialog_alert);
         dialog.show();
     }
 
@@ -402,6 +416,10 @@ public class MainActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
+            /*
+             Note: below code has been commented in, as handing Bluetooth state changes
+             has been moved to EnableBluetoothBroadcastReceiver, implemented in this class.
+              */
             // Callback from 'Enable Bluetooth' dialog
 //            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT:
 //                switch (resultCode) {
@@ -418,15 +436,18 @@ public class MainActivity extends AppCompatActivity implements
 //                        Log.d(LOG_TAG, "User has NOT enabled bluetooth.");
 //                        break;
 //                }
+
+            /*
+            Callback from enable location request.
+             */
             case Constants.Requests.ENABLE_LOCATION_REQUEST_RESULT:
                 switch (resultCode) {
                     case RESULT_OK: // User enabled location
-                        // Location is enabled. Trigger verification again
-                        // to get current location
+                        /* Location is enabled. Request location again.
+                        */
                         myLocationManager.getLocation(true, true);
                         break;
                     case RESULT_CANCELED: // User cancelled
-                        // Show toast message and close
                         locationCallback(Constants.Location.LOCATION_DISABLED, new Location("empty"));
                         break;
                 }
@@ -441,7 +462,6 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(LOG_TAG, "We are in onRequestPermissionsResult");
         switch (requestCode) {
             case (Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION): {
                 // If request is cancelled, the result arrays are empty.
@@ -486,6 +506,9 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Opens device's settings for this app.
+     */
     private void openApplicationSettings() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -517,16 +540,13 @@ public class MainActivity extends AppCompatActivity implements
             new MyDefaultPreferenceManager(this).removeLocation();
             // Clear notification
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-            try {
+            if(mNotificationManager != null) {
                 mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
-            } catch (NullPointerException e) {
-                Log.e(LOG_TAG, e.getMessage());
+                // Update ParkFragment UI
+                parkFragment.updateUI();
+            } else {
+                throw new RuntimeException("Unhandled action in MainActivity.onUIUpdate().");
             }
-            // Update ParkFragment UI
-            parkFragment.updateUI();
-        } else {
-            throw new RuntimeException("Unhandled action in MainActivity.onUIUpdate().");
         }
     }
 }
-
