@@ -39,7 +39,6 @@ public class MyBluetoothDeviceAdapter extends ArrayAdapter {
 
         // Get views for name, address and tick image
         TextView deviceNameTextView = (TextView) deviceView.findViewById(R.id.device_name);
-        TextView deviceAddressTextView = (TextView) deviceView.findViewById(R.id.device_address);
         ImageView imageView = (ImageView) deviceView.findViewById(R.id.tick_picture);
 
         // Get device for current position
@@ -47,7 +46,6 @@ public class MyBluetoothDeviceAdapter extends ArrayAdapter {
 
         // Set TextViews with name and address
         deviceNameTextView.setText(device.getName());
-        deviceAddressTextView.setText(device.getAddress());
 
         // If device is in trackedDevices, show ticked image.
         // Otherwise show un-ticked image
