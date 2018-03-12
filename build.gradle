@@ -19,8 +19,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        // Using morphing-button from this repo
-//        maven { url 'https://jitpack.io' }
     }
 }
 
