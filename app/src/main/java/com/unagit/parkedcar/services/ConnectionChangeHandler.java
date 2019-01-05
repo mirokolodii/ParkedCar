@@ -18,7 +18,7 @@ public class ConnectionChangeHandler extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        return super.onStartCommand(intent, flags, startId);
         startForeground(FOREGROUND_NOTIFICATION_ID,
-                Helpers.getForegroundNotification(getApplicationContext())
+                Helpers.getForegroundNotification(getBaseContext())
         );
 
         Runnable runnable = new Runnable() {
@@ -29,7 +29,7 @@ public class ConnectionChangeHandler extends Service {
             }
         };
 
-        new Handler().postDelayed(runnable, TimeUnit.SECONDS.toMillis(5));
+        new Handler().postDelayed(runnable, TimeUnit.SECONDS.toMillis(10));
 
         return Service.START_STICKY;
 
