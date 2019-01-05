@@ -23,6 +23,7 @@ import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 public class ConnectionChangeHandler extends Service implements MyLocationManager.MyLocationManagerCallback {
     private static int FOREGROUND_NOTIFICATION_ID = 222;
+
     public ConnectionChangeHandler() {
     }
 
@@ -33,6 +34,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
                 Helpers.getForegroundNotification(getBaseContext())
         );
 
+        Log.d("bluetooth", "Service started");
 
 
 //        Runnable runnable = new Runnable() {
@@ -44,17 +46,19 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
 //
 //        new Handler().postDelayed(runnable, TimeUnit.SECONDS.toMillis(10));
 
-        // We need extras from intent, so stop if it's null
-        if(intent == null) {
+        // We need extras from intent, so stop if it's null or doesn't have needed extras
+        if (intent == null
+                || !intent.hasExtra(Constants.Bluetooth.EXTRA_CONNECTION_STATE)
+                || !intent.hasExtra(Constants.Bluetooth.EXTRA_PREV_CONNECTION_STATE)) {
+            Log.d("service", "no extras");
             stopService();
+        } else {
+            Integer connectionState = intent.getIntExtra(Constants.Bluetooth.EXTRA_CONNECTION_STATE, -1);
+            Integer prevConnectionState = intent.getIntExtra(Constants.Bluetooth.EXTRA_PREV_CONNECTION_STATE, -1);
+            handleConnectionState(connectionState, prevConnectionState);
         }
 
-        final Integer connectionState = intent.getIntExtra(Constants.Bluetooth.EXTRA_CONNECTION_STATE, -1);
-        final Integer prevConnectionState = intent.getIntExtra(Constants.Bluetooth.EXTRA_PREV_CONNECTION_STATE, -1);
-        handleConnectionState(connectionState, prevConnectionState);
-
         return Service.START_REDELIVER_INTENT;
-
     }
 
     @Override
@@ -64,6 +68,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
     }
 
     private void stopService() {
+        Log.d(this.getClass().getSimpleName(), "Service is about to stop");
         stopForeground(true);
         stopSelf();
     }
@@ -77,6 +82,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
      * @param prevConnectionState previous Bluetooth connection state
      */
     private void handleConnectionState(Integer connectionState, Integer prevConnectionState) {
+
         // Device has been disconnected, we need to park
         if (connectionState == BluetoothAdapter.STATE_DISCONNECTED /* 0 */
                 && !(prevConnectionState == BluetoothAdapter.STATE_CONNECTING /* 1 */)) {
@@ -86,8 +92,10 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
                     getApplicationContext(),
                     this);
             myLocationManager.getLocation(false, false);
+            Log.d("service", "location requested");
 
         }
+
         // Device has been connected, clear parking
         else if (connectionState == BluetoothAdapter.STATE_CONNECTED /* 2 */ ) {
             // 1. clear location
@@ -97,16 +105,21 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
             try {
                 mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
             } catch (NullPointerException e) {
-                Log.e(LOG_TAG, e.getMessage());
+                e.printStackTrace();
             }
             // 3. Send broadcast to update ParkFragment UI
             sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
+            stopService();
+
+        } else { // Other states, just quit
+            stopService();
         }
     }
 
     // Handle callback with a location, received from MyLocationManager
     @Override
     public void locationCallback(int result, Location location) {
+        Log.d("service", "locationCallback started");
         // We need only case, when location IS received
         if (result == Constants.Location.LOCATION_RECEIVED) {
             // Save location to DefaultPreferences
@@ -120,8 +133,10 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
             // Send broadcast that car has been parked automatically via bluetooth connection
             sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
         } else {
-            // Ignore other cases.
+            Log.e(ConnectionChangeHandler.this.getClass().getSimpleName(), "Can't receive location");
         }
+
+        stopService();
     }
 
     /**
@@ -138,5 +153,4 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
         );
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
-
 }

@@ -39,6 +39,8 @@ public class BluetoothReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
           this.context = context;
 
+          Log.d("bluetooth", "BluetoothReceiver started");
+
         // Verify intent action:
         // we need only case, when this receiver has been triggered
         // by the change of bluetooth connection state
@@ -49,6 +51,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
         String deviceAddress = device.getAddress();
 
         if (action != null && isCorrectAction(action) && isTrackedDevice(deviceAddress)) {
+            Log.d("bluetooth", "BluetoothReceiver should start service");
             Intent i = new Intent(context, ConnectionChangeHandler.class);
             i.putExtra(EXTRA_CONNECTION_STATE, connectionState);
             i.putExtra(EXTRA_PREV_CONNECTION_STATE, prevConnectionState);
