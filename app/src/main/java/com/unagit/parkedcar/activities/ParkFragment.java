@@ -35,6 +35,8 @@ import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
+import com.unagit.parkedcar.services.ConnectionChangeHandler;
+
 import java.util.Locale;
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
@@ -237,6 +239,19 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 }
             });
         }
+
+        Button serviceBtn = view.findViewById(R.id.startServiceBtn);
+        serviceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent service = new Intent(getContext(), ConnectionChangeHandler.class);
+                try {
+                    getActivity().startForegroundService(service);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -347,11 +362,13 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      * Once map fragment is ready, set its callback.
      */
     private void setMapCallback() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
+        // TODO: should be fixed to comply with updated Google Maps API
+        // TODO: for more check: https://developers.google.com/maps/documentation/android-sdk/map-with-marker#manifest
+//        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+//                .findFragmentById(R.id.map);
+//        if (mapFragment != null) {
+//            mapFragment.getMapAsync(this);
+//        }
     }
 
     /**

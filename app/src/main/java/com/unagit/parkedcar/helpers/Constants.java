@@ -66,14 +66,13 @@ public final class Constants {
      * Constants, used to setup a notification.
      */
     public static class Notifications {
-        // Uncomment below when targeting API >= 26.
-//        // ID of channel
-//        public static final String NOTIFICATION_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".park_car_notifications";
-//        // User-visible name of the channel
-//        public static final String NOTIFICATION_CHANNEL_NAME = "Park Car Notifications";
-//        // User-visible description of the channel
-//        public static final String NOTIFICATION_CHANNEL_DESCRIPTION
-//                = "Used to show notifications with information about location of parked car.";
+        // ID of channel
+        public static final String NOTIFICATION_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".park_car_notifications";
+        // User-visible name of the channel
+        public static final String NOTIFICATION_CHANNEL_NAME = "Park Car Notifications";
+        // User-visible description of the channel
+        public static final String NOTIFICATION_CHANNEL_DESCRIPTION
+                = "Used to show notifications with information about location of parked car.";
         public static final int NOTIFICATION_ID = 100;
         public static final String NOTIFICATION_TITLE = "Parked Car";
         public static final String NOTIFICATION_TEXT = "Your Car has been marked on the map.";

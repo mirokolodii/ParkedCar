@@ -31,10 +31,15 @@
             android:layout_marginBottom="15dp"
             android:drawableLeft="@drawable/ic_action_parking_button_icon"
             style="@style/ParkButton"
-
             android:drawablePadding="10dp"
             android:id="@+id/park_car"
             android:text="@string/park_car" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/startServiceBtn"
+            android:text="start service" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,13 +60,15 @@
                 android:id="@+id/park_time_info" />
         </LinearLayout>
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        <fragment
+            xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:id="@+id/map"
             tools:context=".activities.MainActivity"
-            android:name="com.google.android.gms.maps.SupportMapFragment" />
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            class="com.google.android.gms.maps.MapFragment"/>
     </LinearLayout>
 </FrameLayout>

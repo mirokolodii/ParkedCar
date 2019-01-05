@@ -38,6 +38,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC4fU_XfN42pqEUAsGvzNsPYM_ENu7h614" />
+
+        <service
+            android:name=".services.ConnectionChangeHandler"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
