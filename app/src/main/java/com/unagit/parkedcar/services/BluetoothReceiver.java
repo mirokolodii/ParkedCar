@@ -50,7 +50,7 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
         final Integer prevConnectionState = intent.getIntExtra(BluetoothProfile.EXTRA_PREVIOUS_STATE, -1);
         final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
         String deviceAddress = device.getAddress();
-        if (isCorrectAction(action) && isTrackedDevice(deviceAddress)) {
+        if (action != null && isCorrectAction(action) && isTrackedDevice(deviceAddress)) {
             handleConnectionState(connectionState, prevConnectionState);
         }
     }
@@ -79,8 +79,8 @@ public class BluetoothReceiver extends BroadcastReceiver implements MyLocationMa
      * requests current location, parks car and shows notifications,
      * or removes parking location, clears notification
      * and send broadcast about clear parking action.
-     * @param connectionState
-     * @param prevConnectionState
+     * @param connectionState Bluetooth connection state
+     * @param prevConnectionState previous Bluetooth connection state
      */
     private void handleConnectionState(Integer connectionState, Integer prevConnectionState) {
         // Device has been disconnected, we need to park
