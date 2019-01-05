@@ -118,10 +118,10 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
 
     // Handle callback with a location, received from MyLocationManager
     @Override
-    public void locationCallback(int result, Location location) {
+    public void locationCallback(Constants.LocationStatus result, Location location) {
         Log.d("service", "locationCallback started");
         // We need only case, when location IS received
-        if (result == Constants.Location.LOCATION_RECEIVED) {
+        if (result == Constants.LocationStatus.LOCATION_RECEIVED) {
             // Save location to DefaultPreferences
             MyDefaultPreferenceManager myDefaultPreferenceManager =
                     new MyDefaultPreferenceManager(getApplicationContext());
@@ -132,7 +132,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
             new MyNotificationManager().sendNotification(getApplicationContext(), location);
             // Send broadcast that car has been parked automatically via bluetooth connection
             sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
-        } else {
+        } else { // We are not interested in other results
             Log.e(ConnectionChangeHandler.this.getClass().getSimpleName(), "Can't receive location");
         }
 

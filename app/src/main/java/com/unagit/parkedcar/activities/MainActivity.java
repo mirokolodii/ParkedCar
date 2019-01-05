@@ -258,24 +258,24 @@ public class MainActivity extends AppCompatActivity implements
      * @param location requested location.
      */
     @Override
-    public void locationCallback(int result, Location location) {
+    public void locationCallback(Constants.LocationStatus result, Location location) {
         // We need some action only if this activity is in foreground.
         if(!isInFront) {
             return;
         }
 
         switch (result) {
-            case (Constants.Location.LOCATION_DISABLED):
+            case LOCATION_DISABLED:
                 showLocationDisabledDialog();
                 break;
-            case (Constants.Location.LOCATION_PERMISSION_NOT_GRANTED):
+            case LOCATION_PERMISSION_NOT_GRANTED:
                 Helpers.showToast("Location permission is not granted.", this);
                 this.finish();
                 break;
-            case (Constants.Location.LOCATION_RECEIVED):
+            case LOCATION_RECEIVED:
                 handleLocationReceivedAction(location);
                 break;
-            case (Constants.Location.LOCATION_NOT_RECEIVED):
+            case LOCATION_NOT_RECEIVED:
                 /*
                  Can't get location. Set last known location instead (or empty location,
                  if returned location is null) in park fragment and show
@@ -448,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements
                         myLocationManager.getLocation(true, true);
                         break;
                     case RESULT_CANCELED: // User cancelled
-                        locationCallback(Constants.Location.LOCATION_DISABLED, new Location("empty"));
+                        locationCallback(Constants.LocationStatus.LOCATION_DISABLED, new Location("empty"));
                         break;
                 }
             default:

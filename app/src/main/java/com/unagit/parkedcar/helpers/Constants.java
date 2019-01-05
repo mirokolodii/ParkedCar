@@ -96,11 +96,18 @@ public final class Constants {
     /**
      * Constants, representing results, received by a callback from MyLocationManager.
      */
-    public static class Location {
-        public static final int LOCATION_DISABLED = 1;
-        public static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
-        public static final int LOCATION_RECEIVED = 3;
-        public static final int LOCATION_NOT_RECEIVED = 4;
+//    public static class Location {
+//        public static final int LOCATION_DISABLED = 1;
+//        public static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
+//        public static final int LOCATION_RECEIVED = 3;
+//        public static final int LOCATION_NOT_RECEIVED = 4;
+//    }
+
+    public enum LocationStatus {
+        LOCATION_DISABLED,
+        LOCATION_PERMISSION_NOT_GRANTED,
+        LOCATION_RECEIVED,
+        LOCATION_NOT_RECEIVED
     }
 
     /**
