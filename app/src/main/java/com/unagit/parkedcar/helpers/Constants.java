@@ -122,6 +122,8 @@ public final class Constants {
     public static class Bluetooth {
         public static final String BLUETOOTH_RECEIVER_BROADCAST_ACTION = BuildConfig.APPLICATION_ID + ".BluetoothReceiverBroadcast";
         public static final String BLUETOOTH_RECEIVER_BROADCAST_RESULT = BuildConfig.APPLICATION_ID + ".result";
+        public static final String EXTRA_CONNECTION_STATE = "Bluetooth.connection.state";
+        public static final String EXTRA_PREV_CONNECTION_STATE = "Bluetooth.previous.connection.state";
     }
 
     /**

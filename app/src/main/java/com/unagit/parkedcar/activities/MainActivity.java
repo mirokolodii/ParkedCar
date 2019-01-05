@@ -530,11 +530,13 @@ public class MainActivity extends AppCompatActivity implements
             mParkFragment = parkFragment;
             // Get location
             myLocationManager.getLocation(true, false);
+
         } else if(action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
             mParkAction = action;
             mParkFragment = parkFragment;
             // Get location
             myLocationManager.getLocation(true, true);
+
         } else if (action == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
             // Remove location
             new MyDefaultPreferenceManager(this).removeLocation();

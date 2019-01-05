@@ -67,6 +67,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private Long parkedTime;
     private Boolean isParkedAutomatically = false;
     private MyDefaultPreferenceManager myDefaultPreferenceManager;
+    private BluetoothReceiverBroadcastReceiver mBluetoothReceiverBroadcastReceiver;
 
     // Those two objects are used to trigger a timer, which updates UI.
     private Handler handler = new Handler();
@@ -86,7 +87,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             updateUI();
         }
     }
-    private BluetoothReceiverBroadcastReceiver mBluetoothReceiverBroadcastReceiver;
 
     public ParkFragment() {
         // Required empty public constructor
