@@ -66,7 +66,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
      */
     private boolean isCorrectAction(String action) {
         return (
-                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
+//                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
                         action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED));
     }
 

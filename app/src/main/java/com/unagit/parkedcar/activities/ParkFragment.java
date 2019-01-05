@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -239,19 +240,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 }
             });
         }
-
-        Button serviceBtn = view.findViewById(R.id.startServiceBtn);
-        serviceBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent service = new Intent(getContext(), ConnectionChangeHandler.class);
-                try {
-                    getActivity().startForegroundService(service);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     /**
@@ -362,13 +350,11 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      * Once map fragment is ready, set its callback.
      */
     private void setMapCallback() {
-        // TODO: should be fixed to comply with updated Google Maps API
-        // TODO: for more check: https://developers.google.com/maps/documentation/android-sdk/map-with-marker#manifest
-//        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-//                .findFragmentById(R.id.map);
-//        if (mapFragment != null) {
-//            mapFragment.getMapAsync(this);
-//        }
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     /**
@@ -389,6 +375,13 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      * @param action determines, whether we should park or set current location on a map.
      */
     void setMarkerOnMap(double latitude, double longitude, int action) {
+
+        if(googleMap == null) {
+            showProgressBar(false);
+            enableParkButton(true);
+            return;
+        }
+
         clearMap();
 
         // Show current location on a map
