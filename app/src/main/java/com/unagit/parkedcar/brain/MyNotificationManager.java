@@ -41,11 +41,11 @@ public class MyNotificationManager {
         // Set notifications channel for Android.O and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    Constants.Notifications.NOTIFICATION_CHANNEL_ID,
-                    Constants.Notifications.NOTIFICATION_CHANNEL_NAME,
+                    Constants.Notifications.CHANNEL_ID,
+                    Constants.Notifications.CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT // Should be lower priority to not show it in a bar?
             );
-            notificationChannel.setDescription(Constants.Notifications.NOTIFICATION_CHANNEL_DESCRIPTION);
+            notificationChannel.setDescription(Constants.Notifications.CHANNEL_DESCRIPTION);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.GREEN);
             notificationChannel.enableVibration(false);
@@ -66,7 +66,7 @@ public class MyNotificationManager {
         PendingIntent mainActivityPendingIntent =
                 PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_parking_icon)
                 .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
                 .setSubText(accuracy)
@@ -79,9 +79,15 @@ public class MyNotificationManager {
 
         // Add Actions
         mBuilder
-                .addAction(android.R.drawable.ic_menu_mylocation, Constants.Notifications.NOTIFICATION_ACTION_TITLE_SHOW, getPendingIntent(context, Constants.Notifications.ACTION_SHOW_ON_MAP))
-                .addAction(android.R.drawable.ic_menu_directions, Constants.Notifications.NOTIFICATION_ACTION_TITLE_DIRECTIONS, getPendingIntent(context, Constants.Notifications.ACTION_DIRECTIONS))
-                .addAction(android.R.drawable.ic_notification_clear_all, Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR, getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
+                .addAction(android.R.drawable.ic_menu_mylocation,
+                        Constants.Notifications.NOTIFICATION_ACTION_TITLE_SHOW,
+                        getPendingIntent(context, Constants.Notifications.ACTION_SHOW_ON_MAP))
+                .addAction(android.R.drawable.ic_menu_directions,
+                        Constants.Notifications.NOTIFICATION_ACTION_TITLE_DIRECTIONS,
+                        getPendingIntent(context, Constants.Notifications.ACTION_DIRECTIONS))
+                .addAction(android.R.drawable.ic_notification_clear_all,
+                        Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR,
+                        getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
 
         // Send notification
         try {

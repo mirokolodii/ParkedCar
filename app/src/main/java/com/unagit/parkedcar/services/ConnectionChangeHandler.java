@@ -133,7 +133,8 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
             // Send broadcast that car has been parked automatically via bluetooth connection
             sendBroadcast(Constants.ParkActions.SET_PARKING_LOCATION);
         } else { // We are not interested in other results
-            Log.e(ConnectionChangeHandler.this.getClass().getSimpleName(), "Can't receive location");
+            Log.e(ConnectionChangeHandler.this.getClass().getSimpleName(),
+                    "Can't receive location: " + result);
         }
 
         stopService();

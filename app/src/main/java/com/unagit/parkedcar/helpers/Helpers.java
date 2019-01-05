@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.widget.Toast;
 
-import com.unagit.parkedcar.BuildConfig;
 import com.unagit.parkedcar.R;
 
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ public class Helpers {
 
     /**
      * Shows toast message.
+     *
      * @param text
      * @param context
      */
@@ -33,6 +33,7 @@ public class Helpers {
 
     /**
      * Calculates difference between current time and parkedTimestamp.
+     *
      * @param parkedTimestamp Long Timestamp.
      * @return String, representing time difference in days, hours and minutes.
      */
@@ -56,7 +57,7 @@ public class Helpers {
         // Get a sub array with values = 0
         ArrayList<DurationPart> zeroValueDurationParts = new ArrayList<>();
         for (DurationPart part : durationParts) {
-            if(part.getValue() == 0) {
+            if (part.getValue() == 0) {
                 zeroValueDurationParts.add(part);
             }
         }
@@ -66,10 +67,10 @@ public class Helpers {
 
         // Combine all parts into one string and separate them with comma.
         String parkingDuration = "";
-        for(int i=0; i<durationParts.size(); i++) {
+        for (int i = 0; i < durationParts.size(); i++) {
             DurationPart part = durationParts.get(i);
             parkingDuration += part.getDuration();
-            if(i < durationParts.size()-1) { // We don't want comma after last part
+            if (i < durationParts.size() - 1) { // We don't want comma after last part
                 parkingDuration += ", ";
             }
         }
@@ -84,14 +85,14 @@ public class Helpers {
     public static Notification getForegroundNotification(Context context) {
 
         // Register notification channel for Android version >= Android.O
-        NotificationManager notificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
-                    Constants.Notifications.NOTIFICATION_CHANNEL_ID,
-                    Constants.Notifications.NOTIFICATION_CHANNEL_NAME,
+                    Constants.Notifications.CHANNEL_ID,
+                    Constants.Notifications.CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT // Should be lower priority to not show it in a bar?
             );
-            notificationChannel.setDescription(Constants.Notifications.NOTIFICATION_CHANNEL_DESCRIPTION);
+            notificationChannel.setDescription(Constants.Notifications.CHANNEL_DESCRIPTION);
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.GREEN);
             notificationChannel.enableVibration(false);
@@ -103,11 +104,11 @@ public class Helpers {
             }
         }
 
-        return new NotificationCompat.Builder(context, Constants.Notifications.NOTIFICATION_CHANNEL_ID)
-                        .setContentTitle("title")
-                        .setContentText("text")
-                        .setSmallIcon(R.drawable.ic_parking_icon)
-                        .setTicker("ticker")
-                        .build();
+        return new NotificationCompat.Builder(context, Constants.Notifications.CHANNEL_ID)
+                .setContentTitle(Constants.Notifications.FOREGROUND_NOTIFICATION_TITLE)
+                .setContentText(Constants.Notifications.FOREGROUND_NOTIFICATION_TEXT)
+                .setSmallIcon(R.drawable.ic_parking_icon)
+                .setColor(Color.GREEN)
+                .build();
     }
 }

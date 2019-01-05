@@ -66,22 +66,27 @@ public final class Constants {
      * Constants, used to setup a notification.
      */
     public static class Notifications {
-        // ID of channel
-        public static final String NOTIFICATION_CHANNEL_ID = BuildConfig.APPLICATION_ID + ".park_car_notifications";
-        // User-visible name of the channel
-        public static final String NOTIFICATION_CHANNEL_NAME = "Park Car Notifications";
-        // User-visible description of the channel
-        public static final String NOTIFICATION_CHANNEL_DESCRIPTION
-                = "Used to show notifications with information about location of parked car.";
+        // Location notification channel
+        public static final String CHANNEL_ID = BuildConfig.APPLICATION_ID + ".park_car_notifications";
+        public static final String CHANNEL_NAME = "Car Parking Location";
+        public static final String CHANNEL_DESCRIPTION
+                = "Show a location of car parking place";
+
+        // Location notification
         public static final int NOTIFICATION_ID = 100;
         public static final String NOTIFICATION_TITLE = "Parked Car";
-        public static final String NOTIFICATION_TEXT = "Your Car has been marked on the map.";
+        public static final String NOTIFICATION_TEXT = "Your Car has been marked on the map";
         public static final String NOTIFICATION_ACTION_TITLE_SHOW = "Map";
         public static final String NOTIFICATION_ACTION_TITLE_DIRECTIONS = "Directions";
         public static final String NOTIFICATION_ACTION_TITLE_CLEAR = "Clear";
         public static final String ACTION_SHOW_ON_MAP = "Show";
         public static final String ACTION_DIRECTIONS = "Directions";
         public static final String ACTION_CLEAR = "Clear";
+
+        // Foreground service notification
+        public static final String FOREGROUND_NOTIFICATION_TITLE = "Getting location...";
+        public static final String FOREGROUND_NOTIFICATION_TEXT = "Looking for current location of your car";
+
     }
 
     /**
@@ -94,15 +99,8 @@ public final class Constants {
     }
 
     /**
-     * Constants, representing results, received by a callback from MyLocationManager.
+     * Results, which are sent by MyLocationManager to it's callback.
      */
-//    public static class Location {
-//        public static final int LOCATION_DISABLED = 1;
-//        public static final int LOCATION_PERMISSION_NOT_GRANTED = 2;
-//        public static final int LOCATION_RECEIVED = 3;
-//        public static final int LOCATION_NOT_RECEIVED = 4;
-//    }
-
     public enum LocationStatus {
         LOCATION_DISABLED,
         LOCATION_PERMISSION_NOT_GRANTED,
