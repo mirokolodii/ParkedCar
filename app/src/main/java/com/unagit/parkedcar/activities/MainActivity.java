@@ -137,14 +137,14 @@ public class MainActivity extends AppCompatActivity implements
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), myBluetoothManager);
 
         // Set up the ViewPager with PagerAdapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // Custom animated transformation between tabs
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         //Setup a TabLayout to work with ViewPager (get tabs from it).
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
         // Each tab: remove title text and set icons
         setTabIcons();
@@ -529,13 +529,13 @@ public class MainActivity extends AppCompatActivity implements
             mParkAction = action;
             mParkFragment = parkFragment;
             // Get location
-            myLocationManager.getLocation(true, false);
+            myLocationManager.getLocation(false, false);
 
         } else if(action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
             mParkAction = action;
             mParkFragment = parkFragment;
             // Get location
-            myLocationManager.getLocation(true, true);
+            myLocationManager.getLocation(false, true);
 
         } else if (action == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
             // Remove location

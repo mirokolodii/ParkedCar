@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.transition.TransitionManager;
 import android.transition.Transition;
 import android.transition.TransitionSet;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -26,7 +28,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -36,8 +37,6 @@ import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
-import com.unagit.parkedcar.services.ConnectionChangeHandler;
-
 import java.util.Locale;
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
@@ -94,7 +93,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
         if (context instanceof ParkFragmentUIUpdateListener) {
@@ -111,7 +110,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_park, container, false);
@@ -149,7 +148,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             @Override
             public void run() {
                 if(getView() != null) {
-                    TextView parkedTimeTextView = (TextView) getView().findViewById(R.id.park_time_info);
+                    TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
                     String timeDifference = Helpers.timeDifference(parkedTime);
                     timeDifference = String.format(Locale.getDefault()," %s ago.", timeDifference);
                     parkedTimeTextView.setText(timeDifference);
@@ -194,7 +193,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         refreshData();
         View rootView = getView();
         if(rootView != null) {
-            Button parkButton = (Button) rootView.findViewById(R.id.park_car);
+            Button parkButton = rootView.findViewById(R.id.park_car);
             enableParkButton(false);
             if(isParked) {
                 // Set marker with parking location, which is stored in SharedPreferences
@@ -216,7 +215,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      * 2. Clear - change button text, clear park location
      */
     private void setParkButtonClickListener(final View view) {
-        final Button parkButton = (Button) view.findViewById(R.id.park_car);
+        final Button parkButton = view.findViewById(R.id.park_car);
 //        setAnimation(view, parkButton);
 
         if(parkButton != null) {
@@ -249,8 +248,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     private void setAnimation(View rootView, final Button parkButton) {
         ViewGroup container = (ViewGroup) parkButton.getParent();
-        ViewGroup parkInfoContainer = (ViewGroup) rootView.findViewById(R.id.park_info_container);
-        final TextView parkingTypeTextView = (TextView) rootView.findViewById(R.id.park_type_info);
+        ViewGroup parkInfoContainer = rootView.findViewById(R.id.park_info_container);
+        final TextView parkingTypeTextView = rootView.findViewById(R.id.park_type_info);
 
         // Declare transition for button
         ChangeBounds buttonTransition = new ChangeBounds();
@@ -399,7 +398,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             // Move camera to current location
             googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
             googleMap.animateCamera(CameraUpdateFactory
-                    .newLatLng(latLng), 1* 1000 /* 1 sec. */, null);
+                    .newLatLng(latLng), 1000 /* 1 sec. */, null);
             stopTimeUpdate();
 
         } else if(action == Constants.ParkActions.SET_PARKING_LOCATION){
@@ -412,7 +411,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                     .showInfoWindow(); /* show title (no need to click on marker to show title) */
             googleMap.moveCamera(CameraUpdateFactory.zoomTo(17 ));
             googleMap.animateCamera(CameraUpdateFactory
-                    .newLatLng(latLng), 1* 1000 /* 1 sec. */, null);
+                    .newLatLng(latLng), 1000 /* 1 sec. */, null);
 
             // Start updating parking time.
             startTimeUpdate();
