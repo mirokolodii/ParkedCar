@@ -24,33 +24,17 @@ import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 public class ConnectionChangeHandler extends Service implements MyLocationManager.MyLocationManagerCallback {
     private static int FOREGROUND_NOTIFICATION_ID = 222;
 
-    public ConnectionChangeHandler() {
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        return super.onStartCommand(intent, flags, startId);
         startForeground(FOREGROUND_NOTIFICATION_ID,
                 Helpers.getForegroundNotification(getBaseContext())
         );
-
-        Log.d("bluetooth", "Service started");
-
-
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                stopService();
-//            }
-//        };
-//
-//        new Handler().postDelayed(runnable, TimeUnit.SECONDS.toMillis(10));
 
         // We need extras from intent, so stop if it's null or doesn't have needed extras
         if (intent == null
                 || !intent.hasExtra(Constants.Bluetooth.EXTRA_CONNECTION_STATE)
                 || !intent.hasExtra(Constants.Bluetooth.EXTRA_PREV_CONNECTION_STATE)) {
-            Log.d("service", "no extras");
+            Log.e("ConnectionChangeHandler", "Intent is null or no needed extras available inside it");
             stopService();
         } else {
             Integer connectionState = intent.getIntExtra(Constants.Bluetooth.EXTRA_CONNECTION_STATE, -1);
