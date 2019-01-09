@@ -58,8 +58,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private ParkFragmentUIUpdateListener mParkFragmentUIUpdateListener;
 
     // Text for Park Car button.
-    private final String PARK_BUTTON = "Park Car";
-    private final String CLEAR_BUTTON = "Clear";
+//    private final String PARK_BUTTON = "Park Car";
+//    private final String CLEAR_BUTTON = "Clear";
 
     private Boolean isParked = false;
     private Float latitude;
@@ -77,13 +77,13 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
     private class BluetoothReceiverBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            int result = intent.getIntExtra(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT, -1);
-            if (result == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
-                Helpers.showToast("Parking location is cleared.", context);
-            } else if (result == Constants.ParkActions.SET_PARKING_LOCATION) {
-                Helpers.showToast("Car has been parked.", context);
-            }
+//            String action = intent.getAction();
+//            int result = intent.getIntExtra(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT, -1);
+//            if (result == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
+//                Helpers.showToast("Parking location is cleared.", context);
+//            } else if (result == Constants.ParkActions.SET_PARKING_LOCATION) {
+//                Helpers.showToast("Car has been parked.", context);
+//            }
             updateUI();
         }
     }
@@ -225,7 +225,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 //                setAnimation(view, parkButton);
 
                     parkButton.setEnabled(false);
-                    parkButton.setText("Working...");
+                    parkButton.setText(getString(R.string.park_btn_working));
                     showProgressBar(true);
                     if (isParked) {
                         isParked = false;
@@ -273,7 +273,8 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             @Override
             public void onTransitionEnd(Transition transition) {
                 // Show button text again on transition end.
-                parkButton.setText(isParked ? CLEAR_BUTTON : PARK_BUTTON);
+                parkButton.setText(isParked ?
+                        getString(R.string.park_btn_clear) : getString(R.string.park_btn_park_car));
             }
 
             @Override
@@ -405,7 +406,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             // Set marker on parking location and move camera on it
              MarkerOptions options = new MarkerOptions();
             options.position(latLng)
-                    .title("Your Car")
+                    .title(getString(R.string.your_car_marker))
                     .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
             googleMap.addMarker(options)
                     .showInfoWindow(); /* show title (no need to click on marker to show title) */

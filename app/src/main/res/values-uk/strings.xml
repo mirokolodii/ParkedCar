@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bluetooth_unavailable_message">Bluetooth недоступний або вимкнений</string>
-    <string name="bluetooth_view_info">Виберіть ваш автомобіль зі списку Bluetooth пристроїв</string>
-    <string name="bluetooth_view_info_extra">Вашого автомобіля немає в списку? Переконайтесь що він спарований з телефоном</string>
+    <string name="bluetooth_view_info">Виберіть ваше авто зі списку Bluetooth пристроїв</string>
+    <string name="bluetooth_view_info_extra">Вашого авто немає в списку? Переконайтесь що він спарований з телефоном</string>
     <string name="bluetooth_settings"><a href="">Налаштування Bluetooth</a></string>
     <string name="park_btn_park_car">Запаркуй</string>
     <string name="park_btn_working">Працюю&#8230;</string>
     <string name="park_btn_clear">Видалити</string>
+
+    <string name="your_car_marker">Ваше авто</string>
 </resources>
