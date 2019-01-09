@@ -12,11 +12,10 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:gravity="center_vertical"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:id="@+id/device_name"
-            android:layout_margin="8dp"
-            android:text="name"/>
+            android:layout_margin="8dp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="0dp"

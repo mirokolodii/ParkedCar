@@ -39,10 +39,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:drawableLeft="@drawable/ic_action_parking_button_icon"
+                android:drawableStart="@drawable/ic_action_parking_button_icon"
                 style="@style/ParkButton"
                 android:id="@+id/park_car"
-                android:text="@string/park_car" />
+                android:text="@string/park_btn_park_car" />
 
             <LinearLayout
                 android:layout_width="match_parent"
