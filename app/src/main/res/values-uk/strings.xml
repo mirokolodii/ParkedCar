@@ -14,6 +14,21 @@
     <string name="parking_time_day">д.</string>
     <string name="parking_time_hour">год.</string>
     <string name="parking_time_min">хв.</string>
-    <string name="parking_time_parked_ago">назад</string>
+    <string name="parking_time_parked_ago">\u0020назад</string>
+
+    <!--Parking type-->
+    <string name="parking_type_auto">Запарковано автоматично\u0020</string>
+    <string name="parking_type_manual">Запарковано вручну\u0020</string>
+
+    <!--Notifications-->
+    <string name="notification_text">Ваше авто позначено на мапі</string>
+    <string name="foreground_notification_text">Отримую локалізацію авто&#8230;</string>
+    <string name="notification_action_maps">Мапа</string>
+    <string name="notification_action_directions">Покроково</string>
+    <string name="notification_action_clear">Видалити</string>
+
+    <!--Accuracy-->
+    <string name="accuracy_text">Точність</string>
+    <string name="accuracy_unit">м.</string>
 
 </resources>

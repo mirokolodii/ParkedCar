@@ -263,9 +263,9 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 parkButton.setText("");
                 if(isParked) {
                     if (isParkedAutomatically) parkingTypeTextView.setText(
-                            Constants.ParkTypeText.PARKED_AUTOMATICALLY_TEXT);
+                            getContext().getString(R.string.parking_type_auto));
                     else parkingTypeTextView.setText(
-                            Constants.ParkTypeText.PARKED_MANUALLY_TEXT);
+                            getContext().getString(R.string.parking_type_manual));
                 }
             }
 

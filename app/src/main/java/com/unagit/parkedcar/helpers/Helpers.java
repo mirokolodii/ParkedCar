@@ -85,6 +85,7 @@ public class Helpers {
                 parkingDuration.append(", ");
             }
         }
+        parkingDuration.append(context.getString(R.string.parking_time_parked_ago));
         return parkingDuration.toString();
     }
 
@@ -95,7 +96,7 @@ public class Helpers {
      * @param value of an entry to be added to map
      */
     private static void putIfNotZero(Map<Long,String> map, Long key, String value) {
-        if(key != null) {
+        if(key != 0) {
             map.put(key, value);
         }
     }
@@ -109,7 +110,7 @@ public class Helpers {
             NotificationChannel notificationChannel = new NotificationChannel(
                     Constants.Notifications.CHANNEL_ID,
                     Constants.Notifications.CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT // Should be lower priority to not show it in a bar?
+                    NotificationManager.IMPORTANCE_LOW
             );
             notificationChannel.setDescription(Constants.Notifications.CHANNEL_DESCRIPTION);
             notificationChannel.enableLights(true);
@@ -124,8 +125,8 @@ public class Helpers {
         }
 
         return new NotificationCompat.Builder(context, Constants.Notifications.CHANNEL_ID)
-                .setContentTitle(Constants.Notifications.FOREGROUND_NOTIFICATION_TITLE)
-                .setContentText(Constants.Notifications.FOREGROUND_NOTIFICATION_TEXT)
+                .setContentTitle(context.getString(R.string.notification_title))
+                .setContentText(context.getString(R.string.foreground_notification_text))
                 .setSmallIcon(R.drawable.ic_parking_icon)
                 .setColor(Color.GREEN)
                 .build();

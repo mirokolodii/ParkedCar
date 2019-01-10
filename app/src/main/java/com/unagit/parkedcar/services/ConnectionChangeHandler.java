@@ -52,7 +52,6 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
     }
 
     private void stopService() {
-        Log.d(this.getClass().getSimpleName(), "Service is about to stop");
         stopForeground(true);
         stopSelf();
     }

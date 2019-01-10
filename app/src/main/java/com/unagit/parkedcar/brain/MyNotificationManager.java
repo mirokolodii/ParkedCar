@@ -7,17 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import android.os.Build;
 import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.activities.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 import java.util.Locale;
-import static com.unagit.parkedcar.helpers.Constants.Notifications.NOTIFICATION_TEXT;
 import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 /**
@@ -43,7 +41,7 @@ public class MyNotificationManager {
             NotificationChannel notificationChannel = new NotificationChannel(
                     Constants.Notifications.CHANNEL_ID,
                     Constants.Notifications.CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT // Should be lower priority to not show it in a bar?
+                    NotificationManager.IMPORTANCE_LOW
             );
             notificationChannel.setDescription(Constants.Notifications.CHANNEL_DESCRIPTION);
             notificationChannel.enableLights(true);
@@ -59,7 +57,10 @@ public class MyNotificationManager {
 
         String accuracy = "";
         if(location != null) {
-            accuracy = String.format(Locale.getDefault(), " Accuracy: %.2f m.", location.getAccuracy());
+            accuracy = String.format(Locale.getDefault(), " %s: %.2f %s",
+                    context.getString(R.string.accuracy_text),
+                    location.getAccuracy(),
+                    context.getString(R.string.accuracy_unit));
         }
         // This intent is triggered on notification click
         Intent mainActivityIntent = new Intent(context, MainActivity.class);
@@ -68,9 +69,9 @@ public class MyNotificationManager {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.Notifications.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_parking_icon)
-                .setContentTitle(Constants.Notifications.NOTIFICATION_TITLE)
+                .setContentTitle(context.getString(R.string.notification_title))
                 .setSubText(accuracy)
-                .setContentText(NOTIFICATION_TEXT)
+                .setContentText(context.getString(R.string.notification_text))
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(Color.GREEN)
@@ -80,13 +81,13 @@ public class MyNotificationManager {
         // Add Actions
         mBuilder
                 .addAction(android.R.drawable.ic_menu_mylocation,
-                        Constants.Notifications.NOTIFICATION_ACTION_TITLE_SHOW,
+                        context.getString(R.string.notification_action_maps),
                         getPendingIntent(context, Constants.Notifications.ACTION_SHOW_ON_MAP))
                 .addAction(android.R.drawable.ic_menu_directions,
-                        Constants.Notifications.NOTIFICATION_ACTION_TITLE_DIRECTIONS,
+                        context.getString(R.string.notification_action_directions),
                         getPendingIntent(context, Constants.Notifications.ACTION_DIRECTIONS))
                 .addAction(android.R.drawable.ic_notification_clear_all,
-                        Constants.Notifications.NOTIFICATION_ACTION_TITLE_CLEAR,
+                        context.getString(R.string.notification_action_clear),
                         getPendingIntent(context, Constants.Notifications.ACTION_CLEAR));
 
         // Send notification

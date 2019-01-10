@@ -68,25 +68,14 @@ public final class Constants {
     public static class Notifications {
         // Location notification channel
         public static final String CHANNEL_ID = BuildConfig.APPLICATION_ID + ".park_car_notifications";
-        public static final String CHANNEL_NAME = "Car Parking Location";
+        public static final String CHANNEL_NAME = "Parking Location";
         public static final String CHANNEL_DESCRIPTION
-                = "Show a location of car parking place";
-
-        // Location notification
+                = "Show a location of car's parking place";
         public static final int NOTIFICATION_ID = 100;
-        public static final String NOTIFICATION_TITLE = "Parked Car";
-        public static final String NOTIFICATION_TEXT = "Your Car has been marked on the map";
-        public static final String NOTIFICATION_ACTION_TITLE_SHOW = "Map";
-        public static final String NOTIFICATION_ACTION_TITLE_DIRECTIONS = "Directions";
-        public static final String NOTIFICATION_ACTION_TITLE_CLEAR = "Clear";
+
         public static final String ACTION_SHOW_ON_MAP = "Show";
         public static final String ACTION_DIRECTIONS = "Directions";
         public static final String ACTION_CLEAR = "Clear";
-
-        // Foreground service notification
-        public static final String FOREGROUND_NOTIFICATION_TITLE = "Getting location...";
-        public static final String FOREGROUND_NOTIFICATION_TEXT = "Looking for current location of your car";
-
     }
 
     /**
@@ -106,16 +95,6 @@ public final class Constants {
         LOCATION_PERMISSION_NOT_GRANTED,
         LOCATION_RECEIVED,
         LOCATION_NOT_RECEIVED
-    }
-
-    /**
-     * Represents a text for parking type:
-     * either manual (user clicked 'Park Car' button)
-     * or automatic (parking is triggered by a BluetoothListener).
-     */
-    public static class ParkTypeText {
-        public static final String PARKED_AUTOMATICALLY_TEXT = "Parked automatically";
-        public static final String PARKED_MANUALLY_TEXT = "Parked manually";
     }
 
     /**

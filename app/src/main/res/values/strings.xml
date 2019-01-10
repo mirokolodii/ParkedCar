@@ -19,7 +19,23 @@
     <string name="parking_time_day">d.</string>
     <string name="parking_time_hour">hr.</string>
     <string name="parking_time_min">min.</string>
-    <string name="parking_time_parked_ago">ago</string>
+    <string name="parking_time_parked_ago">\u0020ago</string>
+
+    <!--Parking type-->
+    <string name="parking_type_auto">Parked automatically\u0020</string>
+    <string name="parking_type_manual">Parked manually\u0020</string>
+
+    <!--Notifications-->
+    <string name="notification_title" translatable="false">Parked Car</string>
+    <string name="notification_text">Your Car has been marked on the map</string>
+    <string name="foreground_notification_text">Getting location of your car&#8230;</string>
+    <string name="notification_action_maps">Maps</string>
+    <string name="notification_action_directions">Directions</string>
+    <string name="notification_action_clear">Clear</string>
+
+    <!--Accuracy-->
+    <string name="accuracy_text">Accuracy</string>
+    <string name="accuracy_unit">m.</string>
 
     <string name="when_label" translatable="false">When:</string>
     <string name="when_info" translatable="false">2018-01-22, 11:45</string>
