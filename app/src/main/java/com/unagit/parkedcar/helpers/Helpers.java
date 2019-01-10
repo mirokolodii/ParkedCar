@@ -59,7 +59,7 @@ public class Helpers {
         long diffMinutes = diff / (60 * 1000) % 60;
 
         // Create a map of time units combined with unit names
-        Map<Long, String> timeUnits = new HashMap<>();
+        Map<Long, String> timeUnits = new LinkedHashMap<>();
         putIfNotZero(timeUnits, diffDays, context.getString(R.string.parking_time_day));
         putIfNotZero(timeUnits, diffHours, context.getString(R.string.parking_time_hour));
         putIfNotZero(timeUnits, diffMinutes, context.getString(R.string.parking_time_min));
