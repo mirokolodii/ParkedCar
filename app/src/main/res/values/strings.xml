@@ -44,8 +44,8 @@
     <string name="location_permission_settings_btn">Settings</string>
     <string name="location_permission_exit_btn">Exit</string>
     <string name="location_not_available_title">Error</string>
-    <string name="location_not_available_text">Sorry&#8230; unable to receive accurate location
-        from the device in reasonable amount of time. You may verify device's location settings
+    <string name="location_not_available_text">Sorry&#8230; Unable to receive accurate location
+        from the device in reasonable amount of time. You may verify device\'s location settings
         and try again afterwards.</string>
     <string name="location_not_available_ok_btn">OK</string>
     <string name="location_disabled_title">Error</string>
