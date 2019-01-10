@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements
                 showLocationDisabledDialog();
                 break;
             case LOCATION_PERMISSION_NOT_GRANTED:
-                Helpers.showToast("Location permission is not granted.", this);
+//                Helpers.showToast("Location permission is not granted.", this);
                 this.finish();
                 break;
             case LOCATION_RECEIVED:
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements
     private void handleLocationReceivedAction(Location location) {
         currentLocation = location;
         if (location == null) {
-            Helpers.showToast("Oops, last location is not known. Trying again...", this);
+//            Helpers.showToast("Oops, last location is not known. Trying again...", this);
             // Try again to get location
             myLocationManager.getLocation(true, true);
 
@@ -319,9 +319,9 @@ public class MainActivity extends AppCompatActivity implements
              */
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
-                    Helpers.showToast(
-                            "Location is saved.",
-                            this);
+//                    Helpers.showToast(
+//                            "Location is saved.",
+//                            this);
                     // Save location into DefaultSharedPreferences
                     MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this);
                     myDefaultPreferenceManager.saveLocation(currentLocation);
@@ -363,16 +363,19 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void showLocationDisabledDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setTitle("Error");
-        dialog.setMessage("Location is disabled on your device or it is in airplane mode. " +
-                "Please, enable location in order to use this application.");
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Exit", new DialogInterface.OnClickListener() {
+        dialog.setTitle(getString(R.string.location_disabled_title));
+        dialog.setMessage(getString(R.string.location_disabled_text));
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                getString(R.string.location_disabled_exit_btn),
+                new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 System.exit(0);
             }
         });
-        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Settings", new DialogInterface.OnClickListener() {
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE,
+                getString(R.string.location_disabled_settings_btn),
+                new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -389,11 +392,11 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void showLocationNotAvailableDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setTitle("Error");
-        dialog.setMessage("Sorry... unable to receive accurate location from the device in " +
-                "reasonable amount of time. You may verify device's location settings " +
-                "and try again afterwards.");
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+        dialog.setTitle(getString(R.string.location_not_available_title));
+        dialog.setMessage(getString(R.string.location_not_available_text));
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                getString(R.string.location_not_available_ok_btn),
+                new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing
@@ -416,27 +419,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            /*
-             Note: below code has been commented in, as handing Bluetooth state changes
-             has been moved to EnableBluetoothBroadcastReceiver, implemented in this class.
-              */
-            // Callback from 'Enable Bluetooth' dialog
-//            case Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT:
-//                switch (resultCode) {
-//                    case RESULT_OK: // User enabled bluetooth
-//                        /**
-//                         * Refresh Bluetooth tab so that Bluetooth fragment is shown
-//                         * instead of DisabledBluetoothFragment
-//                         */
-//                        Log.d(LOG_TAG, "User has enabled bluetooth.");
-//                        mSectionsPagerAdapter.notifyDataSetChanged();
-//                        setTabIcons();
-//                        break;
-//                    case RESULT_CANCELED: // User cancelled
-//                        Log.d(LOG_TAG, "User has NOT enabled bluetooth.");
-//                        break;
-//                }
-
             /*
             Callback from enable location request.
              */
@@ -468,27 +450,27 @@ public class MainActivity extends AppCompatActivity implements
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
-                    Helpers.showToast("Location permission is granted.", this);
+//                    Helpers.showToast("Location permission is granted.", this);
                     // If location has been requested, then request it. Otherwise do nothing
                     myLocationManager.getLocation(true, true);
 
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Helpers.showToast("Location permission denied.", this);
+//                    Helpers.showToast("Location permission denied.", this);
                     new AlertDialog.Builder(this)
-                            .setTitle("Error")
-                            .setMessage("Application requires location permission in order " +
-                                    "to work properly. You can grant this permission in " +
-                                    "application settings.")
-                            .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                            .setTitle(getString(R.string.location_permission_title))
+                            .setMessage(getString(R.string.location_permission_text))
+                            .setPositiveButton(getString(R.string.location_permission_exit_btn),
+                                    new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     // Exit app
                                     MainActivity.this.finish();
                                 }
                             })
-                            .setNegativeButton("Settings", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(getString(R.string.location_permission_settings_btn),
+                                    new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     // Open app settings

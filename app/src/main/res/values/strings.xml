@@ -37,6 +37,23 @@
     <string name="accuracy_text">Accuracy</string>
     <string name="accuracy_unit">m.</string>
 
+    <!--Location-->
+    <string name="location_permission_title">Error</string>
+    <string name="location_permission_text">Application requires location permission in order
+        to work properly. You can grant this permission in application settings.</string>
+    <string name="location_permission_settings_btn">Settings</string>
+    <string name="location_permission_exit_btn">Exit</string>
+    <string name="location_not_available_title">Error</string>
+    <string name="location_not_available_text">Sorry&#8230; unable to receive accurate location
+        from the device in reasonable amount of time. You may verify device's location settings
+        and try again afterwards.</string>
+    <string name="location_not_available_ok_btn">OK</string>
+    <string name="location_disabled_title">Error</string>
+    <string name="location_disabled_text">Location is disabled on your device or
+        airplane mode is enabled. Please, enable location in order to use this application.</string>
+    <string name="location_disabled_settings_btn">Settings</string>
+    <string name="location_disabled_exit_btn">Exit</string>
+
     <string name="when_label" translatable="false">When:</string>
     <string name="when_info" translatable="false">2018-01-22, 11:45</string>
     <string name="location_label" translatable="false">Location:</string>

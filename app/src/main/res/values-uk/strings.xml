@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bluetooth_unavailable_message">Bluetooth недоступний або вимкнений</string>
-    <string name="bluetooth_view_info">Виберіть ваше авто зі списку Bluetooth пристроїв</string>
-    <string name="bluetooth_view_info_extra">Вашого авто немає в списку? Переконайтесь що він спарований з телефоном</string>
+    <string name="bluetooth_view_info">Виберіть ваше авто зі списку Bluetooth пристроїв внизу.</string>
+    <string name="bluetooth_view_info_extra">Немає в списку? Переконайтесь що авто спароване з телефоном.</string>
     <string name="bluetooth_settings"><a href="">Налаштування Bluetooth</a></string>
     <string name="park_btn_park_car">Запаркуй</string>
     <string name="park_btn_working">Працюю&#8230;</string>
@@ -21,8 +21,8 @@
     <string name="parking_type_manual">Запарковано вручну\u0020</string>
 
     <!--Notifications-->
-    <string name="notification_text">Ваше авто позначено на мапі</string>
-    <string name="foreground_notification_text">Отримую локалізацію авто&#8230;</string>
+    <string name="notification_text">Місце парковки збережено</string>
+    <string name="foreground_notification_text">Отримую розташування авто&#8230;</string>
     <string name="notification_action_maps">Мапа</string>
     <string name="notification_action_directions">Покроково</string>
     <string name="notification_action_clear">Видалити</string>
@@ -30,5 +30,21 @@
     <!--Accuracy-->
     <string name="accuracy_text">Точність</string>
     <string name="accuracy_unit">м.</string>
+
+    <!--Location-->
+    <string name="location_permission_title">Помилка</string>
+    <string name="location_permission_text">Програма вимагає доступу до розташування
+        вашого телефону для визначення місця парковки авто. Доступ можна надати в налаштуваннях.</string>
+    <string name="location_permission_settings_btn">Налаштування</string>
+    <string name="location_permission_exit_btn">Вийти</string>
+    <string name="location_not_available_title">Помилка</string>
+    <string name="location_not_available_text">Вибачте&#8230; Не вдалось отримати точне розташування.
+        Перевірте налаштування локалізації і спробуйте знову.</string>
+    <string name="location_not_available_ok_btn">Гаразд</string>
+    <string name="location_disabled_title">Помилка</string>
+    <string name="location_disabled_text">Розташування вимкнене або телефон перебуває в режимі без
+        зв\'язку. Ввімкніть розташування перед використанням програми.</string>
+    <string name="location_disabled_settings_btn">Налаштування</string>
+    <string name="location_disabled_exit_btn">Вихід</string>
 
 </resources>
