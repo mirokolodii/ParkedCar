@@ -9,4 +9,11 @@
     <string name="park_btn_clear">Видалити</string>
 
     <string name="your_car_marker">Ваше авто</string>
+
+    <!--Parking time durations-->
+    <string name="parking_time_day">д.</string>
+    <string name="parking_time_hour">год.</string>
+    <string name="parking_time_min">хв.</string>
+    <string name="parking_time_parked_ago">назад</string>
+
 </resources>

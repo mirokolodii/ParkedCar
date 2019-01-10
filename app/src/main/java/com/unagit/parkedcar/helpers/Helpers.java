@@ -12,8 +12,18 @@ import com.unagit.parkedcar.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Set;
+import java.util.TreeMap;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Helper methods, used throughout the application.
@@ -35,57 +45,66 @@ public class Helpers {
      * Calculates difference between current time and parkedTimestamp.
      *
      * @param parkedTimestamp Long Timestamp.
+     * @param context which is used to get string resources.
      * @return String, representing time difference in days, hours and minutes.
      */
-    public static String timeDifference(Long parkedTimestamp) {
+    public static String getTimeDifference(Long parkedTimestamp, Context context) {
         Long currentTimestamp = Calendar.getInstance().getTimeInMillis();
         long diff = currentTimestamp - parkedTimestamp;
 
-        /*
-         * Convert time difference into string of format "x day(s), y hour(s), z min(s)".
-         */
+        // Get time units from timestamp
 //        long diffSeconds = diff / 1000 % 60;
         long diffDays = diff / (24 * 60 * 60 * 1000);
         long diffHours = diff / (60 * 60 * 1000) % 24;
         long diffMinutes = diff / (60 * 1000) % 60;
-        // Put all parts of difference (days, hours and minutes) into an array.
-        ArrayList<DurationPart> durationParts = new ArrayList<>();
-        durationParts.add(new DurationPart(diffDays, "day"));
-        durationParts.add(new DurationPart(diffHours, "hour"));
-        durationParts.add(new DurationPart(diffMinutes, "minute"));
 
-        // Get a sub array with values = 0
-        ArrayList<DurationPart> zeroValueDurationParts = new ArrayList<>();
-        for (DurationPart part : durationParts) {
-            if (part.getValue() == 0) {
-                zeroValueDurationParts.add(part);
-            }
+        // Create a map of time units combined with unit names
+        Map<Long, String> timeUnits = new HashMap<>();
+        putIfNotZero(timeUnits, diffDays, context.getString(R.string.parking_time_day));
+        putIfNotZero(timeUnits, diffHours, context.getString(R.string.parking_time_hour));
+        putIfNotZero(timeUnits, diffMinutes, context.getString(R.string.parking_time_min));
+
+        // If less than 1 min passed since parking, return 1 min.
+        if(timeUnits.isEmpty()) {
+            return String.format(Locale.getDefault(),
+                    "%d %s %s",
+                    1,
+                    context.getString(R.string.parking_time_min),
+                    context.getString(R.string.parking_time_parked_ago));
         }
 
-        // Remove members with value = 0 from main array
-        durationParts.removeAll(zeroValueDurationParts);
-
-        // Combine all parts into one string and separate them with comma.
-        String parkingDuration = "";
-        for (int i = 0; i < durationParts.size(); i++) {
-            DurationPart part = durationParts.get(i);
-            parkingDuration += part.getDuration();
-            if (i < durationParts.size() - 1) { // We don't want comma after last part
-                parkingDuration += ", ";
+        // Merge all units into single string and separate with comma
+        StringBuilder parkingDuration = new StringBuilder();
+        Iterator<Map.Entry<Long, String>> iterator = timeUnits.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry<Long, String> pair = iterator.next();
+            parkingDuration.append(String.format(Locale.getDefault(),
+                    "%d %s", pair.getKey(), pair.getValue()));
+            // Separate each unit with comma
+            if(iterator.hasNext()) {
+                parkingDuration.append(", ");
             }
         }
+        return parkingDuration.toString();
+    }
 
-        /*
-         * Returns '1 min' text in case, when time since parking is less than 1 min.
-         * Otherwise returns text, informing number of days and time since parking.
-         */
-        return parkingDuration.isEmpty() ? "1 min" : parkingDuration;
+    /**
+     * Puts new Map.Entry into a map only in case key is not equal to zero.
+     * @param map to which a new entry should be added
+     * @param key on an antry to be added to map, only if it's not equal to zero
+     * @param value of an entry to be added to map
+     */
+    private static void putIfNotZero(Map<Long,String> map, Long key, String value) {
+        if(key != null) {
+            map.put(key, value);
+        }
     }
 
     public static Notification getForegroundNotification(Context context) {
 
         // Register notification channel for Android version >= Android.O
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(
                     Constants.Notifications.CHANNEL_ID,

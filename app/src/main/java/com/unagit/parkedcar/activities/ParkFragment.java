@@ -149,8 +149,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             public void run() {
                 if(getView() != null) {
                     TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
-                    String timeDifference = Helpers.timeDifference(parkedTime);
-                    timeDifference = String.format(Locale.getDefault()," %s ago.", timeDifference);
+                    String timeDifference = Helpers.getTimeDifference(parkedTime, getContext());
                     parkedTimeTextView.setText(timeDifference);
                     // Repeat in 1 min.
                     handler.postDelayed(this, 60 * 1000);

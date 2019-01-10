@@ -15,6 +15,12 @@
 
     <string name="your_car_marker">Your Car</string>
 
+    <!--Parking time durations-->
+    <string name="parking_time_day">d.</string>
+    <string name="parking_time_hour">hr.</string>
+    <string name="parking_time_min">min.</string>
+    <string name="parking_time_parked_ago">ago</string>
+
     <string name="when_label" translatable="false">When:</string>
     <string name="when_info" translatable="false">2018-01-22, 11:45</string>
     <string name="location_label" translatable="false">Location:</string>
