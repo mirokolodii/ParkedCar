@@ -50,7 +50,7 @@
     <string name="location_not_available_ok_btn">OK</string>
     <string name="location_disabled_title">Error</string>
     <string name="location_disabled_text">Location is disabled on your device or
-        airplane mode is enabled. Please, enable location in order to use this application.</string>
+        airplane mode is active. Please, enable location in order to use this application.</string>
     <string name="location_disabled_settings_btn">Settings</string>
     <string name="location_disabled_exit_btn">Exit</string>
 
