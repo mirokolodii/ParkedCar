@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/nav_park"
+                android:title="Park Car"/>
+        <item
+                android:id="@+id/nav_bluetooth"
+                android:title="Bluetooth"/>
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                    android:id="@+id/nav_settings"
+                    android:title="Settings"/>
+            <item
+                    android:id="@+id/nav_send"
+                    android:title="Send"/>
+        </menu>
+    </item>
+    <item android:title="Account">
+        <menu>
+            <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@android:drawable/sym_action_chat"
+                    android:title="Logout"/>
+        </menu>
+    </item>
+
+</menu>

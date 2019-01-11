@@ -3,6 +3,13 @@
     <string name="bluetooth_settings"><a href="">Bluetooth Settings</a></string>
     <string name="section_format" translatable="false">Hello World from section: %1$d</string>
 
+    <!--Navigation Drawer-->
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+
     <!--Park button-->
     <string name="park_btn_park_car">Park Car</string>
     <string name="park_btn_working">Working&#8230;</string>
@@ -29,7 +36,7 @@
     <string name="notification_title" translatable="false">Parked Car</string>
     <string name="notification_text">Your Car has been marked on the map</string>
     <string name="foreground_notification_text">Getting location of your car&#8230;</string>
-    <string name="notification_action_maps">Maps</string>
+    <string name="notification_action_maps">Map</string>
     <string name="notification_action_directions">Directions</string>
     <string name="notification_action_clear">Clear</string>
 
@@ -59,7 +66,8 @@
     <string name="location_label" translatable="false">Location:</string>
     <string name="location_info" translatable="false">near High Road 23</string>
 
-    <string name="Upload" translatable="false">Upload</string>
-    <string name="Error" translatable="false">Error</string>
-    <string name="Complete" translatable="false">Complete</string>
+    <!--Preferences-->
+    <string name="pref_behaviour">Behaviour</string>
+    <string name="pref_key_show_notif" translatable="false">pref_show_notif</string>
+    <string name="pref_show_notif">Show Notifications</string>
 </resources>

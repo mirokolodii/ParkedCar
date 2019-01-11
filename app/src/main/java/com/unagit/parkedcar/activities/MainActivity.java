@@ -12,14 +12,28 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
+
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
+
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.brain.MyBluetoothManager;
 import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
@@ -28,12 +42,29 @@ import com.unagit.parkedcar.brain.MyNotificationManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.helpers.ZoomOutPageTransformer;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
         MyLocationManager.MyLocationManagerCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        ParkFragment.ParkFragmentUIUpdateListener {
+        ParkFragment.ParkFragmentUIUpdateListener,
+        NavigationView.OnNavigationItemSelectedListener {
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.nav_park:
+                setFragment(new ParkFragment());
+                return true;
+            case R.id.nav_settings:
+                setFragment(new PreferenceFragment());
+                return true;
+
+        }
+        return false;
+    }
 
     /**
      * Listens to Bluetooth state changes and notifies BluetoothFragment about it.
@@ -42,9 +73,9 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+            if (action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 Integer state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
-                if(state.equals(BluetoothAdapter.STATE_ON)
+                if (state.equals(BluetoothAdapter.STATE_ON)
                         || state.equals(BluetoothAdapter.STATE_OFF)) {
                     updateBluetoothFragment();
                 }
@@ -81,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Instance of {@link MyBluetoothManager}, which includes some helper methods.
-     *
      */
     private MyBluetoothManager myBluetoothManager;
 
@@ -105,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements
      */
     private boolean isInFront;
 
+    private DrawerLayout mDrawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,12 +149,20 @@ public class MainActivity extends AppCompatActivity implements
         myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
 
-        /*
-        // Set toolbar to act as an actionbar. Although, seems like I don't need this for
-        // this app.
+        // Set toolbar to act as an actionbar and setup drawer
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        */
+
+        // Show drawer menu icon to Open/close drawer
+        mDrawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Navigation item click listener
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         // Set tabs and show them on screen, using ViewPager.
         setupViewPagerAndTabLayout();
@@ -193,10 +233,11 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Helper method to register/unregister receiver.
+     *
      * @param register determines, whether to register or unregister.
      */
     private void registerEnableBluetoothBroadcastReceiver(Boolean register) {
-        if(register) {
+        if (register) {
             // Register receiver
             IntentFilter enableBluetoothIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
             registerReceiver(mEnableBluetoothBroadcastReceiver, enableBluetoothIntentFilter);
@@ -254,13 +295,14 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Callback, which receives location result and location itself.
-     * @param result informs, whether or not location has been received.
+     *
+     * @param result   informs, whether or not location has been received.
      * @param location requested location.
      */
     @Override
     public void locationCallback(Constants.LocationStatus result, Location location) {
         // We need some action only if this activity is in foreground.
-        if(!isInFront) {
+        if (!isInFront) {
             return;
         }
 
@@ -298,11 +340,12 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Handles location, received from MyLocationManager, depending on mParkAction:
-     *
+     * <p>
      * SET_PARKING_LOCATION - saves location as parking location and that car has been parked
      * manually by the user, shows notification and updates map in ParkFragment;
-     *
+     * <p>
      * REQUEST_CURRENT_LOCATION - updates current location on map in ParkFragment.
+     *
      * @param location current location.
      */
     private void handleLocationReceivedAction(Location location) {
@@ -368,20 +411,20 @@ public class MainActivity extends AppCompatActivity implements
         dialog.setButton(AlertDialog.BUTTON_POSITIVE,
                 getString(R.string.location_disabled_exit_btn),
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                System.exit(0);
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(0);
+                    }
+                });
         dialog.setButton(AlertDialog.BUTTON_NEGATIVE,
                 getString(R.string.location_disabled_settings_btn),
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                });
         dialog.setIcon(android.R.drawable.ic_dialog_alert);
         dialog.show();
     }
@@ -397,11 +440,11 @@ public class MainActivity extends AppCompatActivity implements
         dialog.setButton(AlertDialog.BUTTON_POSITIVE,
                 getString(R.string.location_not_available_ok_btn),
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do nothing
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                    }
+                });
         dialog.setIcon(android.R.drawable.ic_dialog_alert);
         dialog.show();
     }
@@ -426,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements
                 switch (resultCode) {
                     case RESULT_OK: // User enabled location
                         /* Location is enabled. Request location again.
-                        */
+                         */
                         myLocationManager.getLocation(true, true);
                         break;
                     case RESULT_CANCELED: // User cancelled
@@ -463,20 +506,20 @@ public class MainActivity extends AppCompatActivity implements
                             .setMessage(getString(R.string.location_permission_text))
                             .setPositiveButton(getString(R.string.location_permission_exit_btn),
                                     new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Exit app
-                                    MainActivity.this.finish();
-                                }
-                            })
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // Exit app
+                                            MainActivity.this.finish();
+                                        }
+                                    })
                             .setNegativeButton(getString(R.string.location_permission_settings_btn),
                                     new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Open app settings
-                                    openApplicationSettings();
-                                }
-                            })
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // Open app settings
+                                            openApplicationSettings();
+                                        }
+                                    })
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
                 }
@@ -502,7 +545,8 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Callback from ParkFragment.
-     * @param action which should be handled by this method;
+     *
+     * @param action       which should be handled by this method;
      * @param parkFragment saves instance of ParkFragment to be able to update its UI.
      */
     @Override
@@ -513,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements
             // Get location
             myLocationManager.getLocation(false, false);
 
-        } else if(action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
+        } else if (action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
             mParkAction = action;
             mParkFragment = parkFragment;
             // Get location
@@ -524,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements
             new MyDefaultPreferenceManager(this).removeLocation();
             // Clear notification
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-            if(mNotificationManager != null) {
+            if (mNotificationManager != null) {
                 mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
                 // Update ParkFragment UI
                 parkFragment.updateUI();
@@ -532,5 +576,22 @@ public class MainActivity extends AppCompatActivity implements
                 throw new RuntimeException("Unhandled action in MainActivity.onUIUpdate().");
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void setFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
     }
 }

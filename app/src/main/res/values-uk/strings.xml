@@ -47,4 +47,8 @@
     <string name="location_disabled_settings_btn">Налаштування</string>
     <string name="location_disabled_exit_btn">Вихід</string>
 
+    <!--Preferences-->
+    <string name="pref_behaviour">Поведінка</string>
+    <string name="pref_show_notif">Показувати повідомлення</string>
+
 </resources>
