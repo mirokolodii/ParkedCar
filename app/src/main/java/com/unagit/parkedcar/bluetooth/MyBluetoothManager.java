@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.brain;
+package com.unagit.parkedcar.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -6,20 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
-
-import com.unagit.parkedcar.Contracts.BluetoothManager;
 import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.models.BluetoothDevice;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
- * Class includes a set of helper methods to work with Bluetooth adapter.
- *
+ * {@link MyBluetoothManager} includes a set of helper methods to work with Bluetooth adapter.
  */
 public class MyBluetoothManager implements BluetoothManager {
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
     /**
-     * Returns a boolean, informing, whether Bluetooth is available on a device.
-     * @return boolean
+     * Verifies whether Bluetooth is available on a device.
+     ** @return true if Bluetooth is available.
      */
     @Override
     public boolean isAvailable() {
@@ -27,8 +27,8 @@ public class MyBluetoothManager implements BluetoothManager {
     }
 
     /**
-     * Returns a boolean, informing, whether Bluetooth is enabled on a device.
-     * @return boolean
+     * Verifies whether Bluetooth is enabled on a device.
+     * @return true if Bluetooth is enabled.
      */
     @Override
     public boolean isEnabled() {
@@ -36,7 +36,7 @@ public class MyBluetoothManager implements BluetoothManager {
     }
 
     /**
-     * Requests user to enable Bluetooth on a device.
+     * Requests user to enable Bluetooth.
      */
     @Override
     public void sendEnableRequest(Activity activity) {
@@ -65,5 +65,22 @@ public class MyBluetoothManager implements BluetoothManager {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    @Override
+    public ArrayList<BluetoothDevice> getPairedDevices(Set<String> trackedDevices) {
+        ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>();
+        if (isAvailable()) {
+            Set<android.bluetooth.BluetoothDevice> devices = btAdapter.getBondedDevices();
+            if (devices.size() > 0) {
+                for (android.bluetooth.BluetoothDevice device : devices) {
+                    Boolean tracked = trackedDevices.contains(device.getAddress());
+                    BluetoothDevice pairedDevice = new BluetoothDevice(device.getName(), device.getAddress(), tracked);
+                    pairedDevices.add(pairedDevice);
+                }
+            }
+
+        }
+        return pairedDevices;
     }
 }

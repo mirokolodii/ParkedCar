@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.brain;
+package com.unagit.parkedcar.tools;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,11 +12,11 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import com.unagit.parkedcar.R;
-import com.unagit.parkedcar.activities.MainActivity;
+import com.unagit.parkedcar.views.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 import java.util.Locale;
-import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
+import static com.unagit.parkedcar.views.MainActivity.LOG_TAG;
 
 /**
  * Creates and displays notification with parked car information.

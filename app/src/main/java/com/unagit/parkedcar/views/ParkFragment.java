@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.activities;
+package com.unagit.parkedcar.views;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -34,11 +34,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
-import java.util.Locale;
-import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
+
+import static com.unagit.parkedcar.views.MainActivity.LOG_TAG;
 
 public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 

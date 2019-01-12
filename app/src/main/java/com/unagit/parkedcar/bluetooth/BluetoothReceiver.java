@@ -1,26 +1,21 @@
-package com.unagit.parkedcar.services;
+package com.unagit.parkedcar.bluetooth;
 
-import android.app.NotificationManager;
-import android.app.Service;
 import android.bluetooth.BluetoothA2dp;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 
 import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.util.Log;
-import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
-import com.unagit.parkedcar.brain.MyLocationManager;
-import com.unagit.parkedcar.brain.MyNotificationManager;
-import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.services.ConnectionChangeHandler;
+
 import java.util.Set;
-import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
+
 import static com.unagit.parkedcar.helpers.Constants.Bluetooth.EXTRA_CONNECTION_STATE;
 import static com.unagit.parkedcar.helpers.Constants.Bluetooth.EXTRA_PREV_CONNECTION_STATE;
 
@@ -66,7 +61,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
      */
     private boolean isCorrectAction(String action) {
         return (
-//                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
+                action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) ||
                         action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED));
     }
 

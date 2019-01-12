@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/park_fragment"
-    tools:context="com.unagit.parkedcar.activities.ParkFragment">
+    tools:context="com.unagit.parkedcar.views.ParkFragment">
 
 
     <LinearLayout
@@ -61,7 +61,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:id="@+id/map"
-            tools:context=".activities.MainActivity"
+            tools:context=".views.MainActivity"
             android:name="com.google.android.gms.maps.SupportMapFragment" />
     </LinearLayout>
 </FrameLayout>

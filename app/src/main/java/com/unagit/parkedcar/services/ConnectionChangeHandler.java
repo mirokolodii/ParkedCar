@@ -5,21 +5,16 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.location.Location;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
-import com.unagit.parkedcar.brain.MyLocationManager;
-import com.unagit.parkedcar.brain.MyNotificationManager;
+import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.MyLocationManager;
+import com.unagit.parkedcar.tools.MyNotificationManager;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
 
-import java.util.concurrent.TimeUnit;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
 
 public class ConnectionChangeHandler extends Service implements MyLocationManager.MyLocationManagerCallback {
     private static int FOREGROUND_NOTIFICATION_ID = 222;

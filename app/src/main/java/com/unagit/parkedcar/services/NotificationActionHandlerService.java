@@ -10,9 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
-import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.helpers.Constants;
-import static com.unagit.parkedcar.activities.MainActivity.LOG_TAG;
+import static com.unagit.parkedcar.views.MainActivity.LOG_TAG;
 
 /**
  * Handles actions from notification.

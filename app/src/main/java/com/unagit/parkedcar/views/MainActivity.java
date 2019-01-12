@@ -1,13 +1,9 @@
-package com.unagit.parkedcar.activities;
+package com.unagit.parkedcar.views;
 
 import android.app.NotificationManager;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -16,7 +12,6 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -26,29 +21,106 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.brain.MyBluetoothManager;
-import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
-import com.unagit.parkedcar.brain.MyLocationManager;
-import com.unagit.parkedcar.brain.MyNotificationManager;
+import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.MyLocationManager;
+import com.unagit.parkedcar.tools.MyNotificationManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
-import com.unagit.parkedcar.helpers.ZoomOutPageTransformer;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
         MyLocationManager.MyLocationManagerCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
         ParkFragment.ParkFragmentUIUpdateListener,
         NavigationView.OnNavigationItemSelectedListener {
+
+    // Tag for logs
+    public static String LOG_TAG;
+
+
+    /**
+     * Instance of ParkFragment. Required to trigger its methods from MainActivity.
+     */
+    private ParkFragment mParkFragment;
+
+    /**
+     * Park action from a set of {@link Constants.ParkActions actions},
+     * returned from ParkFragment.
+     */
+    private Integer mParkAction;
+
+
+    /**
+     * Instance of {@link MyLocationManager}, which provides information about current location.
+     */
+    private MyLocationManager myLocationManager;
+
+    /**
+     * Keeps location, returned from MyLocationManager.
+     */
+    Location currentLocation;
+
+
+    /**
+     * True when application is in foreground, false otherwise. Changed in onStart/onStop methods.
+     */
+    private boolean isInFront;
+
+    private DrawerLayout mDrawer;
+    private MyDefaultPreferenceManager mPreferenceManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Set TAG for logs as this class name
+        LOG_TAG = this.getClass().getSimpleName();
+
+        // Create instances of helper classes.
+        myLocationManager = new MyLocationManager(MainActivity.this, null, this);
+        mPreferenceManager = new MyDefaultPreferenceManager(this);
+
+        // Set toolbar to act as an actionbar and setup drawer
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Show drawer menu icon to Open/close drawer
+        mDrawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Navigation item click listener
+        NavigationView navigationView = findViewById(R.id.nav_container);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        setupInitialView();
+    }
+
+    private void setupInitialView() {
+        setFragment(new ParkFragment());
+    }
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isInFront = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isInFront = false;
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -93,99 +165,6 @@ public class MainActivity extends AppCompatActivity implements
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
-
-    // Tag for logs
-    public static String LOG_TAG;
-
-
-    /**
-     * Instance of ParkFragment. Required to trigger its methods from MainActivity.
-     */
-    private ParkFragment mParkFragment;
-
-    /**
-     * Park action from a set of {@link Constants.ParkActions actions},
-     * returned from ParkFragment.
-     */
-    private Integer mParkAction;
-
-
-    /**
-     * Instance of {@link MyLocationManager}, which provides information about current location.
-     */
-    private MyLocationManager myLocationManager;
-
-    /**
-     * Keeps location, returned from MyLocationManager.
-     */
-    Location currentLocation;
-
-
-    /**
-     * True when application is in foreground, false otherwise. Changed in onStart/onStop methods.
-     */
-    private boolean isInFront;
-
-    private DrawerLayout mDrawer;
-
-    private MyDefaultPreferenceManager mPreferenceManager;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Set TAG for logs as this class name
-        LOG_TAG = this.getClass().getSimpleName();
-
-        // Create instances of helper classes.
-        myLocationManager = new MyLocationManager(MainActivity.this, null, this);
-        mPreferenceManager = new MyDefaultPreferenceManager(this);
-
-        // Set toolbar to act as an actionbar and setup drawer
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Show drawer menu icon to Open/close drawer
-        mDrawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        // Navigation item click listener
-        NavigationView navigationView = findViewById(R.id.nav_container);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // Set tabs and show them on screen, using ViewPager.
-//        setupViewPagerAndTabLayout();
-        setupInitialView();
-    }
-
-    private void setupInitialView() {
-        setFragment(new ParkFragment());
-    }
-
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        updateBluetoothFragment();
-//        verifyBluetoothSetup();
-//        registerEnableBluetoothBroadcastReceiver(true);
-        isInFront = true;
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        registerEnableBluetoothBroadcastReceiver(false);
-        isInFront = false;
-    }
-
 
     /**
      * Callback, which receives location result and location itself.
@@ -256,9 +235,6 @@ public class MainActivity extends AppCompatActivity implements
              */
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
-//                    Helpers.showToast(
-//                            "Location is saved.",
-//                            this);
                     // Save location into DefaultSharedPreferences
                     MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this);
                     myDefaultPreferenceManager.saveLocation(currentLocation);
@@ -425,9 +401,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Opens app's settings
-     */
     private void openApplicationSettings() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

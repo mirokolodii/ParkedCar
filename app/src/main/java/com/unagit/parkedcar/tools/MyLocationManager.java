@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.brain;
+package com.unagit.parkedcar.tools;
 
 import android.Manifest;
 import android.app.Activity;
@@ -29,7 +29,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.unagit.parkedcar.activities.MainActivity;
+import com.unagit.parkedcar.views.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import java.util.concurrent.TimeUnit;
 import static com.unagit.parkedcar.helpers.Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION;
@@ -312,7 +312,7 @@ public class MyLocationManager extends LocationCallback implements
      * Callback from LocationCallback with location results.
      * Do following:
      * 1. remove location updates and disconnect from GoogleApi
-     * 2. trigger a callback {@link MainActivity#locationCallback(int, Location)} with last known location
+     * 2. trigger a callback {@link MainActivity#locationCallback(Constants.LocationStatus, Location)} with last known location
      */
     @Override
     public void onLocationResult(LocationResult locationResult) {

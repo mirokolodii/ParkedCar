@@ -1,7 +1,6 @@
-package com.unagit.parkedcar.activities;
+package com.unagit.parkedcar.views;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.unagit.parkedcar.models.BluetoothDevice;
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.brain.MyBluetoothDevice;
-import com.unagit.parkedcar.brain.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
 import com.unagit.parkedcar.R;
 import java.util.ArrayList;
 import java.util.Set;
@@ -28,7 +28,7 @@ import java.util.Set;
 public class OldBluetoothFragment extends Fragment {
 
     BluetoothAdapter btAdapter;
-    private ArrayList<MyBluetoothDevice> devices;
+    private ArrayList<BluetoothDevice> devices;
     private Set<String> trackedDevices;
     MyDefaultPreferenceManager myDefaultPreferenceManager;
 
@@ -44,7 +44,7 @@ public class OldBluetoothFragment extends Fragment {
         super.onCreate(savedInstanceState);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
-        devices = getPairedDevices();
+
         trackedDevices = myDefaultPreferenceManager.getDevices();
     }
 
@@ -86,20 +86,7 @@ public class OldBluetoothFragment extends Fragment {
         myDefaultPreferenceManager.setValue(Constants.Store.DEVICE_ADDRESSES, trackedDevices);
     }
 
-    /**
-     * Returns a set of MyBluetoothDevice items, which are paired to this device.
-     */
-    private ArrayList<MyBluetoothDevice> getPairedDevices() {
-        ArrayList<MyBluetoothDevice> pairedDevices = new ArrayList<>();
-        Set<BluetoothDevice> devices = btAdapter.getBondedDevices();
-        if (devices.size() > 0) {
-            for (BluetoothDevice device : devices) {
-                MyBluetoothDevice pairedDevice = new MyBluetoothDevice(device.getName(), device.getAddress());
-                pairedDevices.add(pairedDevice);
-            }
-        }
-        return pairedDevices;
-    }
+
 
     /**
      * Fills ListView with a list of paired Bluetooth devices
@@ -111,7 +98,7 @@ public class OldBluetoothFragment extends Fragment {
         MyBluetoothDeviceAdapter adapter = new MyBluetoothDeviceAdapter(getContext(), this.devices, trackedDevices);
 
         // Set adapter for ListView
-        ListView listView = (ListView) rootView.findViewById(R.id.bluetooth_list_view);
+        ListView listView = (ListView) rootView.findViewById(R.id.bluetooth_list);
         listView.setAdapter(adapter);
 
         // Flip tick image and update trackedDevices on item click
@@ -119,7 +106,7 @@ public class OldBluetoothFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 //Get device and its address
-                MyBluetoothDevice clickedDevice = devices.get(position);
+                BluetoothDevice clickedDevice = devices.get(position);
                 String deviceAddress = clickedDevice.getAddress();
 
                 // Flip tick image

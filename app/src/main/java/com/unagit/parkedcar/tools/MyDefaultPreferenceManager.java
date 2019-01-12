@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.brain;
+package com.unagit.parkedcar.tools;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.unagit.parkedcar.R;
-import com.unagit.parkedcar.activities.MainActivity;
+import com.unagit.parkedcar.views.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import java.util.Calendar;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.activities;
+package com.unagit.parkedcar.views;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
