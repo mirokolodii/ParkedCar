@@ -79,7 +79,7 @@ public class MyNotificationManager {
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setSubText(accuracy)
                 .setContentText(context.getString(R.string.notification_text))
-                .setOngoing(true)
+//                .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(Color.GREEN)
                 .setContentIntent(mainActivityPendingIntent);
