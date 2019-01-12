@@ -34,6 +34,13 @@ public class MyNotificationManager {
      * @param location if provided, gets accuracy and shows it in notification.
      */
     public void sendNotification(Context context, @Nullable Location location) {
+        MyDefaultPreferenceManager preferenceManager = new MyDefaultPreferenceManager(context);
+
+        // Check user's preferences regarding notification sending
+        if(!preferenceManager.shouldSendNotification()) {
+            return;
+        }
+
         NotificationManager notificationManager  = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Set notifications channel for Android.O and above

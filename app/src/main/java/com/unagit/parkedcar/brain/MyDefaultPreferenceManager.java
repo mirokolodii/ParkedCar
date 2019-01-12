@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.activities.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import java.util.Calendar;
@@ -15,9 +17,11 @@ import java.util.Set;
  * This class includes helper methods for DefaultSharedPreferences.
  */
 public class MyDefaultPreferenceManager {
-    private static SharedPreferences spref;
+    private SharedPreferences spref;
+    private Context context;
 
     public MyDefaultPreferenceManager(Context context) {
+        this.context = context;
         spref = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -124,5 +128,10 @@ public class MyDefaultPreferenceManager {
 
     private Long getCurrentTimestamp() {
               return Calendar.getInstance().getTimeInMillis();
+    }
+
+    public boolean shouldSendNotification() {
+        return spref.getBoolean(context.getString(R.string.pref_key_show_notif),
+                context.getResources().getBoolean(R.bool.pref_show_notif_default));
     }
 }

@@ -54,16 +54,21 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.nav_park:
                 setFragment(new ParkFragment());
-                return true;
+                break;
+
             case R.id.nav_settings:
                 setFragment(new PreferenceFragment());
-                return true;
+                break;
 
+            default:
+                return false;
         }
-        return false;
+
+        mDrawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     /**
@@ -165,7 +170,12 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 
         // Set tabs and show them on screen, using ViewPager.
-        setupViewPagerAndTabLayout();
+//        setupViewPagerAndTabLayout();
+        setupInitialView();
+    }
+
+    private void setupInitialView() {
+        setFragment(new ParkFragment());
     }
 
     /**
@@ -218,16 +228,16 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        updateBluetoothFragment();
-        verifyBluetoothSetup();
-        registerEnableBluetoothBroadcastReceiver(true);
+//        updateBluetoothFragment();
+//        verifyBluetoothSetup();
+//        registerEnableBluetoothBroadcastReceiver(true);
         isInFront = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        registerEnableBluetoothBroadcastReceiver(false);
+//        registerEnableBluetoothBroadcastReceiver(false);
         isInFront = false;
     }
 
@@ -532,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Opens device's settings for this app.
+     * Opens app's settings
      */
     private void openApplicationSettings() {
         Intent intent = new Intent();

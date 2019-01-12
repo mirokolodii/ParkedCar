@@ -1,9 +1,10 @@
-<androidx.viewpager.widget.ViewPager
-    android:id="@+id/container"
+<FrameLayout android:id="@+id/container"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-/>
+    tools:showIn="@layout/activity_main_appbar"
+
+    xmlns:tools="http://schemas.android.com/tools" />
 

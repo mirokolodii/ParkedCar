@@ -21,19 +21,10 @@
             app:layout_scrollFlags="enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/app_name" />
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@android:color/holo_green_dark" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
-        layout="@layout/activity_main_context"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        layout="@layout/activity_main_content" />
 
 
 
