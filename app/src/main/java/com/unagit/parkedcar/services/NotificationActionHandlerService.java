@@ -86,6 +86,7 @@ public class NotificationActionHandlerService extends IntentService {
     private void createMapsIntent(String uri) {
         // Initiate new intent
         Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        mapsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // Open intent in Google Maps
         mapsIntent.setPackage("com.google.android.apps.maps");
         try {

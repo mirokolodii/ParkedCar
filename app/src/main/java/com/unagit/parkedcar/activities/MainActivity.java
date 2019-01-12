@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -31,7 +30,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 
 import com.unagit.parkedcar.helpers.Constants;
@@ -42,6 +40,7 @@ import com.unagit.parkedcar.brain.MyNotificationManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.helpers.ZoomOutPageTransformer;
+import com.unagit.parkedcar.services.NotificationActionHandlerService;
 
 import java.util.ArrayList;
 
@@ -57,6 +56,30 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.nav_park:
                 setFragment(new ParkFragment());
+                break;
+
+            case R.id.nav_bluetooth:
+                // TODO: implement
+                break;
+
+            case R.id.nav_maps:
+                if(mPreferenceManager.isParked()) {
+                    Intent i = new Intent(this, NotificationActionHandlerService.class);
+                    i.setAction(Constants.Notifications.ACTION_SHOW_ON_MAP);
+                    startService(i);
+                } else {
+                    Helpers.showToast(getString(R.string.parking_not_set_message), this);
+                }
+                break;
+
+            case R.id.nav_directions:
+                if(mPreferenceManager.isParked()) {
+                    Intent i = new Intent(this, NotificationActionHandlerService.class);
+                    i.setAction(Constants.Notifications.ACTION_DIRECTIONS);
+                    startService(i);
+                } else {
+                    Helpers.showToast(getString(R.string.parking_not_set_message), this);
+                }
                 break;
 
             case R.id.nav_settings:
@@ -142,6 +165,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private DrawerLayout mDrawer;
 
+    private MyDefaultPreferenceManager mPreferenceManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements
         // Create instances of helper classes.
         myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
+        mPreferenceManager = new MyDefaultPreferenceManager(this);
 
         // Set toolbar to act as an actionbar and setup drawer
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -166,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements
         toggle.syncState();
 
         // Navigation item click listener
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_container);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Set tabs and show them on screen, using ViewPager.

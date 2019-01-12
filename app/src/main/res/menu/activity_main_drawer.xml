@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:showIn="navigation_view">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
         <item
-                android:id="@+id/nav_park"
-                android:title="Park Car"/>
+            android:id="@+id/nav_park"
+            android:title="Park Car" />
         <item
-                android:id="@+id/nav_bluetooth"
-                android:title="Bluetooth"/>
+            android:id="@+id/nav_bluetooth"
+            android:title="Bluetooth" />
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Google Maps">
         <menu>
             <item
-                    android:id="@+id/nav_settings"
-                    android:title="Settings"/>
+                android:id="@+id/nav_maps"
+                android:title="Show in Maps" />
             <item
-                    android:id="@+id/nav_send"
-                    android:title="Send"/>
+                android:id="@+id/nav_directions"
+                android:title="Directions" />
         </menu>
     </item>
-    <item android:title="Account">
-        <menu>
-            <item
-                    android:id="@+id/nav_logout"
-                    android:icon="@android:drawable/sym_action_chat"
-                    android:title="Logout"/>
-        </menu>
-    </item>
+    <item android:title="Other">
 
+    <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:title="Settings" />
+
+    </menu>
+    </item>
 </menu>
