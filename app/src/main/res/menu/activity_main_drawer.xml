@@ -6,29 +6,29 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_park"
-            android:title="Park Car" />
+            android:title="@string/nav_park" />
         <item
             android:id="@+id/nav_bluetooth"
-            android:title="Bluetooth" />
+            android:title="@string/nav_bluetooth" />
 
     </group>
 
-    <item android:title="Google Maps">
+    <item android:title="@string/nav_google_maps_section">
         <menu>
             <item
                 android:id="@+id/nav_maps"
-                android:title="Show in Maps" />
+                android:title="@string/nav_google_maps" />
             <item
                 android:id="@+id/nav_directions"
-                android:title="Directions" />
+                android:title="@string/nav_directions" />
         </menu>
     </item>
-    <item android:title="Other">
+    <item android:title="@string/nav_other_section">
 
     <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:title="Settings" />
+                android:title="@string/nav_settings" />
 
     </menu>
     </item>
