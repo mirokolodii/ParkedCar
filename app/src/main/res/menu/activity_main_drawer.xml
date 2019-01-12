@@ -6,10 +6,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_park"
-            android:title="@string/nav_park" />
+            android:title="@string/nav_park"
+            android:icon="@android:drawable/ic_menu_mylocation"/>
         <item
             android:id="@+id/nav_bluetooth"
-            android:title="@string/nav_bluetooth" />
+            android:title="@string/nav_bluetooth"
+            android:icon="@android:drawable/stat_sys_data_bluetooth"/>
 
     </group>
 
@@ -17,10 +19,12 @@
         <menu>
             <item
                 android:id="@+id/nav_maps"
-                android:title="@string/nav_google_maps" />
+                android:title="@string/nav_google_maps"
+                android:icon="@drawable/ic_location_on_black_24dp" />
             <item
                 android:id="@+id/nav_directions"
-                android:title="@string/nav_directions" />
+                android:title="@string/nav_directions"
+                android:icon="@android:drawable/ic_menu_directions" />
         </menu>
     </item>
     <item android:title="@string/nav_other_section">
@@ -28,7 +32,8 @@
     <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:title="@string/nav_settings" />
+                android:title="@string/nav_settings"
+                android:icon="@drawable/ic_settings_black_24dp" />
 
     </menu>
     </item>

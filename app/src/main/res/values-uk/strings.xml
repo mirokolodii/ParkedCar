@@ -21,7 +21,7 @@
     <string name="parking_type_manual">Запарковано вручну\u0020</string>
 
     <!--Navigation Drawer-->
-    <string name="nav_park">Запаркуй</string>
+    <string name="nav_park">Розташування Авто</string>
     <string name="nav_bluetooth">Bluetooth</string>
     <string name="nav_google_maps_section">Мапи Google</string>
     <string name="nav_google_maps">Мапа</string>
