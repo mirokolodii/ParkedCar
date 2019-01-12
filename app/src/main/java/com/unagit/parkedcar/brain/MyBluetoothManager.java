@@ -2,28 +2,27 @@ package com.unagit.parkedcar.brain;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
+
+import com.unagit.parkedcar.Contracts.BluetoothManager;
 import com.unagit.parkedcar.helpers.Constants;
 
 /**
  * Class includes a set of helper methods to work with Bluetooth adapter.
  *
  */
-public class MyBluetoothManager {
+public class MyBluetoothManager implements BluetoothManager {
     private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-    private Activity activity;
-
-    public MyBluetoothManager(Activity activity) {
-        this.activity = activity;
-    }
 
     /**
      * Returns a boolean, informing, whether Bluetooth is available on a device.
      * @return boolean
      */
-    public boolean isBluetoothAvailable() {
+    @Override
+    public boolean isAvailable() {
         return (btAdapter != null);
     }
 
@@ -31,26 +30,24 @@ public class MyBluetoothManager {
      * Returns a boolean, informing, whether Bluetooth is enabled on a device.
      * @return boolean
      */
-    public boolean isBluetoothEnabled() {
+    @Override
+    public boolean isEnabled() {
         return btAdapter.isEnabled();
     }
 
     /**
      * Requests user to enable Bluetooth on a device.
      */
-    public void enableBluetoothRequest() {
+    @Override
+    public void sendEnableRequest(Activity activity) {
         Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         activity.startActivityForResult(enableBT, Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT);
     }
 
-    /**
-     * Show a dialog, when Bluetooth is not available on a device.
-     * Two buttons:
-     * 1. Exit - exits app;
-     * 2. Cancel - return to app
-     */
-    public void displayBluetoothNotAvailableNotificationDialog() {
-        new AlertDialog.Builder(activity)
+    // TODO: extract text to string resources
+    @Override
+    public void showUnavailableWarning(Context context) {
+        new AlertDialog.Builder(context)
                 .setTitle("Error")
                 .setMessage("Your device doesn't support Bluetooth")
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {

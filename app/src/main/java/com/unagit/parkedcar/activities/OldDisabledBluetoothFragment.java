@@ -13,8 +13,8 @@ import com.unagit.parkedcar.R;
 /**
  * Fragment, used in cases, where Bluetooth is either unavailable or disabled.
  */
-public class DisabledBluetoothFragment extends Fragment {
-    public DisabledBluetoothFragment() {
+public class OldDisabledBluetoothFragment extends Fragment {
+    public OldDisabledBluetoothFragment() {
         // Required empty public constructor
     }
 
@@ -27,7 +27,7 @@ public class DisabledBluetoothFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_disabled_bluetooth, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_bluetooth_disabled_content, container, false);
 
         // Set a click listener, which opens Bluetooth settings for a device.
         TextView bluetoothSettingsLink = (TextView) rootView.findViewById(R.id.bluetooth_settings_link);

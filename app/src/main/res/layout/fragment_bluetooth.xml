@@ -1,39 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.unagit.parkedcar.activities.BluetoothFragment">
+    tools:context=".activities.BluetoothFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
+   <include android:visibility="gone"
+       android:id="@+id/bluetooth_content"
+       layout="@layout/fragment_bluetooth_content" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/bluetooth_view_info"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/bluetooth_view_info_extra"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/bluetooth_settings_link"
-            android:layout_gravity="end"
-            android:layout_marginBottom="10dp"
-            android:padding="10dp"
-            android:clickable="true"
-            android:text="@string/bluetooth_settings"/>
-
-        <ListView
-            android:id="@+id/bluetooth_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
+    <include android:visibility="visible"
+        android:id="@+id/disabled_bluetooth_content"
+        layout="@layout/fragment_bluetooth_disabled_content" />
 
 </FrameLayout>
-

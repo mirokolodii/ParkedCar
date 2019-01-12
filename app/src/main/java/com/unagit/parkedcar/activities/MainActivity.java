@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.nav_bluetooth:
-                // TODO: implement
+                setFragment(new BluetoothFragment());
                 break;
 
             case R.id.nav_maps:
@@ -94,38 +94,11 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
-    /**
-     * Listens to Bluetooth state changes and notifies BluetoothFragment about it.
-     */
-    public class EnableBluetoothBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                Integer state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
-                if (state.equals(BluetoothAdapter.STATE_ON)
-                        || state.equals(BluetoothAdapter.STATE_OFF)) {
-                    updateBluetoothFragment();
-                }
-            }
-        }
-    }
+
 
     // Tag for logs
     public static String LOG_TAG;
 
-    /**
-     * Implementation of FragmentStatePagerAdapter, which will provide
-     * fragments for each of the sections.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
-
-    private TabLayout tabLayout;
 
     /**
      * Instance of ParkFragment. Required to trigger its methods from MainActivity.
@@ -138,10 +111,6 @@ public class MainActivity extends AppCompatActivity implements
      */
     private Integer mParkAction;
 
-    /**
-     * Instance of {@link MyBluetoothManager}, which includes some helper methods.
-     */
-    private MyBluetoothManager myBluetoothManager;
 
     /**
      * Instance of {@link MyLocationManager}, which provides information about current location.
@@ -153,10 +122,6 @@ public class MainActivity extends AppCompatActivity implements
      */
     Location currentLocation;
 
-    /**
-     * Instance of {@link EnableBluetoothBroadcastReceiver}, which informs about Bluetooth state changes.
-     */
-    private EnableBluetoothBroadcastReceiver mEnableBluetoothBroadcastReceiver = new EnableBluetoothBroadcastReceiver();
 
     /**
      * True when application is in foreground, false otherwise. Changed in onStart/onStop methods.
@@ -176,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements
         LOG_TAG = this.getClass().getSimpleName();
 
         // Create instances of helper classes.
-        myBluetoothManager = new MyBluetoothManager(this);
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
         mPreferenceManager = new MyDefaultPreferenceManager(this);
 
@@ -204,52 +168,7 @@ public class MainActivity extends AppCompatActivity implements
         setFragment(new ParkFragment());
     }
 
-    /**
-     * Setup ViewPager with adapter.
-     * Setup TabLayout to work with ViewPager.
-     */
-    private void setupViewPagerAndTabLayout() {
-        // PagerAdapter for ViewPager
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), myBluetoothManager);
 
-        // Set up the ViewPager with PagerAdapter.
-        mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // Custom animated transformation between tabs
-        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-
-        //Setup a TabLayout to work with ViewPager (get tabs from it).
-        tabLayout = findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(mViewPager);
-        // Each tab: remove title text and set icons
-        setTabIcons();
-
-        /*
-         * Listener for TabLayout tabs selection changes
-         */
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                /*
-                 * When BLUETOOTH_TAB is selected - verify that:
-                 * 1. Bluetooth is supported by a device. If not - display dialog.
-                 * 2. Bluetooth is enabled. If not - send request to enable Bluetooth.
-                 */
-                verifyBluetoothSetup();
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-        });
-    }
 
     @Override
     protected void onStart() {
@@ -267,67 +186,6 @@ public class MainActivity extends AppCompatActivity implements
         isInFront = false;
     }
 
-    /**
-     * Helper method to register/unregister receiver.
-     *
-     * @param register determines, whether to register or unregister.
-     */
-    private void registerEnableBluetoothBroadcastReceiver(Boolean register) {
-        if (register) {
-            // Register receiver
-            IntentFilter enableBluetoothIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            registerReceiver(mEnableBluetoothBroadcastReceiver, enableBluetoothIntentFilter);
-        } else {
-            // Unregister receiver
-            unregisterReceiver(mEnableBluetoothBroadcastReceiver);
-        }
-    }
-
-    /**
-     * If bluetooth tab is currently selected, then verify:
-     * - is Bluetooth available on a device? If not, show a message to a user.
-     * - is Bluetooth enabled on a device? If not, show a request to enable Bluetooth.
-     */
-    private void verifyBluetoothSetup() {
-        if (tabLayout.getSelectedTabPosition() == Constants.Tabs.BLUETOOTH_TAB) {
-            if (!myBluetoothManager.isBluetoothAvailable()) { /* Bluetooth is not available */
-                myBluetoothManager.displayBluetoothNotAvailableNotificationDialog();
-            } else if (!myBluetoothManager.isBluetoothEnabled()) { /* Bluetooth is disabled */
-                myBluetoothManager.enableBluetoothRequest();
-            }
-        }
-    }
-
-    /**
-     * Updates BluetoothFragment on Bluetooth connection state changes.
-     * If Bluetooth is enabled, show Bluetooth fragment.
-     * If Bluetooth is disabled or not available, show DisabledBluetoothFragment.
-     */
-    private void updateBluetoothFragment() {
-        mSectionsPagerAdapter.notifyDataSetChanged();
-        setTabIcons();
-    }
-
-    /**
-     * setTabIcons:
-     * removes title and sets icon for each tab in TabLayout.
-     */
-    private void setTabIcons() {
-        ArrayList<Integer> icons = new ArrayList<>();
-        icons.add(Constants.Tabs.MAP_TAB_ICON);
-//        icons.add(Constants.Tabs.PHOTOS_TAB_ICON);
-        icons.add(Constants.Tabs.BLUETOOTH_TAB_ICON);
-        for (int position = 0; position < icons.size(); position++) {
-            try {
-                tabLayout
-                        .getTabAt(position)
-                        .setText(null)
-                        .setIcon(icons.get(position));
-            } catch (NullPointerException e) {
-                Log.e(LOG_TAG, e.getMessage());
-            }
-        }
-    }
 
     /**
      * Callback, which receives location result and location itself.

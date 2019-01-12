@@ -25,7 +25,7 @@
     <!--Bluetooth window-->
     <string name="bluetooth_view_info">Choose your car on a list of bluetooth devices below</string>
     <string name="bluetooth_view_info_extra">Don\'t see your car? Make sure it is paired with your phone first</string>
-    <string name="bluetooth_unavailable_message">Bluetooth is either unavailable or disabled</string>
+    <string name="bluetooth_unavailable_message">Bluetooth is either unavailable or disabled.</string>
 
     <string name="your_car_marker">Your Car</string>
 
@@ -86,4 +86,7 @@
     <string name="pref_version_title">Version</string>
     <string name="pref_rate_not_in_market_error">Unable to find this app in Google Play market</string>
     <string name="parking_not_set_message">Car not parked</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
