@@ -53,5 +53,6 @@
     <string name="pref_about">Про Додаток</string>
     <string name="pref_rate_summary">Оцініть Parked Car в Play Store</string>
     <string name="pref_version_title">Версія</string>
+    <string name="pref_rate_not_in_market_error">Додаток не знайдений в Google Play</string>
 
 </resources>
