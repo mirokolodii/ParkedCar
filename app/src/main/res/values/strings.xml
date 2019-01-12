@@ -70,4 +70,11 @@
     <string name="pref_behaviour">Behaviour</string>
     <string name="pref_key_show_notif" translatable="false">pref_show_notif</string>
     <string name="pref_show_notif">Show Notifications</string>
+    <string name="pref_key_about_settings" translatable="false">pref_about_settings</string>
+    <string name="pref_about">About</string>
+    <string name="pref_key_rate" translatable="false">pref_rate</string>
+    <string name="pref_rate_summary">Rate Parked Car on Play Store</string>
+    <string name="pref_rate_title" translatable="false">❤ Parked Car</string>
+    <string name="pref_key_version" translatable="false">pref_version</string>
+    <string name="pref_version_title">Version</string>
 </resources>

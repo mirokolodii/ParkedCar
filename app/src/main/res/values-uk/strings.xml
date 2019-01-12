@@ -49,6 +49,9 @@
 
     <!--Preferences-->
     <string name="pref_behaviour">Поведінка</string>
-    <string name="pref_show_notif">Показувати повідомлення</string>
+    <string name="pref_show_notif">Показувати Повідомлення</string>
+    <string name="pref_about">Про Додаток</string>
+    <string name="pref_rate_summary">Оцініть Parked Car в Play Store</string>
+    <string name="pref_version_title">Версія</string>
 
 </resources>

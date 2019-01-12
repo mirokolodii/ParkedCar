@@ -1,41 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-            android:title="@string/pref_behaviour"
-            android:key="pref_key_behaviour_settings">
+        android:key="pref_key_behaviour_settings"
+        android:title="@string/pref_behaviour">
 
         <SwitchPreference
-                android:key="@string/pref_key_show_notif"
-                android:title="@string/pref_show_notif"/>
-
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-            android:title="Security"
-            android:key="pref_key_security_settings">
-
-        <SwitchPreference
-                android:defaultValue="@bool/auto_lock"
-                android:key="@string/pref_key_auto_lock"
-                android:title="Auto Lock"
-                android:summary="Always prompt password login when the app is inactive for a while"/>
+            android:defaultValue="@bool/pref_show_notif_default"
+            android:key="@string/pref_key_show_notif"
+            android:title="@string/pref_show_notif" />
 
     </PreferenceCategory>
-
     <PreferenceCategory
-            android:title="About"
-            android:key="pref_key_about_settings">
+        android:key="@string/pref_key_about_settings"
+        android:title="@string/pref_about">
 
 
         <Preference
-                android:key="@string/pref_key_rate"
-                android:title="❤ Parked Car"
-                android:summary="Rate Parked Car on Play Store"/>
+            android:key="@string/pref_key_rate"
+            android:summary="@string/pref_rate_summary"
+            android:title="@string/pref_rate_title" />
 
         <Preference
-                android:key=""
-                android:title="Version"/>
+            android:key="@string/pref_key_version"
+            android:summary="@string/app_version"
+            android:title="@string/pref_version_title" />
 
     </PreferenceCategory>
 </PreferenceScreen>
