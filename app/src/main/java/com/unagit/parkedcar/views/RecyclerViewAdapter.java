@@ -77,7 +77,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
     void update(BluetoothDevice device, int position) {
-        devices.set(position, device);
+//        devices.set(position, device);
         notifyItemChanged(position);
     }
 

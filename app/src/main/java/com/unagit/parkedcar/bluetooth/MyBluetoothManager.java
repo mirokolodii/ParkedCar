@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.appcompat.app.AlertDialog;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.models.BluetoothDevice;
@@ -75,11 +77,13 @@ public class MyBluetoothManager implements BluetoothManager {
             if (devices.size() > 0) {
                 for (android.bluetooth.BluetoothDevice device : devices) {
                     Boolean tracked = trackedDevices.contains(device.getAddress());
-                    BluetoothDevice pairedDevice = new BluetoothDevice(device.getName(), device.getAddress(), tracked);
+                    BluetoothDevice pairedDevice = new BluetoothDevice(
+                            device.getName(),
+                            device.getAddress(),
+                            tracked);
                     pairedDevices.add(pairedDevice);
                 }
             }
-
         }
         return pairedDevices;
     }

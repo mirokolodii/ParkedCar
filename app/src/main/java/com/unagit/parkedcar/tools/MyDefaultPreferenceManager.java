@@ -11,6 +11,7 @@ import com.unagit.parkedcar.views.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -56,6 +57,7 @@ public class MyDefaultPreferenceManager {
         }
         // Apply changes to editor
         editor.apply();
+        listPrefs();
     }
 
     /**
@@ -103,6 +105,7 @@ public class MyDefaultPreferenceManager {
      */
     public Set<String> getDevices() {
         Set<String> s = new HashSet<>(); // default value
+        listPrefs();
         return spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, s);
     }
 
@@ -130,8 +133,18 @@ public class MyDefaultPreferenceManager {
               return Calendar.getInstance().getTimeInMillis();
     }
 
-    public boolean shouldSendNotification() {
+    boolean shouldSendNotification() {
         return spref.getBoolean(context.getString(R.string.pref_key_show_notif),
                 context.getResources().getBoolean(R.bool.pref_show_notif_default));
+    }
+
+    private void listPrefs() {
+        Map<String, ?> prefs = PreferenceManager.getDefaultSharedPreferences(
+                context).getAll();
+        for (String key : prefs.keySet()) {
+            Object pref = prefs.get(key);
+            Log.e("pref", "Pref value: " + key + ": " + pref);
+        }
+
     }
 }
