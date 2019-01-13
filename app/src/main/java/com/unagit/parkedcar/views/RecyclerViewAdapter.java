@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
-    private ArrayList<BluetoothDevice> devices;
+    private ArrayList<BluetoothDevice> devices = new ArrayList<>();
     private ItemClickListener itemClickListener;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -52,7 +52,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     RecyclerViewAdapter(ArrayList<BluetoothDevice> devices, ItemClickListener listener) {
-        this.devices = devices;
+        this.devices.addAll(devices);
         itemClickListener = listener;
     }
 

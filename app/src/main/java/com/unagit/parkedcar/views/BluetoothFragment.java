@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.unagit.parkedcar.models.BluetoothDevice;
 import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -46,6 +48,20 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        preferenceManager = new MyDefaultPreferenceManager(getContext());
+        mTrackedDevices = preferenceManager.getDevices();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        verifyBluetoothState();
+        registerBluetoothStateChangeListener(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,7 +73,7 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
 
     private void setupView() {
         // Set onClickListener to open Bluetooth settings
-        TextView link = (TextView) mRootView.findViewById(R.id.bluetooth_settings_link);
+        TextView link = mRootView.findViewById(R.id.bluetooth_settings_link);
         link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,14 +88,6 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        preferenceManager = new MyDefaultPreferenceManager(getContext());
-        mTrackedDevices = preferenceManager.getDevices();
-        verifyBluetoothState();
-        registerBluetoothStateChangeListener(true);
-    }
 
     @Override
     public void onPause() {

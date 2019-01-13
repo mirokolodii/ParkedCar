@@ -57,7 +57,6 @@ public class MyDefaultPreferenceManager {
         }
         // Apply changes to editor
         editor.apply();
-        listPrefs();
     }
 
     /**
@@ -104,9 +103,9 @@ public class MyDefaultPreferenceManager {
      * Returns a list of Bluetooth devices, which are tracked by the user for auto-parking.
      */
     public Set<String> getDevices() {
-        Set<String> s = new HashSet<>(); // default value
-        listPrefs();
-        return spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, s);
+        Set<String> store = spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, new HashSet<String>());
+        // Return new object, as there is a bug with saving data, when same object is used to get and set
+        return new HashSet<>(store);
     }
 
     /**
@@ -136,15 +135,5 @@ public class MyDefaultPreferenceManager {
     boolean shouldSendNotification() {
         return spref.getBoolean(context.getString(R.string.pref_key_show_notif),
                 context.getResources().getBoolean(R.bool.pref_show_notif_default));
-    }
-
-    private void listPrefs() {
-        Map<String, ?> prefs = PreferenceManager.getDefaultSharedPreferences(
-                context).getAll();
-        for (String key : prefs.keySet()) {
-            Object pref = prefs.get(key);
-            Log.e("pref", "Pref value: " + key + ": " + pref);
-        }
-
     }
 }
