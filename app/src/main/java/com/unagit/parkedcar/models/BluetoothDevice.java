@@ -5,8 +5,8 @@ package com.unagit.parkedcar.models;
  */
 
 public class BluetoothDevice {
-    private String name;
-    private String address;
+    private final String name;
+    private final String address;
     private boolean tracked;
 
     public BluetoothDevice(String name, String address, boolean tracked) {

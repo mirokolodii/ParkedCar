@@ -3,37 +3,10 @@ package com.unagit.parkedcar.helpers;
 import com.unagit.parkedcar.BuildConfig;
 import com.unagit.parkedcar.R;
 
-import java.util.ArrayList;
-
 /**
  * Global constants to use throughout the application.
  */
 public final class Constants {
-    /**
-     * Constants, related to tabs in TabLayout.
-     */
-    public static class Tabs {
-        /**
-         * Number of tabs.
-         */
-//        public static final int TABS_COUNT = 3;
-        public static final int TABS_COUNT = 2;
-
-        /**
-         * Positions of tabs in TabLayout.
-         */
-        public static final int PARK_TAB = 0;
-//        public static final int PHOTOS_TAB = 1;
-        public static final int BLUETOOTH_TAB = 1;
-//        public static final int BLUETOOTH_TAB = 2;
-
-        /**
-         * Icons for tabs in TabLayout.
-         */
-        public static final int MAP_TAB_ICON = android.R.drawable.ic_menu_mylocation;
-        public static final int PHOTOS_TAB_ICON = android.R.drawable.ic_menu_camera;
-        public static final int BLUETOOTH_TAB_ICON = android.R.drawable.stat_sys_data_bluetooth;
-    }
 
     /**
      * IDs for different requests within the app (permission requests, notification IDs etc.)

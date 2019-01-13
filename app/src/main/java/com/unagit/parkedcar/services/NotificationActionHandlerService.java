@@ -105,7 +105,7 @@ public class NotificationActionHandlerService extends IntentService {
         }
     }
 
-    public void dismissNotification() {
+    private void dismissNotification() {
         // Dismiss notification
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
         try {

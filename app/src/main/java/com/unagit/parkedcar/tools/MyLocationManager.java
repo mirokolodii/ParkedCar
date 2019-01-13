@@ -327,10 +327,6 @@ public class MyLocationManager extends LocationCallback implements
         }
     }
 
-    @Override
-    public void onLocationAvailability(LocationAvailability locationAvailability) {
-        super.onLocationAvailability(locationAvailability);
-    }
 
     // Stop location updates and disconnect GoogleApiClient
     private void stopLocationUpdates() {

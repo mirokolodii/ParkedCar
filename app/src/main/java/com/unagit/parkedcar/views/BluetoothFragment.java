@@ -14,31 +14,28 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.unagit.parkedcar.bluetooth.BluetoothManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.bluetooth.MyBluetoothManager;
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.models.BluetoothDevice;
 import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
 public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener {
 
-    private BluetoothManager mBluetoothManager = new MyBluetoothManager();
+    private final BluetoothManager mBluetoothManager = new MyBluetoothManager();
     private View mRootView;
-    private BluetoothStateChangeListener mBluetoothStateChangeListener = new BluetoothStateChangeListener();
+    private final BluetoothStateChangeListener mBluetoothStateChangeListener = new BluetoothStateChangeListener();
     private MyDefaultPreferenceManager preferenceManager;
     private Set<String> mTrackedDevices;
     private RecyclerView mRecyclerView;
@@ -117,10 +114,10 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         if (register) {
             // Register receiver
             IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            getActivity().registerReceiver(mBluetoothStateChangeListener, filter);
+            Objects.requireNonNull(getActivity()).registerReceiver(mBluetoothStateChangeListener, filter);
         } else {
             // Unregister receiver
-            getActivity().unregisterReceiver(mBluetoothStateChangeListener);
+            Objects.requireNonNull(getActivity()).unregisterReceiver(mBluetoothStateChangeListener);
         }
     }
 
@@ -160,6 +157,7 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         }
         device.setTracked(!device.isTracked());
         RecyclerViewAdapter adapter = (RecyclerViewAdapter) mRecyclerView.getAdapter();
+        assert adapter != null;
         adapter.update(device, position);
 
     }
@@ -180,6 +178,4 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
             }
         }
     }
-
-
 }

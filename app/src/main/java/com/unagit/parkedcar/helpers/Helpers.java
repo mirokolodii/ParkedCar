@@ -10,20 +10,13 @@ import android.widget.Toast;
 
 import com.unagit.parkedcar.R;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.TreeMap;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * Helper methods, used throughout the application.

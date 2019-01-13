@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import com.unagit.parkedcar.helpers.Constants;
@@ -17,7 +16,7 @@ import java.util.Set;
  * {@link MyBluetoothManager} includes a set of helper methods to work with Bluetooth adapter.
  */
 public class MyBluetoothManager implements BluetoothManager {
-    private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
     /**
      * Verifies whether Bluetooth is available on a device.

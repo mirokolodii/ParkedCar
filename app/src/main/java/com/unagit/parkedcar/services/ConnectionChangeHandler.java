@@ -17,7 +17,7 @@ import com.unagit.parkedcar.helpers.Helpers;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class ConnectionChangeHandler extends Service implements MyLocationManager.MyLocationManagerCallback {
-    private static int FOREGROUND_NOTIFICATION_ID = 222;
+    private static final int FOREGROUND_NOTIFICATION_ID = 222;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

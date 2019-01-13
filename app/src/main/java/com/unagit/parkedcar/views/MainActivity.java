@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Keeps location, returned from MyLocationManager.
      */
-    Location currentLocation;
+    private Location currentLocation;
 
 
     /**

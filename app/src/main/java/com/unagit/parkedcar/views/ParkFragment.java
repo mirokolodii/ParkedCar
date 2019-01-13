@@ -104,10 +104,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
