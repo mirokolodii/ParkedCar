@@ -22,10 +22,15 @@
     <string name="park_btn_working">Working&#8230;</string>
     <string name="park_btn_clear">Clear</string>
 
-    <!--Bluetooth window-->
+    <!--Bluetooth -->
     <string name="bluetooth_view_info">Choose your car on a list of Bluetooth devices below.</string>
     <string name="bluetooth_view_info_extra">Don\'t see your car? Make sure it is paired with your phone first.</string>
     <string name="bluetooth_unavailable_message">Bluetooth is either unavailable or disabled.</string>
+    <string name="bluetooth_unavailable_dialog_title">Error</string>
+    <string name="bluetooth_unavailable_dialog_msg">Your device doesn\'t support Bluetooth.</string>
+    <string name="bluetooth_unavailable_dialog_pos_btn">Exit</string>
+    <string name="bluetooth_unavailable_dialog_net_btn">Cancel</string>
+
 
     <string name="your_car_marker">Your Car</string>
 

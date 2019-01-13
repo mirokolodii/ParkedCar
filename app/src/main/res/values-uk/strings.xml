@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Bluetooth-->
     <string name="bluetooth_unavailable_message">Bluetooth недоступний або вимкнений.</string>
     <string name="bluetooth_view_info">Виберіть ваше авто зі списку Bluetooth пристроїв внизу.</string>
     <string name="bluetooth_view_info_extra">Немає в списку? Переконайтесь що авто спароване з телефоном.</string>
     <string name="bluetooth_settings"><a href="">Налаштування Bluetooth</a></string>
+    <string name="bluetooth_unavailable_dialog_title">Помилка</string>
+    <string name="bluetooth_unavailable_dialog_msg">Ваш пристрій не підтримує Bluetooth.</string>
+    <string name="bluetooth_unavailable_dialog_pos_btn">Вихід</string>
+    <string name="bluetooth_unavailable_dialog_net_btn">Відміна</string>
+
     <string name="park_btn_park_car">Запаркуй</string>
     <string name="park_btn_working">Працюю&#8230;</string>
     <string name="park_btn_clear">Видалити</string>
@@ -45,7 +51,7 @@
     <string name="location_permission_text">Програма вимагає доступу до розташування
         вашого телефону для визначення місця парковки авто. Доступ можна надати в налаштуваннях.</string>
     <string name="location_permission_settings_btn">Налаштування</string>
-    <string name="location_permission_exit_btn">Вийти</string>
+    <string name="location_permission_exit_btn">Вихід</string>
     <string name="location_not_available_title">Помилка</string>
     <string name="location_not_available_text">Вибачте&#8230; Не вдалось отримати точне розташування.
         Перевірте налаштування локалізації і спробуйте знову.</string>

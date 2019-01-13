@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.models.BluetoothDevice;
 import java.util.ArrayList;
@@ -45,20 +47,21 @@ public class MyBluetoothManager implements BluetoothManager {
         activity.startActivityForResult(enableBT, Constants.Requests.ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT);
     }
 
-    // TODO: extract text to string resources
     @Override
     public void showUnavailableWarning(Context context) {
         new AlertDialog.Builder(context)
-                .setTitle("Error")
-                .setMessage("Your device doesn't support Bluetooth")
-                .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                .setTitle(context.getString(R.string.bluetooth_unavailable_dialog_title))
+                .setMessage(context.getString(R.string.bluetooth_unavailable_dialog_msg))
+                .setPositiveButton(context.getString(R.string.bluetooth_unavailable_dialog_pos_btn),
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Exit app
                         System.exit(0);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(context.getString(R.string.bluetooth_unavailable_dialog_net_btn),
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing
