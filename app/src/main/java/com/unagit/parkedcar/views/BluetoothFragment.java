@@ -52,13 +52,6 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         mTrackedDevices = preferenceManager.getDevices();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        verifyBluetoothState();
-        registerBluetoothStateChangeListener(true);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,19 +61,20 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         return rootView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        verifyBluetoothState();
+        registerBluetoothStateChangeListener(true);
+    }
+
     private void setupView() {
         // Set onClickListener to open Bluetooth settings
         TextView link = mRootView.findViewById(R.id.bluetooth_settings_link);
         link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Intent intent = new Intent(Intent.ACTION_MAIN, null);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                ComponentName cn = new ComponentName("com.android.settings",
-                        "com.android.settings.bluetooth.BluetoothSettings");
-                intent.setComponent(cn);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                mBluetoothManager.openBluetoothSettings(BluetoothFragment.this.getContext());
             }
         });
     }

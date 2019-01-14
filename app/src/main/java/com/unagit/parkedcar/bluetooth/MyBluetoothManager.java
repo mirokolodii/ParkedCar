@@ -2,9 +2,12 @@ package com.unagit.parkedcar.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.provider.Settings;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -88,5 +91,30 @@ public class MyBluetoothManager implements BluetoothManager {
             }
         }
         return pairedDevices;
+    }
+
+    /**
+     * Method opens Bluetooth settings on a device.
+     * Tries few different approaches to accomplish desired action, as different ways will work
+     * depending on device manufacturer.
+     * @param context is required to start new activity.
+     */
+
+    @Override
+    public void openBluetoothSettings(Context context) {
+        try {
+            context.startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+        } catch (ActivityNotFoundException e) {
+            final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            ComponentName cn = new ComponentName("com.android.settings",
+                    "com.android.settings.bluetooth.BluetoothSettings");
+            intent.setComponent(cn);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

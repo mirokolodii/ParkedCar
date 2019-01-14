@@ -12,7 +12,7 @@ public interface BluetoothManager {
     void sendEnableRequest(Activity activity);
     void showUnavailableWarning(Context context);
     ArrayList<BluetoothDevice> getPairedDevices(Set<String> trackedDevices);
-
+    void openBluetoothSettings(Context context);
 
 
 }
