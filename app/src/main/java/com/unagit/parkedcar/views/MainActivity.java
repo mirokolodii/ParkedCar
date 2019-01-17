@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (mParkAction != null) {
             /*
             Get back to ParkFragment with location result, depending on action,
-            received from ParkFragment previously in onUIUpdate.
+            received from ParkFragment previously in onUpdate.
              */
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements
      * @param parkFragment saves instance of ParkFragment to be able to update its UI.
      */
     @Override
-    public void onUIUpdate(int action, ParkFragment parkFragment) {
+    public void onUpdate(int action, ParkFragment parkFragment) {
         if (action == Constants.ParkActions.SET_PARKING_LOCATION) {
             mParkAction = action;
             mParkFragment = parkFragment;
@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements
                 // Update ParkFragment UI
                 parkFragment.updateUI();
             } else {
-                throw new RuntimeException("Unhandled action in MainActivity.onUIUpdate().");
+                throw new RuntimeException("Unhandled action in MainActivity.onUpdate().");
             }
         }
     }

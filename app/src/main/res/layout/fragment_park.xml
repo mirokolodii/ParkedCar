@@ -24,7 +24,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"/>
         </FrameLayout>
-        <Button
+        <com.unagit.parkedcar.views.ParkButton
+            android:id="@+id/park_car"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -32,7 +33,6 @@
             android:drawableStart="@drawable/ic_action_parking_button_icon"
             style="@style/ParkButton"
             android:drawablePadding="10dp"
-            android:id="@+id/park_car"
             android:text="@string/park_btn_park_car" />
 
         <LinearLayout
