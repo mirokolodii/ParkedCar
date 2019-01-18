@@ -57,10 +57,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
      */
     private ParkFragmentUIUpdateListener UIUpdateListener;
 
-    // Text for Park Car button.
-//    private final String PARK_BUTTON = "Park Car";
-//    private final String CLEAR_BUTTON = "Clear";
-
     private Boolean isParked = false;
     private Float latitude;
     private Float longitude;
@@ -183,9 +179,7 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         refreshData();
         View rootView = getView();
         if(rootView != null) {
-//            Button parkButton = rootView.findViewById(R.id.park_car);
             parkButton.setParked(isParked);
-//            enableParkButton(false);
             if(isParked) {
                 // Set marker with parking location, which is stored in SharedPreferences
                 setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
@@ -194,9 +188,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
                 UIUpdateListener.onUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
                         ParkFragment.this);
             }
-
-            // Animate UI changes.
-//            setAnimation(getView(), parkButton);
         }
     }
 
@@ -227,111 +218,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             });
         }
     }
-
-    /**
-     * Sets animation transition for park button and park information.
-     * @param rootView main View of this fragment. Used to get other inner Views.
-     * @param parkButton ButtonView, which should be animated.
-     */
-//    private void setAnimation(View rootView, final Button parkButton) {
-//        ViewGroup container = (ViewGroup) parkButton.getParent();
-//        ViewGroup parkInfoContainer = rootView.findViewById(R.id.park_info_container);
-//        final TextView parkingTypeTextView = rootView.findViewById(R.id.park_type_info);
-
-//        // Declare transition for button
-//        ChangeBounds buttonTransition = new ChangeBounds();
-//        buttonTransition
-//                .setInterpolator(new AnticipateInterpolator())
-//                .setDuration(500)
-//                .addTarget(parkButton);
-//        buttonTransition.addListener(new Transition.TransitionListener() {
-//            @Override
-//            public void onTransitionStart(Transition transition) {
-//                // Remove button text, so it's not "jumping" during animation
-//                parkButton.setText("");
-//                if(isParked) {
-//                    if (isParkedAutomatically) parkingTypeTextView.setText(
-//                            getContext().getString(R.string.parking_type_auto));
-//                    else parkingTypeTextView.setText(
-//                            getContext().getString(R.string.parking_type_manual));
-//                }
-//            }
-//
-//            @Override
-//            public void onTransitionEnd(Transition transition) {
-//                // Show button text again on transition end.
-//                parkButton.setText(isParked ?
-//                        getString(R.string.park_btn_clear) : getString(R.string.park_btn_park_car));
-//            }
-//
-//            @Override
-//            public void onTransitionCancel(Transition transition) {
-//
-//            }
-//
-//            @Override
-//            public void onTransitionPause(Transition transition) {
-//
-//            }
-//
-//            @Override
-//            public void onTransitionResume(Transition transition) {
-//
-//            }
-//        });
-
-        // Declare transition for @id/park_text_container
-//        Transition textTransition = new Fade();
-//        textTransition
-//                .setDuration(500)
-//                .addTarget(parkInfoContainer);
-//
-//        // Put all transitions into one set
-//        TransitionSet transitionSet = new TransitionSet();
-//        transitionSet
-//                .setOrdering(TransitionSet.ORDERING_TOGETHER)
-//                .addTransition(buttonTransition)
-//                .addTransition(textTransition);
-//
-//        // Initialize DelayedTransition
-//        TransitionManager.beginDelayedTransition(container, transitionSet);
-
-        /* Depending on isParked value device's orientation, change button's padding
-         and show/hide parking information TextView.
-          */
-//        if(isParked) {
-//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                // Parked, portrait
-//                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.SMALL_PORTRAIT);
-//            } else {
-//                // Parked, landscape
-//                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.SMALL_LANDSCAPE);
-//            }
-//            parkInfoContainer.setVisibility(View.VISIBLE);
-//
-//        } else {
-//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                // !Parked, portrait
-//                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.BIG_PORTRAIT);
-//            } else {
-//                // !Parked, landscape
-//                setParkButtonPadding(parkButton, Constants.ParkButtonPadding.BIG_LANDSCAPE);
-//            }
-//            parkInfoContainer.setVisibility(View.GONE);
-//        }
-//    }
-
-//    /**
-//     * Helper to set button padding.
-//     */
-//    private void setParkButtonPadding(Button parkButton, int[] padding) {
-//        parkButton.setPadding(
-//                DPToPixels(padding[0]),
-//                DPToPixels(padding[1]),
-//                DPToPixels(padding[2]),
-//                DPToPixels(padding[3])
-//        );
-//    }
 
     /**
      * Once map fragment is ready, set its callback.
@@ -366,7 +252,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         if(googleMap == null) {
             showProgressBar(false);
             parkButton.setParked(isParked);
-//            enableParkButton(true);
             return;
         }
 
@@ -409,7 +294,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         // Once marker is set, we can enable button and hide progress bar.
         showProgressBar(false);
         parkButton.setParked(isParked);
-//        enableParkButton(true);
     }
 
     /**
@@ -432,8 +316,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
         isParkedAutomatically = myDefaultPreferenceManager.isParkedAutomatically();
     }
 
-
-
     private void showProgressBar(Boolean show) {
         if(getView() != null) {
             getView().findViewById(R.id.indeterminateBar).setVisibility(
@@ -441,12 +323,6 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
             );
         }
     }
-
-//    private void enableParkButton(Boolean enable) {
-//        if(getView() != null) {
-//            getView().findViewById(R.id.park_car).setEnabled(enable);
-//        }
-//    }
 }
 
 
