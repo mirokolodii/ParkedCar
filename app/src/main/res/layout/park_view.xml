@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.unagit.parkedcar.views.ParkButton
+        android:id="@+id/park_car"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:drawableStart="@drawable/ic_action_parking_button_icon"
+        style="@style/ParkButton"
+        android:drawablePadding="10dp"
+        android:text="@string/park_btn_park_car" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/park_time_info" />
+</LinearLayout>
