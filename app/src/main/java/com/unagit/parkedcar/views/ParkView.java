@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -37,7 +38,9 @@ public class ParkView extends LinearLayout {
         CircleView circleView = new CircleView(getContext());
         circlesContainer.addView(circleView);
         Button btn = findViewById(R.id.park_car);
-        btn.setOnClickListener(v -> animate(circlesContainer, circleView));
+        btn.setOnClickListener(v -> {
+            animate(circlesContainer, circleView);
+        });
 //        animate(circlesContainer, circleView);
     }
 

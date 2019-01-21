@@ -4,7 +4,10 @@ package com.unagit.parkedcar.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.unagit.parkedcar.R;
 
@@ -17,6 +20,9 @@ public class CircleView extends View {
     public CircleView(Context context) {
         super(context);
         color = getResources().getColor(R.color.colorAccent);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        setContentDescription("Getting parking location is in progress");
     }
 
     @Override
@@ -33,5 +39,14 @@ public class CircleView extends View {
         paint.setStyle(Paint.Style.FILL);
         float radius = size / 2f;
         canvas.drawCircle(radius, radius, radius, paint);
+    }
+
+    @Override
+    public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
+        super.onPopulateAccessibilityEvent(event);
+        if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_FOCUSED) {
+            CharSequence text = "this is a test";
+            event.getText().add(text);
+        }
     }
 }
