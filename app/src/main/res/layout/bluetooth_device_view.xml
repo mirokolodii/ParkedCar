@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_margin="10dp">
+    android:orientation="horizontal" >
         <TextView
             android:layout_height="match_parent"
             android:layout_width="0dp"
@@ -14,13 +13,13 @@
             android:textStyle="bold"
             tools:text="Bluetooth device"
             android:id="@+id/device_name"
-            android:layout_margin="10dp" />
+            android:layout_margin="5dp" />
         <ImageView
             android:id="@+id/tick_picture"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:padding="40dp"
-            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:layout_margin="5dp"
             android:layout_gravity="center"
             android:contentDescription="@string/bluetooth_ticker"
             android:src="@drawable/big_tick" />
