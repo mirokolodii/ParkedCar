@@ -71,4 +71,7 @@
     <string name="pref_rate_not_in_market_error">Додаток не знайдений в Google Play</string>
     <string name="parking_not_set_message">Авто не запарковане</string>
 
+    <!--Accessibility-->
+    <string name="bluetooth_ticker">Зазнач пристрій для реагування за зміну стану його Bluetooth підключення</string>
+
 </resources>
