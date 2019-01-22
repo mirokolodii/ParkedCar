@@ -214,23 +214,20 @@ public class ParkFragment extends Fragment  implements OnMapReadyCallback {
 //        setAnimation(view, parkButton);
 
         if(parkButton != null) {
-            parkButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            parkButton.setOnClickListener(v -> {
 //                setAnimation(view, parkButton);
 
-                    parkButton.setEnabled(false);
-                    parkButton.setText(getString(R.string.park_btn_working));
-                    showProgressBar(true);
-                    if (isParked) {
-                        isParked = false;
-                        mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
-                                ParkFragment.this);
-                    } else {
-                        isParked = true;
-                        mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.SET_PARKING_LOCATION,
-                                ParkFragment.this);
-                    }
+                parkButton.setEnabled(false);
+                parkButton.setText(getString(R.string.park_btn_working));
+                showProgressBar(true);
+                if (isParked) {
+                    isParked = false;
+                    mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.CLEAR_PARKING_LOCATION,
+                            ParkFragment.this);
+                } else {
+                    isParked = true;
+                    mParkFragmentUIUpdateListener.onUIUpdate(Constants.ParkActions.SET_PARKING_LOCATION,
+                            ParkFragment.this);
                 }
             });
         }
