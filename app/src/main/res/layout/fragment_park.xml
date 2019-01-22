@@ -30,7 +30,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
             android:drawableStart="@drawable/ic_action_parking_button_icon"
-            style="@style/ParkButton"
+            style="@style/ParkButton.CustomBackground"
             android:drawablePadding="10dp"
             android:id="@+id/park_car"
             android:text="@string/park_btn_park_car" />

@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
 
     </style>
 
@@ -19,7 +20,8 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <!-- Custom class for Park Button. -->
-    <style name="ParkButton" parent="Widget.AppCompat.Button.Colored">
-        <!--<item name="android:background">@drawable/button_rounded_shape</item>-->
+    <style name="ParkButton" parent="Widget.AppCompat.Button.Colored" />
+    <style name="ParkButton.CustomBackground">
+        <item name="android:background">@drawable/button_park_car</item>
     </style>
 </resources>
