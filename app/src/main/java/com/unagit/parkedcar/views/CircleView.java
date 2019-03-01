@@ -23,6 +23,7 @@ public class CircleView extends View {
         setFocusable(true);
         setFocusableInTouchMode(true);
         setContentDescription("Getting parking location is in progress");
+
     }
 
     @Override
