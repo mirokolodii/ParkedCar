@@ -3,14 +3,10 @@ package com.unagit.parkedcar.views;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -28,6 +24,10 @@ public class ParkView extends LinearLayout {
     private static int DIST_BETWEEN_CIRCLES;
     private static int CIRCLES_COUNT = 3;
     private static int[] CIRCLES_POS = new int[CIRCLES_COUNT];
+    private AnimatorSet animatorSet = new AnimatorSet();
+    private boolean isRunningAnimation = false;
+    private boolean isInitializedAnim = false;
+    private final static long ANIM_DURATION = 500;
 
     public ParkView(Context context) {
         super(context);
@@ -85,7 +85,18 @@ public class ParkView extends LinearLayout {
 
     // https://www.raywenderlich.com/350-android-animation-tutorial-with-kotlin
     private void startAnimation(ArrayList<CircleView> circles) {
-        AnimatorSet set = new AnimatorSet();
+        if (!isInitializedAnim) {
+            initAnimation(circles);
+        }
+        if(isRunningAnimation) {
+            return;
+        }
+
+        isRunningAnimation = true;
+        animatorSet.start();
+    }
+
+    private void initAnimation(ArrayList<CircleView> circles) {
         Animator enterAnimForCircleOne
                 = getAnimSet(circles.get(0), 0, CIRCLES_POS[0], 0f, 1f);
         Animator enterAnimForCircleTwo
@@ -100,9 +111,7 @@ public class ParkView extends LinearLayout {
         Animator exitAnimForCircleThree
                 = getAnimSet(circles.get(2), CIRCLES_POS[2], CONTAINER_WIDTH,1f, 0f);
 
-//        set.play(animForCircleOne).before(animForCircleTwo);
-//        set.play(animForCircleTwo).before(animForCircleThree);
-        set.playSequentially(
+        animatorSet.playSequentially(
                 enterAnimForCircleOne,
                 enterAnimForCircleTwo,
                 enterAnimForCircleThree,
@@ -110,18 +119,18 @@ public class ParkView extends LinearLayout {
                 exitAnimForCircleTwo,
                 exitAnimForCircleThree);
 
-//        Log.e("anim", "CONTAINER WIDTH: " + CONTAINER_WIDTH);
-        set.setDuration(500);
+        animatorSet.setDuration(ANIM_DURATION);
 
-        set.addListener(new Animator.AnimatorListener() {
+        animatorSet.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                Log.e("anim", "ended");
-                set.start();
+                if(isRunningAnimation) {
+                    animatorSet.start();
+                }
             }
 
             @Override
@@ -132,7 +141,8 @@ public class ParkView extends LinearLayout {
             public void onAnimationRepeat(Animator animation) {
             }
         });
-        set.start();
+
+        isInitializedAnim = true;
     }
 
     private Animator getAnimSet(View view, int startPos, int endPos, float startFadeValue, float endFadeValue) {
@@ -150,5 +160,10 @@ public class ParkView extends LinearLayout {
 
     private ObjectAnimator getFadeAnimator(View view, float startFadeValue, float endFadeValue ) {
         return ObjectAnimator.ofFloat(view, "alpha", startFadeValue, endFadeValue);
+    }
+
+    private void stopAnimation() {
+        isRunningAnimation = false;
+        animatorSet.end();
     }
 }
