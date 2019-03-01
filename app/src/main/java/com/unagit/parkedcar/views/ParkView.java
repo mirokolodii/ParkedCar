@@ -143,7 +143,9 @@ public class ParkView extends LinearLayout {
     }
 
     private ObjectAnimator getPositionAnimator(View view, float startPos, float endPos) {
-        return ObjectAnimator.ofFloat(view, "translationX", startPos, endPos);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", startPos, endPos);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        return animator;
     }
 
     private ObjectAnimator getFadeAnimator(View view, float startFadeValue, float endFadeValue ) {
