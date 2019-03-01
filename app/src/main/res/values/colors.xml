@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2e7d32</color>
-    <color name="colorPrimaryDark">#005005</color>
+    <color name="colorPrimary">#87909e</color>
+    <color name="colorPrimaryDark">#565d68</color>
     <color name="colorAccent">#e67635</color>
+    <color name="colorParkButtonPressed">#ff9151</color>
+    <color name="colorParkButtonDisabled">#d9dce0</color>
     <color name="green">#388e3c</color>
     <color name="green_dark">#00600f</color>
     <color name="white">#ffffff</color>
