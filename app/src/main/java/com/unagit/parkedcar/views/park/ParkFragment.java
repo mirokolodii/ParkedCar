@@ -131,7 +131,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void run() {
                 if (getView() != null) {
-                    TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
+//                    TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
                     String timeDifference = Helpers.getTimeDifference(parkedTime, getContext());
 //                    parkedTimeTextView.setText(timeDifference);
                     parkView.setParkingTime(timeDifference);
@@ -176,7 +176,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         refreshData();
         View rootView = getView();
         if (rootView != null) {
-//            parkButton.setParked(isParked);
+//            parkButton.setParking(isParked);
             if (isParked) {
                 parkView.setParking();
                 // Set marker with parking location, which is stored in SharedPreferences
@@ -240,7 +240,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
         if (googleMap == null) {
 //            showProgressBar(false);
-//            parkButton.setParked(isParked);
+//            parkButton.setParking(isParked);
             if (isParked) {
                 parkView.setParking();
             } else {
@@ -289,7 +289,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         }
         // Once marker is set, we can enable button and hide progress bar.
 //        showProgressBar(false);
-//        parkButton.setParked(isParked);
+//        parkButton.setParking(isParked);
     }
 
     /**

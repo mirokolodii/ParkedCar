@@ -7,18 +7,17 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.unagit.parkedcar.R;
-import com.unagit.parkedcar.views.park.CircleView;
 
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-public class ParkViewImp extends LinearLayout {
+public class ParkViewImp extends LinearLayout implements ParkView{
 
     private static int CONTAINER_WIDTH;
     private static int CIRCLE_WIDTH;
@@ -29,6 +28,8 @@ public class ParkViewImp extends LinearLayout {
     private boolean isRunningAnimation = false;
     private boolean isInitializedAnim = false;
     private final static long ANIM_DURATION = 500;
+    private ArrayList<CircleView> circles;
+    private ParkButton parkButton;
 
     public ParkViewImp(Context context) {
         super(context);
@@ -46,12 +47,12 @@ public class ParkViewImp extends LinearLayout {
     private void initView() {
         inflate(getContext(), R.layout.park_view, this);
         FrameLayout container = findViewById(R.id.circles_container);
-        ArrayList<CircleView> circles = getCircles(CIRCLES_COUNT);
+        circles = getCircles(CIRCLES_COUNT);
         for (CircleView circle : circles) {
             container.addView(circle);
         }
-        Button btn = findViewById(R.id.park_car);
-        btn.setOnClickListener(v -> startAnimation(circles));
+        parkButton = findViewById(R.id.park_car);
+//        btn.setOnClickListener(v -> startAnimation(circles));
 //        Log.e("anim", "Number of circles: " + circles.size());
 
     }
@@ -85,7 +86,7 @@ public class ParkViewImp extends LinearLayout {
     }
 
     // https://www.raywenderlich.com/350-android-animation-tutorial-with-kotlin
-    private void startAnimation(ArrayList<CircleView> circles) {
+    private void startAnimation() {
         if (!isInitializedAnim) {
             initAnimation(circles);
         }
@@ -166,5 +167,35 @@ public class ParkViewImp extends LinearLayout {
     private void stopAnimation() {
         isRunningAnimation = false;
         animatorSet.end();
+    }
+
+    @Override
+    public void setParkingTime(String time) {
+        ((TextView) findViewById(R.id.park_time_info)).setText(time);
+    }
+
+    @Override
+    public void setParking() {
+        // 1. Enable Button
+        parkButton.setParking();
+        // 2. stop animation
+        stopAnimation();
+    }
+
+    @Override
+    public void clearParking() {
+        // 1. Enable Button
+        parkButton.clearParking();
+
+        // 2. stop animation
+        stopAnimation();
+    }
+
+    @Override
+    public void setWaiting() {
+        // 1. Disable Button
+        parkButton.setWaiting();
+        // 2. start animation
+        startAnimation();
     }
 }

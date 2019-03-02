@@ -25,11 +25,15 @@ public class ParkButton extends AppCompatButton {
         super(context, attrs, defStyleAttr);
     }
 
-    void setParked(Boolean isParked) {
-        beginTransitionWithAnim(isParked);
+    void setParking() {
+        beginTransitionWithAnim(true);
     }
 
-    void setWorking() {
+    void clearParking() {
+        beginTransitionWithAnim(false);
+    }
+
+    void setWaiting() {
         setEnabled(false);
         setText(getContext().getString(R.string.park_btn_working));
     }
