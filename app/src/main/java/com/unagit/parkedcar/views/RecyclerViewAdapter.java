@@ -30,12 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             selectedImg = view.findViewById(R.id.tick_picture);
         }
         void bind(final int position) {
-            rootView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    RecyclerViewAdapter.this.itemClickListener.onItemClicked(position);
-                }
-            });
+            rootView.setOnClickListener(v -> RecyclerViewAdapter.this.itemClickListener.onItemClicked(position));
             BluetoothDevice device = RecyclerViewAdapter.this.devices.get(position);
             nameView.setText(device.getName());
             if (device.isTracked()) {

@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.views;
+package com.unagit.parkedcar.views.park;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -12,12 +12,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.views.park.CircleView;
 
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-public class ParkView extends LinearLayout {
+public class ParkViewImp extends LinearLayout {
 
     private static int CONTAINER_WIDTH;
     private static int CIRCLE_WIDTH;
@@ -29,16 +30,16 @@ public class ParkView extends LinearLayout {
     private boolean isInitializedAnim = false;
     private final static long ANIM_DURATION = 500;
 
-    public ParkView(Context context) {
+    public ParkViewImp(Context context) {
         super(context);
     }
 
-    public ParkView(Context context, @Nullable AttributeSet attrs) {
+    public ParkViewImp(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public ParkView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ParkViewImp(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.views;
+package com.unagit.parkedcar.views.park;
 
 import android.content.Context;
 import android.content.res.Configuration;
