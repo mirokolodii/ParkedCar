@@ -12,18 +12,18 @@
         android:id="@+id/park_transition_viewgroup"
         android:gravity="center_horizontal"
         android:orientation="vertical">
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="6dp">
-            <ProgressBar
-                android:id="@+id/indeterminateBar"
-                android:visibility="invisible"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:indeterminate="true"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"/>
-        </FrameLayout>
+        <!--<FrameLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="6dp">-->
+            <!--<ProgressBar-->
+                <!--android:id="@+id/indeterminateBar"-->
+                <!--android:visibility="invisible"-->
+                <!--style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
+                <!--android:indeterminate="true"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="50dp"/>-->
+        <!--</FrameLayout>-->
 
         <com.unagit.parkedcar.views.park.ParkViewImp
             android:id="@+id/park_view"
