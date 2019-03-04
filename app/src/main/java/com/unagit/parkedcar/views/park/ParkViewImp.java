@@ -18,17 +18,17 @@ import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-public class ParkViewImp extends LinearLayout implements ParkView{
+public class ParkViewImp extends LinearLayout implements ParkView {
 
     private static int CONTAINER_WIDTH;
-    private static int CIRCLE_WIDTH;
-    private static int DIST_BETWEEN_CIRCLES;
-    private static int CIRCLES_COUNT = 3;
+    private final static int CIRCLE_WIDTH = 60;
+    private final static int DIST_BETWEEN_CIRCLES = 10;
+    private static int CIRCLES_COUNT = 1; //3;
     private static int[] CIRCLES_POS = new int[CIRCLES_COUNT];
     private AnimatorSet animatorSet = new AnimatorSet();
     private boolean isRunningAnimation = false;
     private boolean isInitializedAnim = false;
-    private final static long ANIM_DURATION = 500;
+    private final static long ANIM_DURATION = 2000;
     private ArrayList<CircleView> circles;
     private ParkButton parkButton;
 
@@ -43,7 +43,6 @@ public class ParkViewImp extends LinearLayout implements ParkView{
 
     public ParkViewImp(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
     }
 
     private void initView() {
@@ -55,8 +54,9 @@ public class ParkViewImp extends LinearLayout implements ParkView{
         }
 
         parkButton = findViewById(R.id.park_car);
-//        btn.setOnClickListener(v -> startAnimation(circles));
         Log.e("anim", "Number of circles: " + circles.size());
+        // TODO: debug
+//        setWaiting();
     }
 
     private ArrayList<CircleView> getCircles(Integer count) {
@@ -73,27 +73,15 @@ public class ParkViewImp extends LinearLayout implements ParkView{
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        setDimens();
-    }
-
-    private void setDimens() {
-        FrameLayout container = findViewById(R.id.circles_container);
-        CONTAINER_WIDTH = container.getWidth();
-//        Log.e("anim", "Container width: " + container.getWidth());
-        CIRCLE_WIDTH = container.getHeight();
-        DIST_BETWEEN_CIRCLES = 10;
-        CIRCLES_POS[0] = (int) (CONTAINER_WIDTH / 2.0 + CIRCLE_WIDTH / 2.0 + DIST_BETWEEN_CIRCLES);
-        CIRCLES_POS[1] = (int) (CONTAINER_WIDTH / 2.0 - CIRCLE_WIDTH / 2.0);
-        CIRCLES_POS[2] = (int) (CONTAINER_WIDTH / 2.0 - 3 * CIRCLE_WIDTH / 2.0 - DIST_BETWEEN_CIRCLES);
     }
 
     // https://www.raywenderlich.com/350-android-animation-tutorial-with-kotlin
     private void startAnimation() {
         Log.e("Anim", "startAnim");
         if (!isInitializedAnim) {
-            initAnimation(circles);
+            initAnimation();
         }
-        if(isRunningAnimation) {
+        if (isRunningAnimation) {
             return;
         }
 
@@ -101,29 +89,35 @@ public class ParkViewImp extends LinearLayout implements ParkView{
         animatorSet.start();
     }
 
-    private void initAnimation(ArrayList<CircleView> circles) {
+    private void initAnimation() {
         Log.e("Anim", "initAnim");
+        FrameLayout container = findViewById(R.id.circles_container);
+        CONTAINER_WIDTH = container.getWidth();
+        CIRCLES_POS[0] = (int) (CONTAINER_WIDTH / 2.0 + CIRCLE_WIDTH / 2.0 + DIST_BETWEEN_CIRCLES);
+        //        CIRCLES_POS[1] = (int) (CONTAINER_WIDTH / 2.0 - CIRCLE_WIDTH / 2.0);
+//        CIRCLES_POS[2] = (int) (CONTAINER_WIDTH / 2.0 - 3 * CIRCLE_WIDTH / 2.0 - DIST_BETWEEN_CIRCLES);
+
         Animator enterAnimForCircleOne
                 = getAnimSet(circles.get(0), 0, CIRCLES_POS[0], 0f, 1f);
-        Animator enterAnimForCircleTwo
-                = getAnimSet(circles.get(1), 0, CIRCLES_POS[1], 0f, 1f);
-        Animator enterAnimForCircleThree
-                = getAnimSet(circles.get(2), 0, CIRCLES_POS[2], 0f, 1f);
-
-        Animator exitAnimForCircleOne
-                = getAnimSet(circles.get(0), CIRCLES_POS[0], CONTAINER_WIDTH, 1f, 0f);
-        Animator exitAnimForCircleTwo
-                = getAnimSet(circles.get(1), CIRCLES_POS[1], CONTAINER_WIDTH,1f, 0f);
-        Animator exitAnimForCircleThree
-                = getAnimSet(circles.get(2), CIRCLES_POS[2], CONTAINER_WIDTH,1f, 0f);
+//        Animator enterAnimForCircleTwo
+//                = getAnimSet(circles.get(1), 0, CIRCLES_POS[1], 0f, 1f);
+//        Animator enterAnimForCircleThree
+//                = getAnimSet(circles.get(2), 0, CIRCLES_POS[2], 0f, 1f);
+//
+//        Animator exitAnimForCircleOne
+//                = getAnimSet(circles.get(0), CIRCLES_POS[0], CONTAINER_WIDTH, 1f, 0f);
+//        Animator exitAnimForCircleTwo
+//                = getAnimSet(circles.get(1), CIRCLES_POS[1], CONTAINER_WIDTH, 1f, 0f);
+//        Animator exitAnimForCircleThree
+//                = getAnimSet(circles.get(2), CIRCLES_POS[2], CONTAINER_WIDTH, 1f, 0f);
 
         animatorSet.playSequentially(
-                enterAnimForCircleOne,
-                enterAnimForCircleTwo,
-                enterAnimForCircleThree,
-                exitAnimForCircleOne,
-                exitAnimForCircleTwo,
-                exitAnimForCircleThree);
+                enterAnimForCircleOne);
+//                enterAnimForCircleTwo,
+//                enterAnimForCircleThree,
+//                exitAnimForCircleOne,
+//                exitAnimForCircleTwo,
+//                exitAnimForCircleThree);
 
         animatorSet.setDuration(ANIM_DURATION);
 
@@ -134,7 +128,7 @@ public class ParkViewImp extends LinearLayout implements ParkView{
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if(isRunningAnimation) {
+                if (isRunningAnimation) {
                     animatorSet.start();
                 }
             }
@@ -164,7 +158,7 @@ public class ParkViewImp extends LinearLayout implements ParkView{
         return animator;
     }
 
-    private ObjectAnimator getFadeAnimator(View view, float startFadeValue, float endFadeValue ) {
+    private ObjectAnimator getFadeAnimator(View view, float startFadeValue, float endFadeValue) {
         return ObjectAnimator.ofFloat(view, "alpha", startFadeValue, endFadeValue);
     }
 

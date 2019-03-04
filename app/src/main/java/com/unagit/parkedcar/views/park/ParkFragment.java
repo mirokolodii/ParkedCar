@@ -106,7 +106,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         super.onStart();
         registerBluetoothReceiver(true);
 //        showProgressBar(true);
-        parkView.setWaiting();
         if (googleMap != null) {
             updateUI();
         }
@@ -182,7 +181,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
                 // Set marker with parking location, which is stored in SharedPreferences
                 setMarkerOnMap(latitude, longitude, Constants.ParkActions.SET_PARKING_LOCATION);
             } else {
-                parkView.clearParking();
+                parkView.setWaiting();
                 // Send callback to listener (MainActivity) and request for a location update.
                 UIUpdateListener.onUpdate(Constants.ParkActions.REQUEST_CURRENT_LOCATION,
                         ParkFragment.this);
@@ -193,8 +192,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     private void setViews(final View parent) {
         parkView = parent.findViewById(R.id.park_view);
         parkButton = parent.findViewById(R.id.park_car);
-        // TODO: debug, remember to remove
-        parkView.setWaiting();
 
         parkButton.setOnClickListener(view -> {
             parkView.setWaiting();
