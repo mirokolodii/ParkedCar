@@ -20,8 +20,8 @@ public class CircleView extends View {
     public CircleView(Context context) {
         super(context);
         color = getResources().getColor(R.color.colorAccent);
-        setFocusable(true);
-        setFocusableInTouchMode(true);
+//        setFocusable(true);
+//        setFocusableInTouchMode(true);
         setContentDescription("Getting parking location is in progress");
 
     }
@@ -40,29 +40,5 @@ public class CircleView extends View {
         paint.setStyle(Paint.Style.FILL);
         float radius = size / 2f;
         canvas.drawCircle(radius, radius, radius, paint);
-    }
-
-    @Override
-    public boolean onHoverEvent(MotionEvent event) {
-        final int action = event.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_HOVER_ENTER:
-                Log.d("test", "onHoverEvent: ACTION_HOVER_ENTER");
-                sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_HOVER_ENTER);
-                return true;
-        }
-        return super.onHoverEvent(event);
-    }
-
-    @Override
-    public void onPopulateAccessibilityEvent(AccessibilityEvent event) {
-        super.onPopulateAccessibilityEvent(event);
-        if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_HOVER_ENTER) {
-            Log.d("test", "onPopulateAccessibilityEvent");
-            CharSequence text = "this is a test";
-            Log.d("test", "text before: " + event.getText());
-            event.getText().add(text);
-            Log.d("test", "text after: " + event.getText());
-        }
     }
 }

@@ -193,6 +193,8 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     private void setViews(final View parent) {
         parkView = parent.findViewById(R.id.park_view);
         parkButton = parent.findViewById(R.id.park_car);
+        // TODO: debug, remember to remove
+        parkView.setWaiting();
 
         parkButton.setOnClickListener(view -> {
             parkView.setWaiting();

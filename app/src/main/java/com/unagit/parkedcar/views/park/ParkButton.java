@@ -27,10 +27,14 @@ public class ParkButton extends AppCompatButton {
 
     void setParking() {
         beginTransitionWithAnim(true);
+//        setText(getContext().getString(R.string.park_btn_park_car));
+//        setEnabled(true);
     }
 
     void clearParking() {
         beginTransitionWithAnim(false);
+//        setText(getContext().getString(R.string.park_btn_clear));
+//        setEnabled(true);
     }
 
     void setWaiting() {
@@ -82,7 +86,7 @@ public class ParkButton extends AppCompatButton {
         TransitionManager.beginDelayedTransition(container, buttonTransition);
 
         // Begin transition
-        changePadding(isParked, getResources().getConfiguration().orientation);
+//        changePadding(isParked, getResources().getConfiguration().orientation);
     }
 
     private void changePadding(Boolean isParked, int orientation) {

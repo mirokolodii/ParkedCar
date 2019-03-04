@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -42,6 +43,7 @@ public class ParkViewImp extends LinearLayout implements ParkView{
 
     public ParkViewImp(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initView();
     }
 
     private void initView() {
@@ -51,17 +53,17 @@ public class ParkViewImp extends LinearLayout implements ParkView{
         for (CircleView circle : circles) {
             container.addView(circle);
         }
+
         parkButton = findViewById(R.id.park_car);
 //        btn.setOnClickListener(v -> startAnimation(circles));
-//        Log.e("anim", "Number of circles: " + circles.size());
-
+        Log.e("anim", "Number of circles: " + circles.size());
     }
 
     private ArrayList<CircleView> getCircles(Integer count) {
         ArrayList<CircleView> circles = new ArrayList<>();
         while (count > 0) {
             CircleView circleView = new CircleView(getContext());
-            circleView.setAlpha(0);
+//            circleView.setAlpha(0);
             circles.add(circleView);
             count--;
         }
@@ -87,6 +89,7 @@ public class ParkViewImp extends LinearLayout implements ParkView{
 
     // https://www.raywenderlich.com/350-android-animation-tutorial-with-kotlin
     private void startAnimation() {
+        Log.e("Anim", "startAnim");
         if (!isInitializedAnim) {
             initAnimation(circles);
         }
@@ -99,6 +102,7 @@ public class ParkViewImp extends LinearLayout implements ParkView{
     }
 
     private void initAnimation(ArrayList<CircleView> circles) {
+        Log.e("Anim", "initAnim");
         Animator enterAnimForCircleOne
                 = getAnimSet(circles.get(0), 0, CIRCLES_POS[0], 0f, 1f);
         Animator enterAnimForCircleTwo
