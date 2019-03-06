@@ -1,10 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/park_fragment"
-    tools:context="com.unagit.parkedcar.views.ParkFragment">
-
+    tools:context="com.unagit.parkedcar.views.park.ParkFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,48 +11,10 @@
         android:id="@+id/park_transition_viewgroup"
         android:gravity="center_horizontal"
         android:orientation="vertical">
-        <FrameLayout
+        <com.unagit.parkedcar.views.park.ParkViewImp
+            android:id="@+id/park_view"
             android:layout_width="match_parent"
-            android:layout_height="6dp">
-            <ProgressBar
-                android:id="@+id/indeterminateBar"
-                android:visibility="invisible"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:indeterminate="true"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"/>
-        </FrameLayout>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:drawableStart="@drawable/ic_action_parking_button_icon"
-            style="@style/ParkButton.CustomBackground"
-            android:drawablePadding="10dp"
-            android:id="@+id/park_car"
-            android:text="@string/park_btn_park_car" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:id="@+id/park_info_container"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_marginBottom="15dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/park_type_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/park_time_info" />
-        </LinearLayout>
-
+            android:layout_height="wrap_content"/>
         <fragment
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

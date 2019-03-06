@@ -34,8 +34,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
           this.context = context;
 
-          Log.d("bluetooth", "BluetoothReceiver started");
-
         // Verify intent action:
         // we need only case, when this receiver has been triggered
         // by the change of bluetooth connection state

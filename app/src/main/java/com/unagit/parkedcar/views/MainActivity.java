@@ -2,7 +2,6 @@ package com.unagit.parkedcar.views;
 
 import android.app.NotificationManager;
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -32,6 +31,7 @@ import com.unagit.parkedcar.tools.MyNotificationManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
+import com.unagit.parkedcar.views.park.ParkFragment;
 
 public class MainActivity extends AppCompatActivity implements
         MyLocationManager.MyLocationManagerCallback,
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements
                 this.finish();
                 break;
             case LOCATION_RECEIVED:
-                handleLocationReceivedAction(location);
+                locationReceivedHandler(location);
                 break;
             case LOCATION_NOT_RECEIVED:
                 /*
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements
                  is to set last known location as a current location on a map.
                 */
                 mParkAction = Constants.ParkActions.REQUEST_CURRENT_LOCATION;
-                handleLocationReceivedAction(location);
+                locationReceivedHandler(location);
                 showLocationNotAvailableDialog();
                 break;
         }
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements
      *
      * @param location current location.
      */
-    private void handleLocationReceivedAction(Location location) {
+    private void locationReceivedHandler(Location location) {
         currentLocation = location;
         if (location == null) {
 //            Helpers.showToast("Oops, last location is not known. Trying again...", this);
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (mParkAction != null) {
             /*
             Get back to ParkFragment with location result, depending on action,
-            received from ParkFragment previously in onUIUpdate.
+            received from ParkFragment previously in onUpdate.
              */
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements
                     setParkFragmentCurrentLocation(location);
             }
         } else {
-            throw new RuntimeException("MainActivity.handleLocationReceivedAction: mParkAction is null.");
+            throw new RuntimeException("MainActivity.locationReceivedHandler: mParkAction is null.");
         }
     }
 
@@ -280,20 +280,12 @@ public class MainActivity extends AppCompatActivity implements
         dialog.setMessage(getString(R.string.location_disabled_text));
         dialog.setButton(AlertDialog.BUTTON_POSITIVE,
                 getString(R.string.location_disabled_exit_btn),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        System.exit(0);
-                    }
-                });
+                (dialog1, which) -> System.exit(0));
         dialog.setButton(AlertDialog.BUTTON_NEGATIVE,
                 getString(R.string.location_disabled_settings_btn),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(intent);
-                    }
+                (dialog12, which) -> {
+                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
                 });
         dialog.setIcon(android.R.drawable.ic_dialog_alert);
         dialog.show();
@@ -309,11 +301,8 @@ public class MainActivity extends AppCompatActivity implements
         dialog.setMessage(getString(R.string.location_not_available_text));
         dialog.setButton(AlertDialog.BUTTON_POSITIVE,
                 getString(R.string.location_not_available_ok_btn),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                    }
+                (dialog1, which) -> {
+                    // Do nothing
                 });
         dialog.setIcon(android.R.drawable.ic_dialog_alert);
         dialog.show();
@@ -375,20 +364,14 @@ public class MainActivity extends AppCompatActivity implements
                             .setTitle(getString(R.string.location_permission_title))
                             .setMessage(getString(R.string.location_permission_text))
                             .setPositiveButton(getString(R.string.location_permission_exit_btn),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // Exit app
-                                            MainActivity.this.finish();
-                                        }
+                                    (dialog, which) -> {
+                                        // Exit app
+                                        MainActivity.this.finish();
                                     })
                             .setNegativeButton(getString(R.string.location_permission_settings_btn),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // Open app settings
-                                            openApplicationSettings();
-                                        }
+                                    (dialog, which) -> {
+                                        // Open app settings
+                                        openApplicationSettings();
                                     })
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
@@ -417,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements
      * @param parkFragment saves instance of ParkFragment to be able to update its UI.
      */
     @Override
-    public void onUIUpdate(int action, ParkFragment parkFragment) {
+    public void onUpdate(int action, ParkFragment parkFragment) {
         if (action == Constants.ParkActions.SET_PARKING_LOCATION) {
             mParkAction = action;
             mParkFragment = parkFragment;
@@ -440,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements
                 // Update ParkFragment UI
                 parkFragment.updateUI();
             } else {
-                throw new RuntimeException("Unhandled action in MainActivity.onUIUpdate().");
+                throw new RuntimeException("Unhandled action in MainActivity.onUpdate().");
             }
         }
     }

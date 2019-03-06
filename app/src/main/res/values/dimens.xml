@@ -6,4 +6,5 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">150dp</dimen>
     <dimen name="nav_img_height">80dp</dimen>
+    <dimen name="circle_size">30dp</dimen>
 </resources>
