@@ -50,7 +50,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
      * Will be notified by this fragment about its UI changes.
      */
     private ParkFragmentUIUpdateListener UIUpdateListener;
-
     private Boolean isParked = false;
     private Float latitude;
     private Float longitude;
@@ -60,11 +59,9 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     private BluetoothReceiverBroadcastReceiver mBluetoothReceiverBroadcastReceiver;
     private ParkView parkView;
 
-    // Those two objects are used to trigger a timer, which updates UI.
+    // Those two objects are used to trigger a timer, which updates parking time
     private Handler handler = new Handler();
     private Runnable runnable;
-
-//    private ParkButton parkButton;
 
     // Updates UI depending on a result received.
     private class BluetoothReceiverBroadcastReceiver extends BroadcastReceiver {
@@ -81,7 +78,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        Log.e("anim", "Fragment onAttach");
         myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
         if (context instanceof ParkFragmentUIUpdateListener) {
             UIUpdateListener = (ParkFragmentUIUpdateListener) context;
@@ -91,11 +87,9 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("anim", "Fragment onCreateView");
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_park, container, false);
         setMapCallback();
@@ -106,18 +100,10 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onStart() {
         super.onStart();
-        Log.e("anim", "Fragment onStart");
         registerBluetoothReceiver(true);
-//        showProgressBar(true);
         if (googleMap != null) {
             updateUI();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("anim", "Fragment onResume");
     }
 
     @Override
@@ -139,9 +125,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void run() {
                 if (getView() != null) {
-//                    TextView parkedTimeTextView = getView().findViewById(R.id.park_time_info);
                     String timeDifference = Helpers.getTimeDifference(parkedTime, getView().getContext());
-//                    parkedTimeTextView.setText(timeDifference);
                     String time = (isParkedAutomatically) ?
                             "Parked automatically " + timeDifference
                             : "Parked manually " + timeDifference;
@@ -187,7 +171,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         refreshData();
         View rootView = getView();
         if (rootView != null) {
-//            parkView.setWaiting();
             if (isParked) {
                 parkView.setParking();
                 // Set marker with parking location, which is stored in SharedPreferences
@@ -235,7 +218,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // Get current location from SharedPreferences
         this.googleMap = googleMap;
         updateUI();
     }
@@ -250,8 +232,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     public void setMarkerOnMap(double latitude, double longitude, int action) {
 
         if (googleMap == null) {
-//            showProgressBar(false);
-//            parkButton.setParking(isParked);
             if (isParked) {
                 parkView.setParking();
             } else {
@@ -271,7 +251,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         }
 
         LatLng latLng = new LatLng(latitude, longitude);
-        Log.d(LOG_TAG, "setMarkerOnMap: " + action);
         // Parking is cleared. Set map camera to current location instead
         if (action == Constants.ParkActions.SET_CURRENT_LOCATION) {
             // Move camera to current location
@@ -298,9 +277,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
             parkView.setParking();
 
         }
-        // Once marker is set, we can enable button and hide progress bar.
-//        showProgressBar(false);
-//        parkButton.setParking(isParked);
     }
 
     /**
@@ -322,14 +298,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         parkedTime = myDefaultPreferenceManager.getTimestamp();
         isParkedAutomatically = myDefaultPreferenceManager.isParkedAutomatically();
     }
-
-//    private void showProgressBar(Boolean show) {
-//        if (getView() != null) {
-//            getView().findViewById(R.id.indeterminateBar).setVisibility(
-//                    show ? View.VISIBLE : View.INVISIBLE
-//            );
-//        }
-//    }
 }
 
 

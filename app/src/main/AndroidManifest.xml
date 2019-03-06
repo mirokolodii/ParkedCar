@@ -38,9 +38,6 @@
         <service
             android:name=".services.NotificationActionHandlerService"
             android:exported="false" />
-        <service
-            android:name=".services.MyJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <!-- Google Maps API Key -->
         <meta-data

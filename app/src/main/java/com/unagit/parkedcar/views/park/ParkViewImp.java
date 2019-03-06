@@ -21,10 +21,10 @@ public class ParkViewImp extends LinearLayout implements ParkView {
 
     private static final int DIST_BETWEEN_CIRCLES = 10;
     private static final int CIRCLES_COUNT = 3;
-    private AnimatorSet animatorSet = new AnimatorSet();
     private static final long ANIM_DURATION = 500;
-    private ArrayList<CircleView> circles = new ArrayList<>();
     private ParkButton parkButton;
+    private ArrayList<CircleView> circles = new ArrayList<>();
+    private AnimatorSet animatorSet = new AnimatorSet();
     private boolean isRunningAnimation = false;
     private boolean isInitializedAnim = false;
     private boolean shouldStartAnimAfterFullInit = false;
@@ -172,27 +172,21 @@ public class ParkViewImp extends LinearLayout implements ParkView {
 
     @Override
     public void setParking() {
-        // 1. Enable Button
         parkButton.setParking();
-        // 2. stop animation
         stopAnimation();
     }
 
     @Override
     public void clearParking() {
-        // 1. Enable Button
         parkButton.clearParking();
         setParkingText("");
-        // 2. stop animation
         stopAnimation();
     }
 
     @Override
     public void setWaiting() {
-        // 1. Disable Button
         parkButton.setWaiting();
         setParkingText("Getting location...");
-        // 2. start animation
         startAnimation();
     }
 }
