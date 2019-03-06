@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -64,7 +64,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     private Handler handler = new Handler();
     private Runnable runnable;
 
-    private ParkButton parkButton;
+//    private ParkButton parkButton;
 
     // Updates UI depending on a result received.
     private class BluetoothReceiverBroadcastReceiver extends BroadcastReceiver {
@@ -145,7 +145,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
                     String time = (isParkedAutomatically) ?
                             "Parked automatically " + timeDifference
                             : "Parked manually " + timeDifference;
-                    parkView.setParkingTime(time);
+                    parkView.setParkingText(time);
                     // Repeat in 1 min.
                     handler.postDelayed(this, 60 * 1000);
                 }
@@ -203,7 +203,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
     private void setViews(final View parent) {
         parkView = parent.findViewById(R.id.park_view);
-        parkButton = parent.findViewById(R.id.park_car);
+        Button parkButton = parent.findViewById(R.id.park_car);
 
         parkButton.setOnClickListener(view -> {
             parkView.setWaiting();

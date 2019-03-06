@@ -2,39 +2,59 @@ package com.unagit.parkedcar.views.park;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.view.animation.AnticipateInterpolator;
+
 import androidx.appcompat.widget.AppCompatButton;
+
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Constants;
 
 public class ParkButton extends AppCompatButton {
+    private boolean isParked = false;
+    private boolean isInitialized = false;
+
     public ParkButton(Context context) {
         super(context);
     }
 
     public ParkButton(Context context, AttributeSet attrs) {
         super(context, attrs);
+//        initTransitionAnim();
     }
 
     public ParkButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (!isInitialized) {
+            setText(isParked
+                    ? getContext().getString(R.string.park_btn_clear)
+                    : getContext().getString(R.string.park_btn_park_car));
+            isInitialized = true;
+        }
+    }
+
     void setParking() {
-        beginTransitionWithAnim(true);
-//        setText(getContext().getString(R.string.park_btn_park_car));
-//        setEnabled(true);
+//        beginTransitionAnim(true);
+        setText(getContext().getString(R.string.park_btn_clear));
+        isParked = true;
+        setEnabled(true);
     }
 
     void clearParking() {
-        beginTransitionWithAnim(false);
-//        setText(getContext().getString(R.string.park_btn_clear));
-//        setEnabled(true);
+//        beginTransitionAnim(false);
+        isParked = false;
+        setText(getContext().getString(R.string.park_btn_park_car));
+        setEnabled(true);
     }
 
     void setWaiting() {
@@ -42,7 +62,7 @@ public class ParkButton extends AppCompatButton {
         setText(getContext().getString(R.string.park_btn_working));
     }
 
-    private void beginTransitionWithAnim(final Boolean isParked) {
+    private void initTransitionAnim() {
         // Declare transition for button
         ChangeBounds buttonTransition = new ChangeBounds();
         buttonTransition
@@ -84,9 +104,14 @@ public class ParkButton extends AppCompatButton {
         // Initialize DelayedTransition
         ViewGroup container = (ViewGroup) getParent();
         TransitionManager.beginDelayedTransition(container, buttonTransition);
+    }
 
-        // Begin transition
-//        changePadding(isParked, getResources().getConfiguration().orientation);
+    private void beginTransitionAnim(final Boolean isParked) {
+        this.isParked = isParked;
+        setText(isParked
+                ? getContext().getString(R.string.park_btn_clear)
+                : getContext().getString(R.string.park_btn_park_car));
+        changePadding(isParked, getResources().getConfiguration().orientation);
     }
 
     private void changePadding(Boolean isParked, int orientation) {

@@ -4,68 +4,20 @@
     android:layout_height="match_parent"
     android:id="@+id/park_fragment"
     tools:context="com.unagit.parkedcar.views.park.ParkFragment">
-
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="4dp">
-        <ProgressBar
-            android:id="@+id/indeterminateBar"
-            android:visibility="invisible"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:indeterminate="true"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"/>
-    </FrameLayout>
-
-
     <LinearLayout
         android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/park_transition_viewgroup"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <com.unagit.parkedcar.views.park.ParkViewImp
+            android:id="@+id/park_view"
+            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_weight="1">
-            <com.unagit.parkedcar.views.park.ParkButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:drawableStart="@drawable/ic_action_parking_button_icon"
-                style="@style/ParkButton.CustomBackground"
-                android:id="@+id/park_car"
-                android:text="@string/park_btn_park_car" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/park_info_container"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone"
-                android:layout_margin="8dp" >
-                <TextView
-                    android:id="@+id/park_type_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Parked automatically"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/park_time_info"
-                    android:text="12 hours, 23 min ago" />
-            </LinearLayout>
-        </LinearLayout>
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"/>
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
