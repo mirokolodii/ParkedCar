@@ -70,8 +70,10 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
 
     private void setupView() {
         // Set onClickListener to open Bluetooth settings
-        TextView link = mRootView.findViewById(R.id.bluetooth_settings_link);
-        link.setOnClickListener(view -> mBluetoothManager.openBluetoothSettings(BluetoothFragment.this.getContext()));
+        View settingsBluetooth = mRootView.findViewById(R.id.bluetooth_settings_link);
+        settingsBluetooth.setOnClickListener(view -> mBluetoothManager.openBluetoothSettings(BluetoothFragment.this.getContext()));
+        View settingsDisabledBluetooth = mRootView.findViewById(R.id.disabled_bluetooth_settings_link);
+        settingsDisabledBluetooth.setOnClickListener(view -> mBluetoothManager.openBluetoothSettings(BluetoothFragment.this.getContext()));
     }
 
 
@@ -122,6 +124,7 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
         } else {
             bluetoothContent.setVisibility(View.GONE);
             disabledBluetoothContent.setVisibility(View.VISIBLE);
+
         }
     }
 
