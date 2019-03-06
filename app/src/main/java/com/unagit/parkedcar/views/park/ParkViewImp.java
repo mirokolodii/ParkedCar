@@ -10,9 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.unagit.parkedcar.R;
-
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;

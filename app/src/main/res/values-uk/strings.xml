@@ -73,5 +73,6 @@
 
     <!--Accessibility-->
     <string name="bluetooth_ticker">Зазнач пристрій для реагування за зміну стану його Bluetooth підключення</string>
+    <string name="park_car_button">Кнопка запаркувати авто</string>
 
 </resources>

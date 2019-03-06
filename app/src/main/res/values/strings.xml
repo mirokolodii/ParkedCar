@@ -94,4 +94,5 @@
 
     <!--Accessibility-->
     <string name="bluetooth_ticker">Choose this device to listen to it\'s Bluetooth state change</string>
+    <string name="park_car_button">Park Car button</string>
 </resources>
