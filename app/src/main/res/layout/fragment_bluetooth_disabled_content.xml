@@ -19,6 +19,7 @@
         android:padding="10dp"
         android:clickable="true"
         android:focusable="true"
+        android:textSize="24sp"
         android:text="@string/bluetooth_settings"/>
     </LinearLayout>
 

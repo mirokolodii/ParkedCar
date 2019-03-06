@@ -71,12 +71,7 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
     private void setupView() {
         // Set onClickListener to open Bluetooth settings
         TextView link = mRootView.findViewById(R.id.bluetooth_settings_link);
-        link.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBluetoothManager.openBluetoothSettings(BluetoothFragment.this.getContext());
-            }
-        });
+        link.setOnClickListener(view -> mBluetoothManager.openBluetoothSettings(BluetoothFragment.this.getContext()));
     }
 
 
