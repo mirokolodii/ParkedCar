@@ -20,17 +20,15 @@ import androidx.annotation.Nullable;
 
 public class ParkViewImp extends LinearLayout implements ParkView {
 
-    private static int CONTAINER_WIDTH;
-    private final static int CIRCLE_WIDTH = 60;
-    private final static int DIST_BETWEEN_CIRCLES = 10;
-    private static int CIRCLES_COUNT = 1; //3;
-    private static int[] CIRCLES_POS = new int[CIRCLES_COUNT];
+    private static final int DIST_BETWEEN_CIRCLES = 10;
+    private static final int CIRCLES_COUNT = 3;
     private AnimatorSet animatorSet = new AnimatorSet();
-    private boolean isRunningAnimation = false;
-    private boolean isInitializedAnim = false;
-    private final static long ANIM_DURATION = 2000;
+    private static final long ANIM_DURATION = 500;
     private ArrayList<CircleView> circles;
     private ParkButton parkButton;
+    private boolean isRunningAnimation = false;
+    private boolean isInitializedAnim = false;
+    private boolean shouldStartAnimAfterFullInit = false;
 
     public ParkViewImp(Context context) {
         super(context);
@@ -52,18 +50,14 @@ public class ParkViewImp extends LinearLayout implements ParkView {
         for (CircleView circle : circles) {
             container.addView(circle);
         }
-
         parkButton = findViewById(R.id.park_car);
-        Log.e("anim", "Number of circles: " + circles.size());
-        // TODO: debug
-//        setWaiting();
     }
 
     private ArrayList<CircleView> getCircles(Integer count) {
         ArrayList<CircleView> circles = new ArrayList<>();
         while (count > 0) {
             CircleView circleView = new CircleView(getContext());
-//            circleView.setAlpha(0);
+            circleView.setAlpha(0);
             circles.add(circleView);
             count--;
         }
@@ -73,51 +67,52 @@ public class ParkViewImp extends LinearLayout implements ParkView {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
+        initAnimation();
     }
 
-    // https://www.raywenderlich.com/350-android-animation-tutorial-with-kotlin
+     // https://www.raywenderlich.com/350-android-animation-tutorial-with-kotlin
     private void startAnimation() {
-        Log.e("Anim", "startAnim");
-        if (!isInitializedAnim) {
-            initAnimation();
-        }
-        if (isRunningAnimation) {
+        if (!isInitializedAnim || isRunningAnimation) {
+            shouldStartAnimAfterFullInit = true;
             return;
         }
-
         isRunningAnimation = true;
         animatorSet.start();
     }
 
     private void initAnimation() {
-        Log.e("Anim", "initAnim");
+        if(isInitializedAnim) {
+            return;
+        }
         FrameLayout container = findViewById(R.id.circles_container);
-        CONTAINER_WIDTH = container.getWidth();
-        CIRCLES_POS[0] = (int) (CONTAINER_WIDTH / 2.0 + CIRCLE_WIDTH / 2.0 + DIST_BETWEEN_CIRCLES);
-        //        CIRCLES_POS[1] = (int) (CONTAINER_WIDTH / 2.0 - CIRCLE_WIDTH / 2.0);
-//        CIRCLES_POS[2] = (int) (CONTAINER_WIDTH / 2.0 - 3 * CIRCLE_WIDTH / 2.0 - DIST_BETWEEN_CIRCLES);
+        int CONTAINER_WIDTH = container.getWidth();
+        int CIRCLE_DIAMETER = container.getHeight();
+        int[] CIRCLES_POS = new int[CIRCLES_COUNT];
+        CIRCLES_POS[0] = (int) (CONTAINER_WIDTH / 2.0 + CIRCLE_DIAMETER / 2.0 + DIST_BETWEEN_CIRCLES);
+        CIRCLES_POS[1] = (int) (CONTAINER_WIDTH / 2.0 - CIRCLE_DIAMETER / 2.0);
+        CIRCLES_POS[2] = (int) (CONTAINER_WIDTH / 2.0 - 3 * CIRCLE_DIAMETER / 2.0 - DIST_BETWEEN_CIRCLES);
 
         Animator enterAnimForCircleOne
                 = getAnimSet(circles.get(0), 0, CIRCLES_POS[0], 0f, 1f);
-//        Animator enterAnimForCircleTwo
-//                = getAnimSet(circles.get(1), 0, CIRCLES_POS[1], 0f, 1f);
-//        Animator enterAnimForCircleThree
-//                = getAnimSet(circles.get(2), 0, CIRCLES_POS[2], 0f, 1f);
-//
-//        Animator exitAnimForCircleOne
-//                = getAnimSet(circles.get(0), CIRCLES_POS[0], CONTAINER_WIDTH, 1f, 0f);
-//        Animator exitAnimForCircleTwo
-//                = getAnimSet(circles.get(1), CIRCLES_POS[1], CONTAINER_WIDTH, 1f, 0f);
-//        Animator exitAnimForCircleThree
-//                = getAnimSet(circles.get(2), CIRCLES_POS[2], CONTAINER_WIDTH, 1f, 0f);
+        Animator enterAnimForCircleTwo
+                = getAnimSet(circles.get(1), 0, CIRCLES_POS[1], 0f, 1f);
+        Animator enterAnimForCircleThree
+                = getAnimSet(circles.get(2), 0, CIRCLES_POS[2], 0f, 1f);
+
+        Animator exitAnimForCircleOne
+                = getAnimSet(circles.get(0), CIRCLES_POS[0], CONTAINER_WIDTH, 1f, 0f);
+        Animator exitAnimForCircleTwo
+                = getAnimSet(circles.get(1), CIRCLES_POS[1], CONTAINER_WIDTH, 1f, 0f);
+        Animator exitAnimForCircleThree
+                = getAnimSet(circles.get(2), CIRCLES_POS[2], CONTAINER_WIDTH, 1f, 0f);
 
         animatorSet.playSequentially(
-                enterAnimForCircleOne);
-//                enterAnimForCircleTwo,
-//                enterAnimForCircleThree,
-//                exitAnimForCircleOne,
-//                exitAnimForCircleTwo,
-//                exitAnimForCircleThree);
+                enterAnimForCircleOne,
+                enterAnimForCircleTwo,
+                enterAnimForCircleThree,
+                exitAnimForCircleOne,
+                exitAnimForCircleTwo,
+                exitAnimForCircleThree);
 
         animatorSet.setDuration(ANIM_DURATION);
 
@@ -143,6 +138,9 @@ public class ParkViewImp extends LinearLayout implements ParkView {
         });
 
         isInitializedAnim = true;
+        if(shouldStartAnimAfterFullInit) {
+            startAnimation();
+        }
     }
 
     private Animator getAnimSet(View view, int startPos, int endPos, float startFadeValue, float endFadeValue) {
@@ -164,6 +162,10 @@ public class ParkViewImp extends LinearLayout implements ParkView {
 
     private void stopAnimation() {
         isRunningAnimation = false;
+        for(View circle : circles) {
+            circle.setAlpha(0);
+            circle.setTranslationX(0);
+        }
         animatorSet.end();
     }
 
