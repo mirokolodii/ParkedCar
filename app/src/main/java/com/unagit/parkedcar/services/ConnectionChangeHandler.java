@@ -70,8 +70,6 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
                     getApplicationContext(),
                     this);
             myLocationManager.getLocation(false, false);
-            Log.d("service", "location requested");
-
         }
 
         // Device has been connected, clear parking
