@@ -18,6 +18,7 @@ import com.unagit.parkedcar.helpers.Constants;
 public class ParkButton extends AppCompatButton {
     private boolean isParked = false;
     private boolean isInitialized = false;
+    ChangeBounds buttonTransition = new ChangeBounds();
 
     public ParkButton(Context context) {
         super(context);
@@ -25,7 +26,6 @@ public class ParkButton extends AppCompatButton {
 
     public ParkButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-//        initTransitionAnim();
     }
 
     public ParkButton(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -40,21 +40,22 @@ public class ParkButton extends AppCompatButton {
                     ? getContext().getString(R.string.park_btn_clear)
                     : getContext().getString(R.string.park_btn_park_car));
             isInitialized = true;
+        initTransitionAnim();
         }
     }
 
     void setParking() {
-//        beginTransitionAnim(true);
-        setText(getContext().getString(R.string.park_btn_clear));
         isParked = true;
-        setEnabled(true);
+        beginTransitionAnim(true);
+//        setText(getContext().getString(R.string.park_btn_clear));
+//        setEnabled(true);
     }
 
     void clearParking() {
-//        beginTransitionAnim(false);
         isParked = false;
-        setText(getContext().getString(R.string.park_btn_park_car));
-        setEnabled(true);
+        beginTransitionAnim(false);
+//        setText(getContext().getString(R.string.park_btn_park_car));
+//        setEnabled(true);
     }
 
     void setWaiting() {
@@ -63,8 +64,6 @@ public class ParkButton extends AppCompatButton {
     }
 
     private void initTransitionAnim() {
-        // Declare transition for button
-        ChangeBounds buttonTransition = new ChangeBounds();
         buttonTransition
                 .setInterpolator(new AnticipateInterpolator())
                 .setDuration(500)
@@ -100,17 +99,11 @@ public class ParkButton extends AppCompatButton {
 
             }
         });
-
-        // Initialize DelayedTransition
-        ViewGroup container = (ViewGroup) getParent();
-        TransitionManager.beginDelayedTransition(container, buttonTransition);
     }
 
     private void beginTransitionAnim(final Boolean isParked) {
-        this.isParked = isParked;
-        setText(isParked
-                ? getContext().getString(R.string.park_btn_clear)
-                : getContext().getString(R.string.park_btn_park_car));
+        ViewGroup container = (ViewGroup) getParent();
+        TransitionManager.beginDelayedTransition(container, buttonTransition);
         changePadding(isParked, getResources().getConfiguration().orientation);
     }
 
