@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -41,7 +42,12 @@ public class ParkViewImp extends LinearLayout implements ParkView {
     }
 
     private void initView() {
+    try{
         inflate(getContext(), R.layout.park_view, this);
+    } catch (Exception e) {
+        Log.e("ParkViewImp", "initView", e);
+        throw(e);
+    }
         FrameLayout container = findViewById(R.id.circles_container);
         addViewsInto(container);
         parkButton = findViewById(R.id.park_car);

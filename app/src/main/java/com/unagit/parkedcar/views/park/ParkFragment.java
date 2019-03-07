@@ -91,7 +91,14 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_park, container, false);
+        View rootView;
+        try {
+
+            rootView = inflater.inflate(R.layout.fragment_park, container, false);
+        } catch (Exception e) {
+            Log.e("fragment", "onCreateView", e);
+            throw(e);
+        }
         setMapCallback();
         setViews(rootView);
         return rootView;
