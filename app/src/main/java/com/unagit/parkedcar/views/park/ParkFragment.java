@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
@@ -29,7 +30,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-//        mViewModel = ViewModelProviders.of
+        mViewModel = ViewModelProviders.of(this).get(ParkViewModel.class);
     }
 
     @Nullable
