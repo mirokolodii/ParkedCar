@@ -32,11 +32,12 @@ import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 import com.unagit.parkedcar.views.park.ParkFragment;
+import com.unagit.parkedcar.views.park.ParkFragment_old;
 
 public class MainActivity extends AppCompatActivity implements
         MyLocationManager.MyLocationManagerCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        ParkFragment.ParkFragmentUIUpdateListener,
+        ParkFragment_old.ParkFragmentUIUpdateListener,
         NavigationView.OnNavigationItemSelectedListener {
 
     // Tag for logs
@@ -44,13 +45,13 @@ public class MainActivity extends AppCompatActivity implements
 
 
     /**
-     * Instance of ParkFragment. Required to trigger its methods from MainActivity.
+     * Instance of ParkFragment_old. Required to trigger its methods from MainActivity.
      */
-    private ParkFragment mParkFragment;
+    private ParkFragment_old mParkFragmentOld;
 
     /**
      * Park action from a set of {@link Constants.ParkActions actions},
-     * returned from ParkFragment.
+     * returned from ParkFragment_old.
      */
     private Integer mParkAction;
 
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements
                     location = new Location("");
                 }
                 /*
-                 Set explicitly ParkFragment's action to REQUEST_CURRENT_LOCATION, as can't
+                 Set explicitly ParkFragment_old's action to REQUEST_CURRENT_LOCATION, as can't
                  get precise location from the device anyway, so most what we can do
                  is to set last known location as a current location on a map.
                 */
@@ -215,9 +216,9 @@ public class MainActivity extends AppCompatActivity implements
      * Handles location, received from MyLocationManager, depending on mParkAction:
      * <p>
      * SET_PARKING_LOCATION - saves location as parking location and that car has been parked
-     * manually by the user, shows notification and updates map in ParkFragment;
+     * manually by the user, shows notification and updates map in ParkFragment_old;
      * <p>
-     * REQUEST_CURRENT_LOCATION - updates current location on map in ParkFragment.
+     * REQUEST_CURRENT_LOCATION - updates current location on map in ParkFragment_old.
      *
      * @param location current location.
      */
@@ -230,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements
 
         } else if (mParkAction != null) {
             /*
-            Get back to ParkFragment with location result, depending on action,
-            received from ParkFragment previously in onUpdate.
+            Get back to ParkFragment_old with location result, depending on action,
+            received from ParkFragment_old previously in onUpdate.
              */
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
@@ -242,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements
                     myDefaultPreferenceManager.setParkedAutomatically(false);
                     // Show notification
                     new MyNotificationManager().sendNotification(this, location);
-                    if (mParkFragment != null) {
-                        mParkFragment.updateUI();
+                    if (mParkFragmentOld != null) {
+                        mParkFragmentOld.updateUI();
                     }
                     break;
 
@@ -256,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Gets back to ParkFragment and sets current location on a map.
+     * Gets back to ParkFragment_old and sets current location on a map.
      */
     private void setParkFragmentCurrentLocation(Location location) {
-        if (mParkFragment != null) {
-            mParkFragment.setMarkerOnMap(
+        if (mParkFragmentOld != null) {
+            mParkFragmentOld.setMarkerOnMap(
                     location.getLatitude(),
                     location.getLongitude(),
                     Constants.ParkActions.SET_CURRENT_LOCATION
@@ -394,22 +395,22 @@ public class MainActivity extends AppCompatActivity implements
 
 
     /**
-     * Callback from ParkFragment.
+     * Callback from ParkFragment_old.
      *
      * @param action       which should be handled by this method;
-     * @param parkFragment saves instance of ParkFragment to be able to update its UI.
+     * @param parkFragmentOld saves instance of ParkFragment_old to be able to update its UI.
      */
     @Override
-    public void onUpdate(int action, ParkFragment parkFragment) {
+    public void onUpdate(int action, ParkFragment_old parkFragmentOld) {
         if (action == Constants.ParkActions.SET_PARKING_LOCATION) {
             mParkAction = action;
-            mParkFragment = parkFragment;
+            mParkFragmentOld = parkFragmentOld;
             // Get location
             myLocationManager.getLocation(false, false);
 
         } else if (action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
             mParkAction = action;
-            mParkFragment = parkFragment;
+            mParkFragmentOld = parkFragmentOld;
             // Get location
             myLocationManager.getLocation(false, true);
 
@@ -420,8 +421,8 @@ public class MainActivity extends AppCompatActivity implements
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
             if (mNotificationManager != null) {
                 mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
-                // Update ParkFragment UI
-                parkFragment.updateUI();
+                // Update ParkFragment_old UI
+                parkFragmentOld.updateUI();
             } else {
                 throw new RuntimeException("Unhandled action in MainActivity.onUpdate().");
             }

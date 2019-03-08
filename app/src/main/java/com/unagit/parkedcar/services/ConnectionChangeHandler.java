@@ -83,7 +83,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-            // 3. Send broadcast to update ParkFragment UI
+            // 3. Send broadcast to update ParkFragment_old UI
             sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
             stopService();
 
@@ -122,7 +122,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
      * @param result
      */
     private void sendBroadcast(int result) {
-        // Send broadcast to update ParkFragment UI
+        // Send broadcast to update ParkFragment_old UI
         Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
         intent.putExtra(
                 Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT,

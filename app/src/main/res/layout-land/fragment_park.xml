@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/park_fragment"
-    tools:context="com.unagit.parkedcar.views.park.ParkFragment">
+    tools:context="com.unagit.parkedcar.views.park.ParkFragment_old">
     <LinearLayout
         android:baselineAligned="false"
         android:layout_width="match_parent"

@@ -128,7 +128,7 @@ public class NotificationActionHandlerService extends IntentService {
      * @param result
      */
     private void sendBroadcast(int result) {
-        // Send broadcast to update ParkFragment UI
+        // Send broadcast to update ParkFragment_old UI
         Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
         intent.putExtra(
                 Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT,

@@ -71,8 +71,8 @@ public final class Constants {
     }
 
     /**
-     * Constants, used in a broadcast, receiver for which is listening in ParkFragment.
-     * Broadcast informs ParkFragment in following cases:
+     * Constants, used in a broadcast, receiver for which is listening in ParkFragment_old.
+     * Broadcast informs ParkFragment_old in following cases:
      * - BluetoothReceiver is triggered either to park or clear parking;
      * - User clicks on notification's clear action.
      */
@@ -105,5 +105,11 @@ public final class Constants {
         public static final int[] SMALL_PORTRAIT = new int[]{40, 20, 50, 20};
         public static final int[] BIG_LANDSCAPE = new int[]{20, 40, 20, 40};
         public static final int[] SMALL_LANDSCAPE = new int[]{50, 20, 50, 20};
+    }
+
+    public enum ParkStatus {
+        IS_PARKED,
+        IS_CLEARED,
+        IS_WAITING
     }
 }
