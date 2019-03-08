@@ -183,14 +183,14 @@ public class ParkViewImp extends LinearLayout implements ParkView {
     @Override
     public void clearParking() {
         parkButton.clearParking();
-        setParkingText("");
+//        setParkingText("");
         stopAnimation();
     }
 
     @Override
     public void setWaiting() {
         parkButton.setWaiting();
-        setParkingText("Getting location...");
+//        setParkingText("Getting location...");
         startAnimation();
     }
 }

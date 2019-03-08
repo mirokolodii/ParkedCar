@@ -16,7 +16,6 @@ import com.unagit.parkedcar.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 public class ParkFragment extends Fragment implements OnMapReadyCallback {
@@ -44,8 +43,25 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
     private void initViews(View parent) {
         Button parkButton = parent.findViewById(R.id.park_car);
-        parkButton.setOnClickListener(view -> Log.e("test","initViews - button clicked") );
+        parkButton.setOnClickListener(view -> mViewModel.onParkButtonClick() );
 
+        ParkView parkView = parent.findViewById(R.id.park_view);
+
+        mViewModel.getMessage().observe(this, parkView::setParkingText);
+
+        mViewModel.getStatus().observe(this, status -> {
+            switch (status) {
+                case IS_CLEARED:
+                    parkView.clearParking();
+                    break;
+                case IS_PARKED:
+                    parkView.setParking();
+                    break;
+                case IS_WAITING:
+                    parkView.setWaiting();
+                    break;
+            }
+        });
     }
 
     private void setMapCallback() {
