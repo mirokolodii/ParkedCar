@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 
@@ -53,7 +53,7 @@ public class ParkFragment_old extends Fragment implements OnMapReadyCallback {
     private Float longitude;
     private Long parkedTime;
     private Boolean isParkedAutomatically = false;
-    private MyDefaultPreferenceManager myDefaultPreferenceManager;
+    private AppPreferenceManager appPreferenceManager;
     private BluetoothReceiverBroadcastReceiver mBluetoothReceiverBroadcastReceiver;
     private ParkView parkView;
 
@@ -76,7 +76,7 @@ public class ParkFragment_old extends Fragment implements OnMapReadyCallback {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        myDefaultPreferenceManager = new MyDefaultPreferenceManager(getContext());
+        appPreferenceManager = new AppPreferenceManager(getContext());
         if (context instanceof ParkFragmentUIUpdateListener) {
             UIUpdateListener = (ParkFragmentUIUpdateListener) context;
         } else {
@@ -297,11 +297,11 @@ public class ParkFragment_old extends Fragment implements OnMapReadyCallback {
      * Refreshes data from DefaultSharedPreferences.
      */
     private void refreshData() {
-        isParked = myDefaultPreferenceManager.isParked();
-        latitude = myDefaultPreferenceManager.getLatitude();
-        longitude = myDefaultPreferenceManager.getLongitude();
-        parkedTime = myDefaultPreferenceManager.getTimestamp();
-        isParkedAutomatically = myDefaultPreferenceManager.isParkedAutomatically();
+        isParked = appPreferenceManager.isParked();
+        latitude = appPreferenceManager.getLatitude();
+        longitude = appPreferenceManager.getLongitude();
+        parkedTime = appPreferenceManager.getTimestamp();
+        isParkedAutomatically = appPreferenceManager.isParkedAutomatically();
     }
 }
 

@@ -25,7 +25,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.tools.MyLocationManager;
 import com.unagit.parkedcar.tools.MyNotificationManager;
 import com.unagit.parkedcar.R;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean isInFront;
 
     private DrawerLayout mDrawer;
-    private MyDefaultPreferenceManager mPreferenceManager;
+    private AppPreferenceManager mPreferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Create instances of helper classes.
         myLocationManager = new MyLocationManager(MainActivity.this, null, this);
-        mPreferenceManager = new MyDefaultPreferenceManager(this);
+        mPreferenceManager = new AppPreferenceManager(this);
 
         // Set toolbar to act as an actionbar and setup drawer
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -237,10 +237,10 @@ public class MainActivity extends AppCompatActivity implements
             switch (mParkAction) {
                 case (Constants.ParkActions.SET_PARKING_LOCATION):
                     // Save location into DefaultSharedPreferences
-                    MyDefaultPreferenceManager myDefaultPreferenceManager = new MyDefaultPreferenceManager(this);
-                    myDefaultPreferenceManager.saveLocation(currentLocation);
+                    AppPreferenceManager appPreferenceManager = new AppPreferenceManager(this);
+                    appPreferenceManager.saveLocation(currentLocation);
                     // Inform that car has been parked manually by the user
-                    myDefaultPreferenceManager.setParkedAutomatically(false);
+                    appPreferenceManager.setParkedAutomatically(false);
                     // Show notification
                     new MyNotificationManager().sendNotification(this, location);
                     if (mParkFragmentOld != null) {
@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements
 
         } else if (action == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
             // Remove location
-            new MyDefaultPreferenceManager(this).removeLocation();
+            new AppPreferenceManager(this).removeLocation();
             // Clear notification
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
             if (mNotificationManager != null) {

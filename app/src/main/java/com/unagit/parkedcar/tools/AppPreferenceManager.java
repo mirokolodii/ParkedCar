@@ -16,11 +16,11 @@ import java.util.Set;
 /**
  * This class includes helper methods for DefaultSharedPreferences.
  */
-public class MyDefaultPreferenceManager {
+public class AppPreferenceManager {
     private SharedPreferences spref;
     private Context context;
 
-    public MyDefaultPreferenceManager(Context context) {
+    public AppPreferenceManager(Context context) {
         this.context = context;
         spref = PreferenceManager.getDefaultSharedPreferences(context);
     }

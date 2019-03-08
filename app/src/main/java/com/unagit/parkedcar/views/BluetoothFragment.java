@@ -2,7 +2,6 @@ package com.unagit.parkedcar.views;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,14 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.unagit.parkedcar.bluetooth.BluetoothManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.bluetooth.MyBluetoothManager;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.models.BluetoothDevice;
-import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -36,7 +34,7 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
     private final BluetoothManager mBluetoothManager = new MyBluetoothManager();
     private View mRootView;
     private final BluetoothStateChangeListener mBluetoothStateChangeListener = new BluetoothStateChangeListener();
-    private MyDefaultPreferenceManager preferenceManager;
+    private AppPreferenceManager preferenceManager;
     private Set<String> mTrackedDevices;
     private RecyclerView mRecyclerView;
     private ArrayList<BluetoothDevice> devices;
@@ -48,7 +46,7 @@ public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.I
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferenceManager = new MyDefaultPreferenceManager(getContext());
+        preferenceManager = new AppPreferenceManager(getContext());
         mTrackedDevices = preferenceManager.getDevices();
     }
 

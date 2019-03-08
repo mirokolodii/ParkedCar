@@ -11,7 +11,7 @@ import android.content.Intent;
 import androidx.core.content.ContextCompat;
 
 import android.util.Log;
-import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.services.ConnectionChangeHandler;
 
 import java.util.Set;
@@ -69,7 +69,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
      * @return boolean, indicating whether device is tracked by the user
       */
     private boolean isTrackedDevice(String address) {
-        Set<String> trackedDevices = new MyDefaultPreferenceManager(this.context).getDevices();
+        Set<String> trackedDevices = new AppPreferenceManager(this.context).getDevices();
         return trackedDevices.contains(address);
     }
 }

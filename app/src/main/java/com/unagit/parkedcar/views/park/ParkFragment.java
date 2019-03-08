@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -18,7 +17,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Constants;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -37,6 +35,18 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mViewModel = ViewModelProviders.of(this).get(ParkViewModel.class);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mViewModel.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewModel.onStop();
     }
 
     @Nullable

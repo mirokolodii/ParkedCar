@@ -8,7 +8,7 @@ import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.tools.MyLocationManager;
 import com.unagit.parkedcar.tools.MyNotificationManager;
 import com.unagit.parkedcar.helpers.Constants;
@@ -75,7 +75,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
         // Device has been connected, clear parking
         else if (connectionState == BluetoothAdapter.STATE_CONNECTED /* 2 */ ) {
             // 1. clear location
-            new MyDefaultPreferenceManager(getApplicationContext()).removeLocation();
+            new AppPreferenceManager(getApplicationContext()).removeLocation();
             // 2. clear notification
             NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Service.NOTIFICATION_SERVICE);
             try {
@@ -99,11 +99,11 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
         // We need only case, when location IS received
         if (result == Constants.LocationStatus.LOCATION_RECEIVED) {
             // Save location to DefaultPreferences
-            MyDefaultPreferenceManager myDefaultPreferenceManager =
-                    new MyDefaultPreferenceManager(getApplicationContext());
-            myDefaultPreferenceManager.saveLocation(location);
+            AppPreferenceManager appPreferenceManager =
+                    new AppPreferenceManager(getApplicationContext());
+            appPreferenceManager.saveLocation(location);
             // Inform that car has been parked automatically
-            myDefaultPreferenceManager.setParkedAutomatically(true);
+            appPreferenceManager.setParkedAutomatically(true);
             // Send notification
             new MyNotificationManager().sendNotification(getApplicationContext(), location);
             // Send broadcast that car has been parked automatically via bluetooth connection

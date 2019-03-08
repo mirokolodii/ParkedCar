@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
-import com.unagit.parkedcar.tools.MyDefaultPreferenceManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.helpers.Constants;
 import static com.unagit.parkedcar.views.MainActivity.LOG_TAG;
 
@@ -40,7 +40,7 @@ public class NotificationActionHandlerService extends IntentService {
         // Clear parking location, dismiss notification and inform UI via broadcast.
         else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
             // Remove location from SharedPreferences
-            new MyDefaultPreferenceManager(this).removeLocation();
+            new AppPreferenceManager(this).removeLocation();
             // Remove notification
             dismissNotification();
             // Send broadcast to inform UI about a need to clear parking.
@@ -61,7 +61,7 @@ public class NotificationActionHandlerService extends IntentService {
      */
     private void showLocationOnMaps() {
         // Create Google Maps query URL
-        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
+        AppPreferenceManager myPreferenceManager = new AppPreferenceManager(getApplicationContext());
         String uri = Constants.GoogleMaps.GOOGLE_MAPS_QUERY_URL;
         uri += myPreferenceManager.getLatitude() + "," + myPreferenceManager.getLongitude();
         createMapsIntent(uri);
@@ -72,7 +72,7 @@ public class NotificationActionHandlerService extends IntentService {
      */
     private void showDirections() {
         // Build Google Maps query for directions
-        MyDefaultPreferenceManager myPreferenceManager = new MyDefaultPreferenceManager(getApplicationContext());
+        AppPreferenceManager myPreferenceManager = new AppPreferenceManager(getApplicationContext());
         String uri = Constants.GoogleMaps.GOOGLE_MAPS_DIRECTIONS_URL;
         uri += myPreferenceManager.getLatitude() + "," + myPreferenceManager.getLongitude();
         Log.d(LOG_TAG, "Directions URI: " + uri);

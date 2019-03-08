@@ -34,7 +34,7 @@ public class MyNotificationManager {
      * @param location if provided, gets accuracy and shows it in notification.
      */
     public void sendNotification(Context context, @Nullable Location location) {
-        MyDefaultPreferenceManager preferenceManager = new MyDefaultPreferenceManager(context);
+        AppPreferenceManager preferenceManager = new AppPreferenceManager(context);
 
         // Check user's preferences regarding notification sending
         if(!preferenceManager.shouldSendNotification()) {
