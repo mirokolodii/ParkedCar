@@ -112,4 +112,9 @@ public final class Constants {
         IS_CLEARED,
         IS_WAITING
     }
+
+    public enum LocationRequestType {
+        CURRENT_LOCATION,
+        PARKING_LOCATION
+    }
 }

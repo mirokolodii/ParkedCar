@@ -62,9 +62,13 @@ public class AppPreferenceManager {
      * Saves location, current time and set IS_PARKED to true.
      */
     public void saveLocation(Location location) {
+        saveLocation(location, true);
+    }
+
+    private void saveLocation(Location location, Boolean isParked) {
         setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.getLatitude());
         setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.getLongitude());
-        setValue(Constants.Store.IS_PARKED, true);
+        setValue(Constants.Store.IS_PARKED, isParked);
         setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
     }
 
@@ -134,5 +138,13 @@ public class AppPreferenceManager {
     boolean shouldSendNotification() {
         return spref.getBoolean(context.getString(R.string.pref_key_show_notif),
                 context.getResources().getBoolean(R.bool.pref_show_notif_default));
+    }
+
+    void setCurrentLocation(Location location) {
+        saveLocation(location, false);
+    }
+
+    void setParkingLocation(Location location) {
+        saveLocation(location, true);
     }
 }
