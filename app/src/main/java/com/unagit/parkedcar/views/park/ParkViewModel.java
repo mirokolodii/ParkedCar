@@ -31,10 +31,10 @@ public class ParkViewModel extends AndroidViewModel {
     private AppPreferenceManager appPreferenceManager;
     private AppLocationProvider locationProvider;
     private Boolean isParked;
-//    private Float latitude;
+    //    private Float latitude;
 //    private Float longitude;
     private Long parkedTime;
-//    private Boolean isParkedAutomatically;
+    //    private Boolean isParkedAutomatically;
     private MutableLiveData<String> message = new MutableLiveData<>();
     private MutableLiveData<Constants.ParkStatus> uiParkStatus = new MutableLiveData<>();
     private MutableLiveData<Pair<Constants.ParkStatus, LatLng>> locationWithStatusPair
@@ -44,6 +44,7 @@ public class ParkViewModel extends AndroidViewModel {
         super(application);
         appPreferenceManager = new AppPreferenceManager(application);
         isParked = appPreferenceManager.isParked();
+        message.setValue("isParked: " + isParked);
         locationProvider = new AppLocationProviderImp(appPreferenceManager);
 //        message.setValue("test message");
 //        uiParkStatus.setValue(Constants.ParkStatus.IS_CLEARED);
@@ -63,6 +64,7 @@ public class ParkViewModel extends AndroidViewModel {
     }
 
     private void refresh() {
+        Log.e("rx", "refresh");
 
         Boolean isParkedNewValue = appPreferenceManager.isParked();
         Boolean isParkedAutomatically = appPreferenceManager.isParkedAutomatically();
@@ -70,22 +72,24 @@ public class ParkViewModel extends AndroidViewModel {
         if (isParked == isParkedNewValue) {
             return;
         }
-            isParked = isParkedNewValue;
-            if (isParked) {
-                uiParkStatus.setValue(Constants.ParkStatus.IS_PARKED);
-                // TODO: Update UI text with parking time
-                parkedTime = appPreferenceManager.getTimestamp();
-                String text = (isParkedAutomatically) ? "Parked automatically" : "Parked manually";
-                message.setValue(text);
-                // TODO: startParkingTimeRefresh
-            } else {
-                uiParkStatus.setValue(Constants.ParkStatus.IS_CLEARED);
-                // TODO: Update UI text
-                message.setValue("");
-            }
+        isParked = isParkedNewValue;
+        message.setValue("isParked: " + isParked);
+        if (isParked) {
+            uiParkStatus.setValue(Constants.ParkStatus.IS_PARKED);
+            // TODO: Update UI text with parking time
+            parkedTime = appPreferenceManager.getTimestamp();
+            String text = (isParkedAutomatically) ? "Parked automatically" : "Parked manually";
+            message.setValue(text);
+            // TODO: startParkingTimeRefresh
+        } else {
+            uiParkStatus.setValue(Constants.ParkStatus.IS_CLEARED);
+            // TODO: Update UI text
+            message.setValue("");
+        }
 
         Float latitude = appPreferenceManager.getLatitude();
         Float longitude = appPreferenceManager.getLongitude();
+        Log.e("rx", "Lat: " + latitude + ", Lon: " + longitude);
         if (latitude != null && longitude != null) {
             LatLng location = new LatLng(latitude, longitude);
             locationWithStatusPair.setValue(new Pair<>(uiParkStatus.getValue(), location));
@@ -109,7 +113,6 @@ public class ParkViewModel extends AndroidViewModel {
         }
         uiParkStatus.setValue(Constants.ParkStatus.IS_WAITING);
         requestLocation(type);
-
 
 
 //        Log.e("test","initViews - button clicked");
