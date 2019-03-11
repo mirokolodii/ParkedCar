@@ -36,6 +36,7 @@ public class ParkButton extends AppCompatButton {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (!isInitialized) {
+            changePadding(isParked, getResources().getConfiguration().orientation);
             setText(isParked
                     ? getContext().getString(R.string.park_btn_clear)
                     : getContext().getString(R.string.park_btn_park_car));

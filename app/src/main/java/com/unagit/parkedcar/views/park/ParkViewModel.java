@@ -43,7 +43,6 @@ public class ParkViewModel extends AndroidViewModel {
         super(application);
         appPreferenceManager = new AppPreferenceManager(application);
         isParked = appPreferenceManager.isParked();
-        message.setValue("isParked: " + isParked);
         locationProvider = new AppLocationProviderImp(appPreferenceManager);
     }
 
