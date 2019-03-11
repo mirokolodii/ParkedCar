@@ -6,6 +6,7 @@ import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.views.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
@@ -62,12 +63,12 @@ public class AppPreferenceManager {
      * Saves location, current time and set IS_PARKED to true.
      */
     public void saveLocation(Location location) {
-        saveLocation(location, true);
+        saveLocation(new LatLng(location.getLatitude(), location.getLongitude()), true);
     }
 
-    private void saveLocation(Location location, Boolean isParked) {
-        setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.getLatitude());
-        setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.getLongitude());
+    private void saveLocation(LatLng location, Boolean isParked) {
+        setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.latitude);
+        setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.longitude);
         setValue(Constants.Store.IS_PARKED, isParked);
         setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
     }
@@ -106,7 +107,7 @@ public class AppPreferenceManager {
      * Returns a list of Bluetooth devices, which are tracked by the user for auto-parking.
      */
     public Set<String> getDevices() {
-        Set<String> store = spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, new HashSet<String>());
+        Set<String> store = spref.getStringSet(Constants.Store.DEVICE_ADDRESSES, new HashSet<>());
         // Return new object, as there is a bug with saving data, when same object is used to get and set
         return new HashSet<>(store);
     }
@@ -140,11 +141,11 @@ public class AppPreferenceManager {
                 context.getResources().getBoolean(R.bool.pref_show_notif_default));
     }
 
-    void setCurrentLocation(Location location) {
+    void setCurrentLocation(LatLng location) {
         saveLocation(location, false);
     }
 
-    void setParkingLocation(Location location) {
+    void setParkingLocation(LatLng location) {
         saveLocation(location, true);
     }
 }
