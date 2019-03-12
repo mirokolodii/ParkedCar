@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
@@ -18,6 +19,7 @@ import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -38,6 +40,7 @@ public class ParkViewModel extends AndroidViewModel {
             = new MutableLiveData<>();
     private Handler timeUpdateHandler = new Handler();
     private Runnable timeUpdateRunnable;
+    private AutoParkingReceiver autoParkingReceiver = new AutoParkingReceiver();
 
     public ParkViewModel(@NonNull Application application) {
         super(application);
@@ -53,7 +56,6 @@ public class ParkViewModel extends AndroidViewModel {
         } else {
             requestLocation(Constants.LocationRequestType.CURRENT_LOCATION);
         }
-
         registerAutoParkingReceiver();
     }
 
@@ -79,8 +81,8 @@ public class ParkViewModel extends AndroidViewModel {
             message.postValue("");
         }
 
-        Constants.ParkStatus status = isParked ?
-                Constants.ParkStatus.IS_PARKED
+        Constants.ParkStatus status = isParked
+                ? Constants.ParkStatus.IS_PARKED
                 : Constants.ParkStatus.IS_CLEARED;
         uiParkStatus.postValue(status);
         locationWithStatusPair.postValue(new Pair<>(status, location));
@@ -88,11 +90,12 @@ public class ParkViewModel extends AndroidViewModel {
 
 
     private void registerAutoParkingReceiver() {
-        // TODO: implement
+        IntentFilter intentFilter = new IntentFilter(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+        LocalBroadcastManager.getInstance(getApplication()).registerReceiver(autoParkingReceiver, intentFilter);
     }
 
     private void unregisterAutoParkingReceiver() {
-        // TODO: implement
+        LocalBroadcastManager.getInstance(getApplication()).unregisterReceiver(autoParkingReceiver);
     }
 
     void onParkButtonClick() {
@@ -174,6 +177,10 @@ public class ParkViewModel extends AndroidViewModel {
         return timeUpdateRunnable;
     }
 
+    /**
+     * This receiver is used to notify application about autoparking, which has occurred
+     * while the application is opened, so that application can update UI.
+     */
     private class AutoParkingReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
