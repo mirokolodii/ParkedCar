@@ -4,16 +4,15 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.tools.AppLocationProvider;
 import com.unagit.parkedcar.tools.AppLocationProviderImp;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
-
 import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
@@ -23,7 +22,6 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.CURRENT_LOCATION;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.PARKING_LOCATION;
 
@@ -38,6 +36,8 @@ public class ParkViewModel extends AndroidViewModel {
     private MutableLiveData<Constants.ParkStatus> uiParkStatus = new MutableLiveData<>();
     private MutableLiveData<Pair<Constants.ParkStatus, LatLng>> locationWithStatusPair
             = new MutableLiveData<>();
+    private Handler timeUpdateHandler = new Handler();
+    private Runnable timeUpdateRunnable;
 
     public ParkViewModel(@NonNull Application application) {
         super(application);
@@ -59,6 +59,7 @@ public class ParkViewModel extends AndroidViewModel {
 
     void onStop() {
         unregisterAutoParkingReceiver();
+        stopParkingTime();
     }
 
     private void refreshData() {
@@ -67,17 +68,14 @@ public class ParkViewModel extends AndroidViewModel {
         Float latitude = appPreferenceManager.getLatitude();
         Float longitude = appPreferenceManager.getLongitude();
         location = new LatLng(latitude, longitude);
+        parkedTime = appPreferenceManager.getTimestamp();
     }
 
     private void updateUI() {
         if (isParked) {
-            // TODO: Update UI text with parking time
-            parkedTime = appPreferenceManager.getTimestamp();
-            String text = (isParkedAutomatically) ? "Parked automatically" : "Parked manually";
-            message.postValue(text);
-            // TODO: startParkingTimeRefresh
+            startParkingTime();
         } else {
-            // TODO: Update UI text
+            stopParkingTime();
             message.postValue("");
         }
 
@@ -85,9 +83,8 @@ public class ParkViewModel extends AndroidViewModel {
                 Constants.ParkStatus.IS_PARKED
                 : Constants.ParkStatus.IS_CLEARED;
         uiParkStatus.postValue(status);
-        locationWithStatusPair.postValue(new Pair<>(status,location));
+        locationWithStatusPair.postValue(new Pair<>(status, location));
     }
-
 
 
     private void registerAutoParkingReceiver() {
@@ -150,6 +147,31 @@ public class ParkViewModel extends AndroidViewModel {
 
     LiveData<Pair<Constants.ParkStatus, LatLng>> getLocationWithStatus() {
         return locationWithStatusPair;
+    }
+
+    private void startParkingTime() {
+        timeUpdateHandler.post(updateText());
+    }
+
+    private void stopParkingTime() {
+        if (timeUpdateRunnable != null) {
+            // Passing null value will remove all callbacks
+            timeUpdateHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private Runnable updateText() {
+        timeUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                String timeDifference = Helpers.getTimeDifference(parkedTime, getApplication());
+                String text = (isParkedAutomatically) ? "Parked automatically " : "Parked manually ";
+                text += timeDifference;
+                message.postValue(text);
+                timeUpdateHandler.postDelayed(this, 60 * 1000);
+            }
+        };
+        return timeUpdateRunnable;
     }
 
     private class AutoParkingReceiver extends BroadcastReceiver {
