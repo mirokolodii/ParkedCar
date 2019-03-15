@@ -7,13 +7,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.tools.AppLocationProvider;
 import com.unagit.parkedcar.tools.AppLocationProviderImp;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
+
 import java.util.concurrent.TimeUnit;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,6 +27,7 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.CURRENT_LOCATION;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.PARKING_LOCATION;
 
@@ -130,12 +134,8 @@ public class ParkViewModel extends AndroidViewModel {
                     @Override
                     public void onError(Throwable e) {
                         Log.e("location", "Failed to receive location");
-                        if (isParked) {
-                            uiParkStatus.setValue(Constants.ParkStatus.IS_PARKED);
-                        } else {
-                            uiParkStatus.setValue(Constants.ParkStatus.IS_CLEARED);
-                        }
-//                        // TODO: show location request error
+                        updateUI();
+                        // TODO: show location request error
                     }
                 });
     }

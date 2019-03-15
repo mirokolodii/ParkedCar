@@ -1,4 +1,4 @@
-package com.unagit.parkedcar.views;
+package com.unagit.parkedcar.views.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;

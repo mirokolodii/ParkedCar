@@ -12,6 +12,8 @@ public class AppLocationProviderImp implements AppLocationProvider {
     }
 
     @Override
+    // https://blog.mindorks.com/understanding-rxjava-subject-publish-replay-behavior-and-async-subject-224d663d452f
+    //https://medium.com/@nazarivanchuk/types-of-subjects-in-rxjava-96f3a0c068e4
     public Completable requestLocation(Constants.LocationRequestType type) {
         return Completable.create(emitter -> {
             LatLng location;

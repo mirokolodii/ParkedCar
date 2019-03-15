@@ -83,7 +83,7 @@ public class ConnectionChangeHandler extends Service implements MyLocationManage
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-            // 3. Send broadcast to update ParkFragment_old UI
+            // 3. Send broadcast to update ParkFragment UI
             sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
             stopService();
 
