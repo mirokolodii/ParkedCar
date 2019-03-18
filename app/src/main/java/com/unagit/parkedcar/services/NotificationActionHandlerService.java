@@ -44,7 +44,7 @@ public class NotificationActionHandlerService extends IntentService {
             // Remove notification
             dismissNotification();
             // Send broadcast to inform UI about a need to clear parking.
-            sendBroadcast(Constants.ParkActions.CLEAR_PARKING_LOCATION);
+            sendBroadcast();
         }
 
         // Unhandled action
@@ -123,17 +123,8 @@ public class NotificationActionHandlerService extends IntentService {
         sendBroadcast(it);
     }
 
-    /**
-     * Sends broadcast with parking result.
-     * @param result
-     */
-    private void sendBroadcast(int result) {
-        // Send broadcast to update ParkFragment_old UI
+    private void sendBroadcast() {
         Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
-        intent.putExtra(
-                Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_RESULT,
-                result
-        );
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

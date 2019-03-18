@@ -39,7 +39,7 @@ public class AppPreferenceManager {
     public void setValue(String key, Object value) {
         // Get instance of SharedPreferences editor
         SharedPreferences.Editor editor = spref.edit();
-        // Get type of value and put into editor
+        // Get locationRequestType of value and put into editor
         if (value instanceof String) {
             editor.putString(key, (String) value);
         } else if (value instanceof Float) {
@@ -52,7 +52,7 @@ public class AppPreferenceManager {
         else if (value instanceof Set) {
             editor.putStringSet(key, (Set<String>) value);
         } else {
-            Log.e(MainActivity.LOG_TAG, "Incorrect value type is passed to setValue method");
+            Log.e(MainActivity.LOG_TAG, "Incorrect value locationRequestType is passed to setValue method");
             return;
         }
         // Apply changes to editor
@@ -62,19 +62,20 @@ public class AppPreferenceManager {
     /**
      * Saves location, current time and set IS_PARKED to true.
      */
-    public void saveLocation(Location location) {
-        saveLocation(new LatLng(location.getLatitude(), location.getLongitude()), true);
-    }
+//    public void saveLocation(Location location) {
+//        saveLocation(new LatLng(location.getLatitude(), location.getLongitude()), true, true);
+//    }
 
-    private void saveLocation(LatLng location, Boolean isParked) {
+    private void saveLocation(LatLng location, Boolean isParked, boolean autoParking) {
         setValue(Constants.Store.PARKING_LOCATION_LATITUDE, (float) location.latitude);
         setValue(Constants.Store.PARKING_LOCATION_LONGITUDE, (float) location.longitude);
         setValue(Constants.Store.IS_PARKED, isParked);
         setValue(Constants.Store.PARKED_TIME, getCurrentTimestamp());
+        setParkedAutomatically(autoParking);
     }
 
     /**
-     * Parking type.
+     * Parking locationRequestType.
      * @param value identifies, whether car has been parked automatically (via Bluetooth) or manually.
      */
     public void setParkedAutomatically(boolean value) {
@@ -113,7 +114,7 @@ public class AppPreferenceManager {
     }
 
     /**
-     * Removes location, IS_PARKED, parking time, parking type.
+     * Removes location, IS_PARKED, parking time, parking locationRequestType.
      */
     public void removeLocation() {
         if (isSet(Constants.Store.PARKING_LOCATION_LATITUDE)
@@ -141,11 +142,11 @@ public class AppPreferenceManager {
                 context.getResources().getBoolean(R.bool.pref_show_notif_default));
     }
 
-    void setCurrentLocation(LatLng location) {
-        saveLocation(location, false);
+    public void setCurrentLocation(LatLng location, boolean autoParking) {
+        saveLocation(location, false, autoParking);
     }
 
-    void setParkingLocation(LatLng location) {
-        saveLocation(location, true);
+    public void setParkingLocation(LatLng location, boolean autoParking) {
+        saveLocation(location, true, autoParking);
     }
 }

@@ -1,38 +1,29 @@
 package com.unagit.parkedcar.bluetooth;
 
 import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.core.content.ContextCompat;
-
 import android.util.Log;
+import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.tools.AppLocationProvider;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
-import com.unagit.parkedcar.services.ConnectionChangeHandler;
 
 import java.util.Set;
 
-import static com.unagit.parkedcar.helpers.Constants.Bluetooth.EXTRA_CONNECTION_STATE;
-import static com.unagit.parkedcar.helpers.Constants.Bluetooth.EXTRA_PREV_CONNECTION_STATE;
-
-/**
- * This BroadcastReceiver listens for CONNECTION_STATE_CHANGE of a Bluetooth adapter on a device.
- * Verifies that:
- * 1. intent has correct action (ACTION_CONNECTION_STATE_CHANGED);
- * 2. remote Bluetooth device is tracked by the user.
- * If both are true, starts service to handle connection change.
- */
+import static com.unagit.parkedcar.helpers.Constants.Extras.IS_AUTOPARKING;
+import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_REQUEST_TYPE;
 
 public class BluetoothReceiver extends BroadcastReceiver {
-
     private Context context;
     @Override
     public void onReceive(Context context, Intent intent) {
-          this.context = context;
+        this.context = context;
 
         // Verify intent action:
         // we need only case, when this receiver has been triggered
@@ -43,17 +34,38 @@ public class BluetoothReceiver extends BroadcastReceiver {
         final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
         String deviceAddress = device.getAddress();
 
+
         if (action != null && isCorrectAction(action) && isTrackedDevice(deviceAddress)) {
-            Log.d("bluetooth", "BluetoothReceiver should start service");
-            Intent i = new Intent(context, ConnectionChangeHandler.class);
-            i.putExtra(EXTRA_CONNECTION_STATE, connectionState);
-            i.putExtra(EXTRA_PREV_CONNECTION_STATE, prevConnectionState);
-            ContextCompat.startForegroundService(context, i);
+            Intent i = new Intent(context, AppLocationProvider.class);
+            try {
+                Constants.LocationRequestType type = getType(connectionState, prevConnectionState);
+                i.putExtra(LOCATION_REQUEST_TYPE, type);
+                i.putExtra(IS_AUTOPARKING, true);
+                ContextCompat.startForegroundService(context, i);
+            } catch (IllegalArgumentException e){
+                Log.i("Location", "Unhandled bluetooth connection change");
+            }
+        }
+    }
+
+    private Constants.LocationRequestType getType(Integer connectionState, Integer prevConnectionState) throws IllegalArgumentException {
+        // Device has been disconnected, we need to park
+        if (connectionState == BluetoothAdapter.STATE_DISCONNECTED /* 0 */
+                && !(prevConnectionState == BluetoothAdapter.STATE_CONNECTING /* 1 */)) {
+            return Constants.LocationRequestType.PARKING_LOCATION;
+        }
+        // Device has been connected, we need to clear parking
+        else if (connectionState == BluetoothAdapter.STATE_CONNECTED /* 2 */) {
+            return Constants.LocationRequestType.CURRENT_LOCATION;
+
+        } else {
+            throw new IllegalArgumentException();
         }
     }
 
     /**
      * Verifies that receiver has been triggered by correct action.
+     *
      * @param action intent action
      * @return boolean, indicating whether the action is correct
      */
@@ -65,9 +77,10 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
     /**
      * Verifies that remote Bluetooth device is tracked by the user.
+     *
      * @param address hardware address of remote Bluetooth device
      * @return boolean, indicating whether device is tracked by the user
-      */
+     */
     private boolean isTrackedDevice(String address) {
         Set<String> trackedDevices = new AppPreferenceManager(this.context).getDevices();
         return trackedDevices.contains(address);

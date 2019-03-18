@@ -36,9 +36,9 @@ import com.unagit.parkedcar.views.park.ParkFragment;
 import com.unagit.parkedcar.views.park.ParkFragment_old;
 
 public class MainActivity extends AppCompatActivity implements
-        MyLocationManager.MyLocationManagerCallback,
+//        MyLocationManager.MyLocationManagerCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        ParkFragment_old.ParkFragmentUIUpdateListener,
+//        ParkFragment_old.ParkFragmentUIUpdateListener,
         NavigationView.OnNavigationItemSelectedListener {
 
     // Tag for logs
@@ -84,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements
         // Set TAG for logs as this class name
         LOG_TAG = this.getClass().getSimpleName();
 
-        // Create instances of helper classes.
-        myLocationManager = new MyLocationManager(MainActivity.this, null, this);
-        mPreferenceManager = new AppPreferenceManager(this);
+//        // Create instances of helper classes.
+//        myLocationManager = new MyLocationManager(MainActivity.this, null, this);
+//        mPreferenceManager = new AppPreferenceManager(this);
 
         // Set toolbar to act as an actionbar and setup drawer
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -174,44 +174,44 @@ public class MainActivity extends AppCompatActivity implements
      * @param result   informs, whether or not location has been received.
      * @param location requested location.
      */
-    @Override
-    public void locationCallback(Constants.LocationStatus result, Location location) {
-        // We need some action only if this activity is in foreground.
-        if (!isInFront) {
-            return;
-        }
-
-        switch (result) {
-            case LOCATION_DISABLED:
-                showLocationDisabledDialog();
-                break;
-            case LOCATION_PERMISSION_NOT_GRANTED:
-//                Helpers.showToast("Location permission is not granted.", this);
-                this.finish();
-                break;
-            case LOCATION_RECEIVED:
-                locationReceivedHandler(location);
-                break;
-            case LOCATION_NOT_RECEIVED:
-                /*
-                 Can't get location. Set last known location instead (or empty location,
-                 if returned location is null) in park fragment and show
-                 dialog to inform the user about this fact.
-                 */
-                if (location == null) {
-                    location = new Location("");
-                }
-                /*
-                 Set explicitly ParkFragment_old's action to REQUEST_CURRENT_LOCATION, as can't
-                 get precise location from the device anyway, so most what we can do
-                 is to set last known location as a current location on a map.
-                */
-                mParkAction = Constants.ParkActions.REQUEST_CURRENT_LOCATION;
-                locationReceivedHandler(location);
-                showLocationNotAvailableDialog();
-                break;
-        }
-    }
+//    @Override
+//    public void locationCallback(Constants.LocationStatus result, Location location) {
+//        // We need some action only if this activity is in foreground.
+//        if (!isInFront) {
+//            return;
+//        }
+//
+//        switch (result) {
+//            case LOCATION_DISABLED:
+//                showLocationDisabledDialog();
+//                break;
+//            case LOCATION_PERMISSION_NOT_GRANTED:
+////                Helpers.showToast("Location permission is not granted.", this);
+//                this.finish();
+//                break;
+//            case LOCATION_RECEIVED:
+//                locationReceivedHandler(location);
+//                break;
+//            case LOCATION_NOT_RECEIVED:
+//                /*
+//                 Can't get location. Set last known location instead (or empty location,
+//                 if returned location is null) in park fragment and show
+//                 dialog to inform the user about this fact.
+//                 */
+//                if (location == null) {
+//                    location = new Location("");
+//                }
+//                /*
+//                 Set explicitly ParkFragment_old's action to REQUEST_CURRENT_LOCATION, as can't
+//                 get precise location from the device anyway, so most what we can do
+//                 is to set last known location as a current location on a map.
+//                */
+//                mParkAction = Constants.ParkActions.REQUEST_CURRENT_LOCATION;
+//                locationReceivedHandler(location);
+//                showLocationNotAvailableDialog();
+//                break;
+//        }
+//    }
 
     /**
      * Handles location, received from MyLocationManager, depending on mParkAction:
@@ -223,52 +223,52 @@ public class MainActivity extends AppCompatActivity implements
      *
      * @param location current location.
      */
-    private void locationReceivedHandler(Location location) {
-        currentLocation = location;
-        if (location == null) {
-//            Helpers.showToast("Oops, last location is not known. Trying again...", this);
-            // Try again to get location
-            myLocationManager.getLocation(true, true);
+//    private void locationReceivedHandler(Location location) {
+//        currentLocation = location;
+//        if (location == null) {
+////            Helpers.showToast("Oops, last location is not known. Trying again...", this);
+//            // Try again to get location
+//            myLocationManager.getLocation(true, true);
+//
+//        } else if (mParkAction != null) {
+//            /*
+//            Get back to ParkFragment_old with location result, depending on action,
+//            received from ParkFragment_old previously in onUpdate.
+//             */
+//            switch (mParkAction) {
+//                case (Constants.ParkActions.SET_PARKING_LOCATION):
+//                    // Save location into DefaultSharedPreferences
+//                    AppPreferenceManager appPreferenceManager = new AppPreferenceManager(this);
+//                    appPreferenceManager.saveLocation(currentLocation);
+//                    // Inform that car has been parked manually by the user
+//                    appPreferenceManager.setParkedAutomatically(false);
+//                    // Show notification
+//                    new MyNotificationManager().sendNotification(this, location);
+//                    if (mParkFragmentOld != null) {
+//                        mParkFragmentOld.updateUI();
+//                    }
+//                    break;
+//
+//                case (Constants.ParkActions.REQUEST_CURRENT_LOCATION):
+//                    setParkFragmentCurrentLocation(location);
+//            }
+//        } else {
+//            throw new RuntimeException("MainActivity.locationReceivedHandler: mParkAction is null.");
+//        }
+//    }
 
-        } else if (mParkAction != null) {
-            /*
-            Get back to ParkFragment_old with location result, depending on action,
-            received from ParkFragment_old previously in onUpdate.
-             */
-            switch (mParkAction) {
-                case (Constants.ParkActions.SET_PARKING_LOCATION):
-                    // Save location into DefaultSharedPreferences
-                    AppPreferenceManager appPreferenceManager = new AppPreferenceManager(this);
-                    appPreferenceManager.saveLocation(currentLocation);
-                    // Inform that car has been parked manually by the user
-                    appPreferenceManager.setParkedAutomatically(false);
-                    // Show notification
-                    new MyNotificationManager().sendNotification(this, location);
-                    if (mParkFragmentOld != null) {
-                        mParkFragmentOld.updateUI();
-                    }
-                    break;
-
-                case (Constants.ParkActions.REQUEST_CURRENT_LOCATION):
-                    setParkFragmentCurrentLocation(location);
-            }
-        } else {
-            throw new RuntimeException("MainActivity.locationReceivedHandler: mParkAction is null.");
-        }
-    }
-
-    /**
-     * Gets back to ParkFragment_old and sets current location on a map.
-     */
-    private void setParkFragmentCurrentLocation(Location location) {
-        if (mParkFragmentOld != null) {
-            mParkFragmentOld.setMarkerOnMap(
-                    location.getLatitude(),
-                    location.getLongitude(),
-                    Constants.ParkActions.SET_CURRENT_LOCATION
-            );
-        }
-    }
+//    /**
+//     * Gets back to ParkFragment_old and sets current location on a map.
+//     */
+//    private void setParkFragmentCurrentLocation(Location location) {
+//        if (mParkFragmentOld != null) {
+//            mParkFragmentOld.setMarkerOnMap(
+//                    location.getLatitude(),
+//                    location.getLongitude(),
+//                    Constants.ParkActions.SET_CURRENT_LOCATION
+//            );
+//        }
+//    }
 
     /**
      * Shows a dialog to a user, if Bluetooth is disabled.
@@ -334,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements
                         myLocationManager.getLocation(true, true);
                         break;
                     case RESULT_CANCELED: // User cancelled
-                        locationCallback(Constants.LocationStatus.LOCATION_DISABLED, new Location("empty"));
+//                        locationCallback(Constants.LocationStatus.LOCATION_DISABLED, new Location("empty"));
                         break;
                 }
             default:
@@ -395,40 +395,40 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    /**
-     * Callback from ParkFragment_old.
-     *
-     * @param action       which should be handled by this method;
-     * @param parkFragmentOld saves instance of ParkFragment_old to be able to update its UI.
-     */
-    @Override
-    public void onUpdate(int action, ParkFragment_old parkFragmentOld) {
-        if (action == Constants.ParkActions.SET_PARKING_LOCATION) {
-            mParkAction = action;
-            mParkFragmentOld = parkFragmentOld;
-            // Get location
-            myLocationManager.getLocation(false, false);
-
-        } else if (action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
-            mParkAction = action;
-            mParkFragmentOld = parkFragmentOld;
-            // Get location
-            myLocationManager.getLocation(false, true);
-
-        } else if (action == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
-            // Remove location
-            new AppPreferenceManager(this).removeLocation();
-            // Clear notification
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-            if (mNotificationManager != null) {
-                mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
-                // Update ParkFragment_old UI
-                parkFragmentOld.updateUI();
-            } else {
-                throw new RuntimeException("Unhandled action in MainActivity.onUpdate().");
-            }
-        }
-    }
+//    /**
+//     * Callback from ParkFragment_old.
+//     *
+//     * @param action       which should be handled by this method;
+//     * @param parkFragmentOld saves instance of ParkFragment_old to be able to update its UI.
+//     */
+//    @Override
+//    public void onUpdate(int action, ParkFragment_old parkFragmentOld) {
+//        if (action == Constants.ParkActions.SET_PARKING_LOCATION) {
+//            mParkAction = action;
+//            mParkFragmentOld = parkFragmentOld;
+//            // Get location
+//            myLocationManager.getLocation(false, false);
+//
+//        } else if (action == Constants.ParkActions.REQUEST_CURRENT_LOCATION) {
+//            mParkAction = action;
+//            mParkFragmentOld = parkFragmentOld;
+//            // Get location
+//            myLocationManager.getLocation(false, true);
+//
+//        } else if (action == Constants.ParkActions.CLEAR_PARKING_LOCATION) {
+//            // Remove location
+//            new AppPreferenceManager(this).removeLocation();
+//            // Clear notification
+//            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+//            if (mNotificationManager != null) {
+//                mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
+//                // Update ParkFragment_old UI
+//                parkFragmentOld.updateUI();
+//            } else {
+//                throw new RuntimeException("Unhandled action in MainActivity.onUpdate().");
+//            }
+//        }
+//    }
 
     @Override
     public void onBackPressed() {

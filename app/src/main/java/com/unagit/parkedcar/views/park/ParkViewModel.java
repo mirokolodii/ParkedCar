@@ -6,34 +6,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.tools.AppLocationProvider;
-import com.unagit.parkedcar.tools.AppLocationProviderImp;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
 
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import io.reactivex.CompletableObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
+import static com.unagit.parkedcar.helpers.Constants.Extras.IS_AUTOPARKING;
+import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_REQUEST_TYPE;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.CURRENT_LOCATION;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.PARKING_LOCATION;
 
 public class ParkViewModel extends AndroidViewModel {
     private AppPreferenceManager appPreferenceManager;
-    private AppLocationProvider locationProvider;
+//    private AppLocationProvider locationProvider;
     private Boolean isParked;
     private LatLng location;
     private Long parkedTime;
@@ -50,7 +45,7 @@ public class ParkViewModel extends AndroidViewModel {
         super(application);
         appPreferenceManager = new AppPreferenceManager(application);
         isParked = appPreferenceManager.isParked();
-        locationProvider = new AppLocationProviderImp(appPreferenceManager);
+//        locationProvider = new AppLocationProviderImp(appPreferenceManager);
     }
 
     void onStart() {
@@ -114,30 +109,35 @@ public class ParkViewModel extends AndroidViewModel {
     }
 
     private void requestLocation(Constants.LocationRequestType type) {
-        // TODO: verify that request is auto disposed
-        locationProvider.requestLocation(type)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .delay(5, TimeUnit.SECONDS)
-                .subscribe(new CompletableObserver() {
+        Intent i = new Intent(getApplication(), AppLocationProvider.class);
+        i.putExtra(LOCATION_REQUEST_TYPE, type);
+        i.putExtra(IS_AUTOPARKING, false);
+        ContextCompat.startForegroundService(getApplication(), i);
 
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        refreshData();
-                        updateUI();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("location", "Failed to receive location");
-                        updateUI();
-                        // TODO: show location request error
-                    }
-                });
+//        // TODO: verify that request is auto disposed
+//        locationProvider.requestLocation(type)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .delay(5, TimeUnit.SECONDS)
+//                .subscribe(new CompletableObserver() {
+//
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        refreshData();
+//                        updateUI();
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.e("location", "Failed to receive location");
+//                        updateUI();
+//                        // TODO: show location request error
+//                    }
+//                });
     }
 
     LiveData<String> getMessage() {

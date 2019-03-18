@@ -30,7 +30,7 @@ public final class Constants {
      */
     public static class ParkActions {
         public static final int SET_PARKING_LOCATION = 0;
-        public static final int CLEAR_PARKING_LOCATION= 1;
+        public static final int CLEAR_PARKING_LOCATION = 1;
         public static final int REQUEST_CURRENT_LOCATION = 2;
         public static final int SET_CURRENT_LOCATION = 3;
     }
@@ -78,9 +78,11 @@ public final class Constants {
      */
     public static class Bluetooth {
         public static final String BLUETOOTH_RECEIVER_BROADCAST_ACTION = BuildConfig.APPLICATION_ID + ".BluetoothReceiverBroadcast";
-        public static final String BLUETOOTH_RECEIVER_BROADCAST_RESULT = BuildConfig.APPLICATION_ID + ".result";
-        public static final String EXTRA_CONNECTION_STATE = "Bluetooth.connection.state";
-        public static final String EXTRA_PREV_CONNECTION_STATE = "Bluetooth.previous.connection.state";
+    }
+
+    public static class Extras {
+        public static final String LOCATION_REQUEST_TYPE = "Location request type";
+        public static final String IS_AUTOPARKING = "Is autoparking";
     }
 
     /**
