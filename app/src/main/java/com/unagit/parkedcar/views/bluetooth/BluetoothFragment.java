@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
-
 public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener {
 
     private final BluetoothManager mBluetoothManager = new MyBluetoothManager();

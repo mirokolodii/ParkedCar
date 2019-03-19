@@ -133,9 +133,7 @@ public class ParkButton extends AppCompatButton {
                 DPToPixels(paddingValues[2]),
                 DPToPixels(paddingValues[3])
         );
-
     }
-
 
     /**
      * Converts DP units to pixels.

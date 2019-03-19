@@ -1,7 +1,5 @@
 package com.unagit.parkedcar.views;
 
-import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,13 +25,11 @@ import android.view.MenuItem;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.tools.MyLocationManager;
-import com.unagit.parkedcar.tools.MyNotificationManager;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 import com.unagit.parkedcar.views.bluetooth.BluetoothFragment;
 import com.unagit.parkedcar.views.park.ParkFragment;
-import com.unagit.parkedcar.views.park.ParkFragment_old;
 
 public class MainActivity extends AppCompatActivity implements
 //        MyLocationManager.MyLocationManagerCallback,
@@ -48,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Instance of ParkFragment_old. Required to trigger its methods from MainActivity.
      */
-    private ParkFragment_old mParkFragmentOld;
 
     /**
      * Park action from a set of {@link Constants.ParkActions actions},

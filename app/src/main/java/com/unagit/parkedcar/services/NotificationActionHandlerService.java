@@ -12,6 +12,9 @@ import android.util.Log;
 import android.widget.Toast;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.helpers.Constants;
+import static com.unagit.parkedcar.helpers.Constants.Notifications.ACTION_CLEAR;
+import static com.unagit.parkedcar.helpers.Constants.Notifications.ACTION_DIRECTIONS;
+import static com.unagit.parkedcar.helpers.Constants.Notifications.ACTION_SHOW_ON_MAP;
 import static com.unagit.parkedcar.views.MainActivity.LOG_TAG;
 
 /**
@@ -26,19 +29,19 @@ public class NotificationActionHandlerService extends IntentService {
         final String action = intent.getAction();
 
         // Show parking location in Google Maps app.
-        if (action.equals(Constants.Notifications.ACTION_SHOW_ON_MAP)) {
+        if (action.equals(ACTION_SHOW_ON_MAP)) {
             // Show location on google maps
             showLocationOnMaps();
         }
 
         // Show directions dialog in Google Maps app.
-        else if (action.equals(Constants.Notifications.ACTION_DIRECTIONS)) {
+        else if (action.equals(ACTION_DIRECTIONS)) {
             showDirections();
 
         }
 
         // Clear parking location, dismiss notification and inform UI via broadcast.
-        else if (action.equals(Constants.Notifications.ACTION_CLEAR)) {
+        else if (action.equals(ACTION_CLEAR)) {
             // Remove location from SharedPreferences
             new AppPreferenceManager(this).removeLocation();
             // Remove notification

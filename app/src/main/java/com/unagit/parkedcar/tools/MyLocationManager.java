@@ -55,7 +55,6 @@ public class MyLocationManager extends LocationCallback implements
     }
 
     private MyLocationManagerCallback callback;
-
     private Activity activity;
     private Context context;
     private GoogleApiClient mGoogleApiClient;

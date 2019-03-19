@@ -113,31 +113,6 @@ public class ParkViewModel extends AndroidViewModel {
         i.putExtra(LOCATION_REQUEST_TYPE, type);
         i.putExtra(IS_AUTOPARKING, false);
         ContextCompat.startForegroundService(getApplication(), i);
-
-//        // TODO: verify that request is auto disposed
-//        locationProvider.requestLocation(type)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .delay(5, TimeUnit.SECONDS)
-//                .subscribe(new CompletableObserver() {
-//
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        refreshData();
-//                        updateUI();
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Log.e("location", "Failed to receive location");
-//                        updateUI();
-//                        // TODO: show location request error
-//                    }
-//                });
     }
 
     LiveData<String> getMessage() {

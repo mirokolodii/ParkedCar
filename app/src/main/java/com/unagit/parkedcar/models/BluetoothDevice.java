@@ -1,9 +1,6 @@
 package com.unagit.parkedcar.models;
 
-/**
- * Simple getter/setter class, which keeps name and address of a Bluetooth Device.
- */
-
+// Data class
 public class BluetoothDevice {
     private final String name;
     private final String address;
