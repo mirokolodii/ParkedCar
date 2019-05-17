@@ -67,7 +67,7 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
         ParkView parkView = parent.findViewById(R.id.park_view);
 
-        mViewModel.getMessage().observe(this, parkView::setParkingText);
+        mViewModel.getParkStatusMessage().observe(this, parkView::setParkingText);
 
         mViewModel.getStatus().observe(this, status -> {
             Log.e("rx", "LiveData: new status received");

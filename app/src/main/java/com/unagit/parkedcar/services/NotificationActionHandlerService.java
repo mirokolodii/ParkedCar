@@ -15,6 +15,7 @@ import com.unagit.parkedcar.helpers.Constants;
 import static com.unagit.parkedcar.helpers.Constants.Notifications.ACTION_CLEAR;
 import static com.unagit.parkedcar.helpers.Constants.Notifications.ACTION_DIRECTIONS;
 import static com.unagit.parkedcar.helpers.Constants.Notifications.ACTION_SHOW_ON_MAP;
+import static com.unagit.parkedcar.tools.MyNotificationManager.dismissNotification;
 import static com.unagit.parkedcar.views.MainActivity.LOG_TAG;
 
 /**
@@ -45,7 +46,7 @@ public class NotificationActionHandlerService extends IntentService {
             // Remove location from SharedPreferences
             new AppPreferenceManager(this).removeLocation();
             // Remove notification
-            dismissNotification();
+            dismissNotification(this);
             // Send broadcast to inform UI about a need to clear parking.
             sendBroadcast();
         }
@@ -105,16 +106,6 @@ public class NotificationActionHandlerService extends IntentService {
             catch (ActivityNotFoundException innerEx) {
                 Toast.makeText(this, "Install Google Maps first.", Toast.LENGTH_LONG).show();
             }
-        }
-    }
-
-    private void dismissNotification() {
-        // Dismiss notification
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-        try {
-            mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
-        } catch (NullPointerException e) {
-            Log.e(LOG_TAG, e.getMessage());
         }
     }
 

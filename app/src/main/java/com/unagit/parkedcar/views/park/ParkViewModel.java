@@ -12,6 +12,7 @@ import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.tools.AppLocationProvider;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
+import com.unagit.parkedcar.tools.MyNotificationManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -33,7 +34,7 @@ public class ParkViewModel extends AndroidViewModel {
     private LatLng location;
     private Long parkedTime;
     private Boolean isParkedAutomatically;
-    private MutableLiveData<String> message = new MutableLiveData<>();
+    private MutableLiveData<String> parkStatusMessage = new MutableLiveData<>();
     private MutableLiveData<Constants.ParkStatus> uiParkStatus = new MutableLiveData<>();
     private MutableLiveData<Pair<Constants.ParkStatus, LatLng>> locationWithStatusPair
             = new MutableLiveData<>();
@@ -77,7 +78,7 @@ public class ParkViewModel extends AndroidViewModel {
             startParkingTime();
         } else {
             stopParkingTime();
-            message.postValue("");
+            parkStatusMessage.postValue("");
         }
 
         Constants.ParkStatus status = isParked
@@ -100,8 +101,11 @@ public class ParkViewModel extends AndroidViewModel {
     void onParkButtonClick() {
         Constants.LocationRequestType type;
         if (isParked) {
+            // Clear parking
             type = CURRENT_LOCATION;
+
         } else {
+            // Set parking
             type = PARKING_LOCATION;
         }
         uiParkStatus.setValue(Constants.ParkStatus.IS_WAITING);
@@ -115,8 +119,8 @@ public class ParkViewModel extends AndroidViewModel {
         ContextCompat.startForegroundService(getApplication(), i);
     }
 
-    LiveData<String> getMessage() {
-        return message;
+    LiveData<String> getParkStatusMessage() {
+        return parkStatusMessage;
     }
 
     LiveData<Constants.ParkStatus> getStatus() {
@@ -128,7 +132,7 @@ public class ParkViewModel extends AndroidViewModel {
     }
 
     private void startParkingTime() {
-        timeUpdateHandler.post(updateText());
+        timeUpdateHandler.post(updateParkingTime());
     }
 
     private void stopParkingTime() {
@@ -138,14 +142,14 @@ public class ParkViewModel extends AndroidViewModel {
         }
     }
 
-    private Runnable updateText() {
+    private Runnable updateParkingTime() {
         timeUpdateRunnable = new Runnable() {
             @Override
             public void run() {
                 String timeDifference = Helpers.getTimeDifference(parkedTime, getApplication());
                 String text = (isParkedAutomatically) ? "Parked automatically " : "Parked manually ";
                 text += timeDifference;
-                message.postValue(text);
+                parkStatusMessage.postValue(text);
                 timeUpdateHandler.postDelayed(this, 60 * 1000);
             }
         };

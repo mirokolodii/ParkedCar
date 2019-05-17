@@ -3,6 +3,7 @@ package com.unagit.parkedcar.tools;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -110,5 +111,16 @@ public class MyNotificationManager {
         Intent notificationAction = new Intent(context, NotificationActionHandlerService.class);
         notificationAction.setAction(action);
         return PendingIntent.getService(context, 0, notificationAction, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public static void dismissNotification(Context context) {
+        // Dismiss notification
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
+        try {
+            mNotificationManager.cancel(Constants.Notifications.NOTIFICATION_ID);
+        } catch (NullPointerException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
     }
 }

@@ -56,6 +56,7 @@ public class AppLocationProvider extends Service implements MyLocationManager.My
                 new MyNotificationManager().sendNotification(getApplicationContext(), location);
             } else {
                 appPreferenceManager.setCurrentLocation(latLng, isAutoParking);
+                MyNotificationManager.dismissNotification(this);
             }
             sendBroadcast();
         }
