@@ -13,14 +13,13 @@
 
 # Tools and libraries
 ### Language:
-<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/xlarge/public/postimages/9274/java.jpg
-" width="150" />
+<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/xlarge/public/postimages/9274/java.jpg" width="150" />
 
 ### Architecture: 
 Started with God Activities and slowly moving towards MVVM with each new change.
 
 ### Libraries:
-* * RxJava2
+* RxJava2
 * Architecture Components (ViewModel, LiveData)
 * Google Play Services (Location, Maps)
   
