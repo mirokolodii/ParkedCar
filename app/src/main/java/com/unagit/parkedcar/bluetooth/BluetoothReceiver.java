@@ -8,12 +8,16 @@ import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
+
 import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.tools.AppLocationProvider;
+import com.unagit.parkedcar.location.AppLocationProvider;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
+
 import java.util.Set;
+
 import static com.unagit.parkedcar.helpers.Constants.Extras.IS_AUTOPARKING;
 import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_REQUEST_TYPE;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.CURRENT_LOCATION;

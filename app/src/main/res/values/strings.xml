@@ -95,4 +95,5 @@
     <!--Accessibility-->
     <string name="bluetooth_ticker">Choose this device to listen to it\'s Bluetooth state change</string>
     <string name="park_car_button">Park Car button</string>
+    <string name="location_not_received_message">Can\'t receive location.</string>
 </resources>

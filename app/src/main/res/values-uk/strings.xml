@@ -61,6 +61,7 @@
         зв\'язку. Ввімкніть розташування перед використанням програми.</string>
     <string name="location_disabled_settings_btn">Налаштування</string>
     <string name="location_disabled_exit_btn">Вихід</string>
+    <string name="location_not_received_message">Неможливо отримати розташування.</string>
 
     <!--Preferences-->
     <string name="pref_behaviour">Поведінка</string>

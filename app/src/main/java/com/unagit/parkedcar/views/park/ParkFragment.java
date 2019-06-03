@@ -8,6 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,11 +25,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Constants;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
@@ -80,6 +83,13 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
                     break;
             }
         });
+
+        mViewModel.getToastMessage().observe(this, this::showMessage);
+    }
+
+    private void showMessage(String message) {
+        if (message != null && !message.isEmpty())
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void setMapCallback() {

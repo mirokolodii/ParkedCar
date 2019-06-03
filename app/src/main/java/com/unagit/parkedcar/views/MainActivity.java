@@ -5,8 +5,21 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.Settings;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -16,24 +29,14 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import android.os.Bundle;
-import android.view.MenuItem;
-import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
 import com.unagit.parkedcar.services.NotificationActionHandlerService;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
 import com.unagit.parkedcar.views.bluetooth.BluetoothFragment;
 import com.unagit.parkedcar.views.park.ParkFragment;
+
 import static com.unagit.parkedcar.helpers.Constants.Requests.ENABLE_LOCATION_REQUEST;
 import static com.unagit.parkedcar.helpers.Constants.Requests.FINE_LOCATION_PERMISSION_REQUEST;
 
@@ -219,23 +222,6 @@ public class MainActivity extends AppCompatActivity implements
                 (dialog12, which) -> {
                     final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent);
-                });
-        dialog.setIcon(android.R.drawable.ic_dialog_alert);
-        dialog.show();
-    }
-
-
-    /**
-     * Show a dialog to a user, if can't get precise enough location.
-     */
-    private void showLocationNotAvailableDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setTitle(getString(R.string.location_not_available_title));
-        dialog.setMessage(getString(R.string.location_not_available_text));
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE,
-                getString(R.string.location_not_available_ok_btn),
-                (dialog1, which) -> {
-                    // Do nothing
                 });
         dialog.setIcon(android.R.drawable.ic_dialog_alert);
         dialog.show();

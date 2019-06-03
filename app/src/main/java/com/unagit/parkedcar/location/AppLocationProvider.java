@@ -1,17 +1,23 @@
-package com.unagit.parkedcar.tools;
+package com.unagit.parkedcar.location;
 
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
+import com.unagit.parkedcar.tools.MyLocationManager;
+import com.unagit.parkedcar.tools.MyNotificationManager;
+
 import static com.unagit.parkedcar.helpers.Constants.Extras.IS_AUTOPARKING;
 import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_REQUEST_TYPE;
 
-public class AppLocationProvider extends Service implements MyLocationManager.MyLocationManagerCallback {
+public class AppLocationProvider extends Service implements MyLocationManager.LocationResultListener {
     private AppPreferenceManager appPreferenceManager;
     private static final int FOREGROUND_NOTIFICATION_ID = 220;
     Constants.LocationRequestType locationRequestType;
@@ -31,11 +37,8 @@ public class AppLocationProvider extends Service implements MyLocationManager.My
                     (Constants.LocationRequestType) intent.getSerializableExtra(LOCATION_REQUEST_TYPE);
             isAutoParking = intent.getBooleanExtra(IS_AUTOPARKING, false);
             boolean isFastResult = locationRequestType != Constants.LocationRequestType.PARKING_LOCATION;
-            MyLocationManager myLocationManager = new MyLocationManager(
-                    null,
-                    getApplicationContext(),
-                    this);
-            myLocationManager.getLocation(false, isFastResult);
+            new MyLocationManager(getApplicationContext(), this)
+                    .getLocation(isFastResult);
         }
 
         return Service.START_REDELIVER_INTENT;
@@ -48,7 +51,7 @@ public class AppLocationProvider extends Service implements MyLocationManager.My
     }
 
     @Override
-    public void locationCallback(Constants.LocationStatus result, Location location) {
+    public void onLocationReceived(Constants.LocationStatus result, Location location) {
         if (result == Constants.LocationStatus.LOCATION_RECEIVED) {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             if (locationRequestType == Constants.LocationRequestType.PARKING_LOCATION) {
@@ -58,12 +61,14 @@ public class AppLocationProvider extends Service implements MyLocationManager.My
                 appPreferenceManager.setCurrentLocation(latLng, isAutoParking);
                 MyNotificationManager.dismissNotification(this);
             }
-            sendBroadcast();
         }
+        sendBroadcast(result);
         stopService();
     }
-    private void sendBroadcast() {
+
+    private void sendBroadcast(Constants.LocationStatus result) {
         Intent intent = new Intent(Constants.Bluetooth.BLUETOOTH_RECEIVER_BROADCAST_ACTION);
+        intent.putExtra(Constants.Extras.LOCATION_STATUS, result);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 

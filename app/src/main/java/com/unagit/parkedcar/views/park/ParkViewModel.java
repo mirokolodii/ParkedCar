@@ -6,11 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import com.google.android.gms.maps.model.LatLng;
-import com.unagit.parkedcar.helpers.Constants;
-import com.unagit.parkedcar.helpers.Helpers;
-import com.unagit.parkedcar.tools.AppLocationProvider;
-import com.unagit.parkedcar.tools.AppPreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
@@ -18,8 +14,17 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.unagit.parkedcar.R;
+import com.unagit.parkedcar.helpers.Constants;
+import com.unagit.parkedcar.helpers.Helpers;
+import com.unagit.parkedcar.location.AppLocationProvider;
+import com.unagit.parkedcar.tools.AppPreferenceManager;
+
 import static com.unagit.parkedcar.helpers.Constants.Extras.IS_AUTOPARKING;
 import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_REQUEST_TYPE;
+import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_STATUS;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.CURRENT_LOCATION;
 import static com.unagit.parkedcar.helpers.Constants.LocationRequestType.PARKING_LOCATION;
 
@@ -33,6 +38,7 @@ public class ParkViewModel extends AndroidViewModel {
     private MutableLiveData<Constants.ParkStatus> uiParkStatus = new MutableLiveData<>();
     private MutableLiveData<Pair<Constants.ParkStatus, LatLng>> locationWithStatusPair
             = new MutableLiveData<>();
+    private MutableLiveData<String> toastMessage = new MutableLiveData<>();
     private Handler timeUpdateHandler = new Handler();
     private Runnable timeUpdateRunnable;
     private AutoParkingReceiver autoParkingReceiver = new AutoParkingReceiver();
@@ -120,6 +126,10 @@ public class ParkViewModel extends AndroidViewModel {
         return uiParkStatus;
     }
 
+    LiveData<String> getToastMessage() {
+        return toastMessage;
+    }
+
     LiveData<Pair<Constants.ParkStatus, LatLng>> getLocationWithStatus() {
         return locationWithStatusPair;
     }
@@ -156,8 +166,15 @@ public class ParkViewModel extends AndroidViewModel {
     private class AutoParkingReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            refreshData();
-            updateUI();
+            Constants.LocationStatus result =
+                    (Constants.LocationStatus) intent.getSerializableExtra(LOCATION_STATUS);
+            if (result == Constants.LocationStatus.LOCATION_RECEIVED) {
+                refreshData();
+                updateUI();
+            } else {
+                toastMessage.setValue(getApplication()
+                        .getString(R.string.location_not_received_message));
+            }
         }
     }
 }

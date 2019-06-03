@@ -64,8 +64,8 @@ public final class Constants {
      * Results, which are sent by MyLocationManager to it's callback.
      */
     public enum LocationStatus {
-        LOCATION_DISABLED,
-        LOCATION_PERMISSION_NOT_GRANTED,
+        //        LOCATION_DISABLED,
+//        LOCATION_PERMISSION_NOT_GRANTED,
         LOCATION_RECEIVED,
         LOCATION_NOT_RECEIVED
     }
@@ -77,6 +77,7 @@ public final class Constants {
     public static class Extras {
         public static final String LOCATION_REQUEST_TYPE = "Location request type";
         public static final String IS_AUTOPARKING = "Is autoparking";
+        public static final String LOCATION_STATUS = "location status";
     }
 
     /**
