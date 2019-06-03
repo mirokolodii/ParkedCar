@@ -8,7 +8,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.helpers.Helpers;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import static com.unagit.parkedcar.helpers.Constants.Extras.IS_AUTOPARKING;
 import static com.unagit.parkedcar.helpers.Constants.Extras.LOCATION_REQUEST_TYPE;
 
@@ -54,11 +53,11 @@ public class AppLocationProvider extends Service implements MyLocationManager.My
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             if (locationRequestType == Constants.LocationRequestType.PARKING_LOCATION) {
                 appPreferenceManager.setParkingLocation(latLng, isAutoParking);
+                new MyNotificationManager().sendNotification(getApplicationContext(), location);
             } else {
                 appPreferenceManager.setCurrentLocation(latLng, isAutoParking);
+                MyNotificationManager.dismissNotification(this);
             }
-            appPreferenceManager.setParkedAutomatically(false);
-            new MyNotificationManager().sendNotification(getApplicationContext(), location);
             sendBroadcast();
         }
         stopService();
