@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 
 import com.unagit.parkedcar.bluetooth.BluetoothManager;
 import com.unagit.parkedcar.R;
-import com.unagit.parkedcar.bluetooth.MyBluetoothManager;
+import com.unagit.parkedcar.bluetooth.BluetoothManagerImp;
 import com.unagit.parkedcar.helpers.Constants;
 import com.unagit.parkedcar.models.BluetoothDevice;
 import com.unagit.parkedcar.tools.AppPreferenceManager;
@@ -31,7 +31,7 @@ import java.util.Set;
 
 public class BluetoothFragment extends Fragment implements RecyclerViewAdapter.ItemClickListener {
 
-    private final BluetoothManager mBluetoothManager = new MyBluetoothManager();
+    private final BluetoothManager mBluetoothManager = new BluetoothManagerImp();
     private View mRootView;
     private final BluetoothStateChangeListener mBluetoothStateChangeListener = new BluetoothStateChangeListener();
     private AppPreferenceManager preferenceManager;

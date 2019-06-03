@@ -15,9 +15,9 @@ public final class Constants {
         // Request to enable bluetooth on a device
         public static final int ENABLE_BLUETOOTH_ACTIVITY_REQUEST_RESULT = 10;
         // Request to allow access to precise location (FINE_LOCATION).
-        public static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 1;
+        public static final int FINE_LOCATION_PERMISSION_REQUEST = 1;
         // Request to check for 'Location enabled' in device' settings
-        public static final int ENABLE_LOCATION_REQUEST_RESULT = 2;
+        public static final int ENABLE_LOCATION_REQUEST = 2;
     }
 
     /**
@@ -70,12 +70,6 @@ public final class Constants {
         LOCATION_NOT_RECEIVED
     }
 
-    /**
-     * Constants, used in a broadcast, receiver for which is listening in ParkFragment_old.
-     * Broadcast informs ParkFragment_old in following cases:
-     * - BluetoothReceiver is triggered either to park or clear parking;
-     * - User clicks on notification's clear action.
-     */
     public static class Bluetooth {
         public static final String BLUETOOTH_RECEIVER_BROADCAST_ACTION = BuildConfig.APPLICATION_ID + ".BluetoothReceiverBroadcast";
     }

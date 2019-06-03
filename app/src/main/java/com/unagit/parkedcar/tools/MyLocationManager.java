@@ -18,7 +18,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -26,14 +25,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.unagit.parkedcar.views.MainActivity;
 import com.unagit.parkedcar.helpers.Constants;
 import java.util.concurrent.TimeUnit;
-import static com.unagit.parkedcar.helpers.Constants.Requests.MY_PERMISSION_REQUEST_FINE_LOCATION;
-import static com.unagit.parkedcar.helpers.Constants.Requests.ENABLE_LOCATION_REQUEST_RESULT;
+import static com.unagit.parkedcar.helpers.Constants.Requests.FINE_LOCATION_PERMISSION_REQUEST;
+import static com.unagit.parkedcar.helpers.Constants.Requests.ENABLE_LOCATION_REQUEST;
 
 /**
  * This class is used to manage all the location work, like verify that
@@ -141,50 +139,46 @@ public class MyLocationManager extends LocationCallback implements
                 LocationServices.getSettingsClient(context)
                         .checkLocationSettings(builder.build());
 
-        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
-            @Override
-            public void onComplete(Task<LocationSettingsResponse> task) {
-                try {
-                    LocationSettingsResponse response = task.getResult(ApiException.class);
-                    /* All location settings are satisfied. The client can initialize location
-                    requests here.
-                    Location is enabled, next is to verify
-                    that location permission is granted for the app.
-                    */
-                    verifyPermissionGranted();
+        result.addOnCompleteListener(task -> {
+            try {
+                LocationSettingsResponse response = task.getResult(ApiException.class);
+                /* All location settings are satisfied. The client can initialize location
+                requests here.
+                Location is enabled, next is to verify
+                that location permission is granted for the app.
+                */
+                verifyPermissionGranted();
 
-                } catch (ApiException exception) {
-                    switch (exception.getStatusCode()) {
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the
-                            // user a dialog.
-                            try {
-                                // Cast to a resolvable exception.
-                                ResolvableApiException resolvable = (ResolvableApiException) exception;
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
-                                // Show dialog to enable location.
-                                // Results will be passed to onActivityResult in activity
-                                if (doInBackground) {
-                                    callback.locationCallback(Constants.LocationStatus.LOCATION_DISABLED,
-                                            new Location(DEFAULT_PROVIDER));
-                                } else {
-                                    resolvable.startResolutionForResult(activity, ENABLE_LOCATION_REQUEST_RESULT);
+            } catch (ApiException exception) {
+                switch (exception.getStatusCode()) {
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the
+                        // user a dialog.
+                        try {
+                            // Cast to a resolvable exception.
+                            ResolvableApiException resolvable = (ResolvableApiException) exception;
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            // Show dialog to enable location.
+                            // Results will be passed to onActivityResult in activity
+                            if (doInBackground) {
+                                returnDefaultLocation(Constants.LocationStatus.LOCATION_DISABLED);
+                            } else {
+                                resolvable.startResolutionForResult(activity, ENABLE_LOCATION_REQUEST);
 
-                                }
-                            } catch (IntentSender.SendIntentException e) {
-                                // Ignore the error.
-                            } catch (ClassCastException e) {
-                                // Ignore, should be an impossible error.
                             }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way to fix the
-                            // settings so we won't show the dialog.
-                            callback.locationCallback(Constants.LocationStatus.LOCATION_DISABLED,
-                                    new Location(DEFAULT_PROVIDER));
-                            break;
-                    }
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        } catch (ClassCastException e) {
+                            // Ignore, should be an impossible error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        callback.locationCallback(Constants.LocationStatus.LOCATION_DISABLED,
+                                new Location(DEFAULT_PROVIDER));
+                        break;
                 }
             }
         });
@@ -206,11 +200,18 @@ public class MyLocationManager extends LocationCallback implements
 
             } else { // Ask for a permission, if not in background
                 if (activity != null && !doInBackground) {
-                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_FINE_LOCATION);
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION_REQUEST);
+                } else {
+                    returnDefaultLocation(Constants.LocationStatus.LOCATION_PERMISSION_NOT_GRANTED);
                 }
 
             }
         }
+    }
+
+    private void returnDefaultLocation(Constants.LocationStatus status) {
+        callback.locationCallback(status,
+                new Location(DEFAULT_PROVIDER));
     }
 
     /**

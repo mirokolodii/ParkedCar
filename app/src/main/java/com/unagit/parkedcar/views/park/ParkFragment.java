@@ -4,12 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,7 +17,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unagit.parkedcar.R;
 import com.unagit.parkedcar.helpers.Constants;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -29,6 +26,7 @@ import androidx.lifecycle.ViewModelProviders;
 public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
     private ParkViewModel mViewModel;
+    private static int ZOOM_LEVEL = 17;
 
     public ParkFragment() {
         // Required empty public constructor
@@ -70,7 +68,6 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
         mViewModel.getMessage().observe(this, parkView::setParkingText);
 
         mViewModel.getStatus().observe(this, status -> {
-            Log.e("rx", "LiveData: new status received");
             switch (status) {
                 case IS_CLEARED:
                     parkView.clearParking();
@@ -95,15 +92,11 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.e("rx", "onMapReady");
         setMyLocationEnabled(googleMap);
 
         mViewModel.getLocationWithStatus().observe(this, locationWithStatusPair -> {
             Constants.ParkStatus status = locationWithStatusPair.first;
             LatLng location = locationWithStatusPair.second;
-
-            Log.e("rx", "LiveData: new LocationWithStatus received");
-
 
             googleMap.clear();
 
@@ -131,21 +124,19 @@ public class ParkFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void setCurrentLocationOnMap(GoogleMap googleMap, LatLng location) {
-        Log.e("map", "new setCurrentLocationOnMap");
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(17));
         googleMap.animateCamera(CameraUpdateFactory
                 .newLatLng(location), 1000 /* 1 sec. */, null);
     }
 
     private void setParkingLocationOnMap(GoogleMap googleMap, LatLng location) {
-        Log.e("map", "new setParkingLocation");
         MarkerOptions options = new MarkerOptions();
         options.position(location)
                 .title(getString(R.string.your_car_marker))
                 .icon(BitmapDescriptorFactory.fromResource(Constants.GoogleMaps.Parking_icon));
         googleMap.addMarker(options)
                 .showInfoWindow(); /* show title (no need to click on marker to show title) */
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+        googleMap.moveCamera(CameraUpdateFactory.zoomTo(ZOOM_LEVEL));
         googleMap.animateCamera(CameraUpdateFactory
                 .newLatLng(location), 1000 /* 1 sec. */, null);
     }

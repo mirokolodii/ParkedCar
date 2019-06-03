@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * {@link MyBluetoothManager} includes a set of helper methods to work with Bluetooth adapter.
+ * {@link BluetoothManagerImp} includes a set of helper methods to work with Bluetooth adapter.
  */
-public class MyBluetoothManager implements BluetoothManager {
+public class BluetoothManagerImp implements BluetoothManager {
     private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
     /**
